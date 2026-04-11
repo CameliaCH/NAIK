@@ -1,9 +1,140 @@
 {% extends "base.html" %}
-{% block title %}Coming Soon — NAIK{% endblock %}
+
+{% block title %}NAIK — Naikkan Taraf Hidup Anda{% endblock %}
+
+{% block head %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NAIK — Explore Careers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='naik.js') }}"></script>
+{% endblock %}
+
 {% block content %}
-<div style="text-align:center; padding:100px 20px; font-family:sans-serif;">
-  <h2>🚧 Coming Soon</h2>
-  <p style="color:#888;">This page is under construction.</p>
-  <a href="/" style="color:#BF4646;">← Back to Home</a>
+<!-- NAV -->
+<nav class="naik-nav">
+  <a href="/" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+  <div class="nav-ctas">
+    <a href="/signin" class="btn btn-outline">Sign In</a>
+    <a href="/donate" class="btn btn-primary">Donate ♡</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER + TABS -->
+<div class="page-header">
+  <svg class="page-header-bg" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <circle cx="1100" cy="60" r="200" fill="none" stroke="#7EACB5" stroke-width="1"/>
+    <circle cx="1100" cy="60" r="140" fill="none" stroke="#BF4646" stroke-width="0.6"/>
+    <circle cx="50" cy="250" r="150" fill="none" stroke="#7EACB5" stroke-width="0.8"/>
+    <circle cx="600" cy="150" r="300" fill="none" stroke="#EDDCC6" stroke-width="1.5"/>
+    <rect x="900" y="150" width="35" height="35" fill="none" stroke="#7EACB5" stroke-width="0.7" transform="rotate(45 917 167)"/>
+    <rect x="200" y="80" width="25" height="25" fill="none" stroke="#BF4646" stroke-width="0.6" transform="rotate(45 212 92)"/>
+  </svg>
+  <div class="page-header-content">
+    <span class="page-label">💼 Career Exploration</span>
+    <h1>Find Your <em>Next Step</em></h1>
+    <p>Browse hundreds of real opportunities across Malaysia — filtered for your life, not just your qualifications.</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="explore">🧭 Explore Jobs</button>
+    <button class="tab-btn" data-tab="saved">🤍 Saved <span class="badge" id="saved-badge">0</span></button>
+  </div>
 </div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ── EXPLORE TAB ── -->
+  <div id="tab-explore">
+    <div class="toolbar">
+      <span class="toolbar-label">Filter</span>
+      <div class="filter-chips">
+        <button class="filter-chip active" data-filter="all">All Jobs</button>
+        <button class="filter-chip" data-filter="full-time">Full-time</button>
+        <button class="filter-chip" data-filter="part-time">Part-time</button>
+        <button class="filter-chip" data-filter="remote">Remote / WFH</button>
+        <button class="filter-chip" data-filter="freelance">Freelance</button>
+        <button class="filter-chip" data-filter="salary-low">RM < 2,000</button>
+        <button class="filter-chip" data-filter="salary-mid">RM 2,000–4,000</button>
+        <button class="filter-chip" data-filter="salary-high">RM 4,000+</button>
+      </div>
+      <select class="sort-select" id="sort-select">
+        <option value="default">Sort: Recommended</option>
+        <option value="salary-asc">Salary: Low to High</option>
+        <option value="salary-desc">Salary: High to Low</option>
+        <option value="name-asc">Name: A–Z</option>
+      </select>
+    </div>
+    <div class="results-bar">
+      <span class="results-count"><strong id="results-num">0</strong> opportunities found</span>
+    </div>
+    <div class="job-grid" id="explore-grid"></div>
+  </div>
+
+  <!-- ── SAVED TAB ── -->
+  <div id="tab-saved" style="display:none;">
+    <div class="saved-toolbar">
+      <div>
+        <h2 style="font-size:1.4rem; margin-bottom:0.2rem;">Your Saved Jobs</h2>
+        <p style="font-size:0.85rem; color:var(--ink-lt);">Heart any job to save it here for later.</p>
+      </div>
+      <button class="rank-toggle" id="rank-toggle">☰ My Ranking</button>
+    </div>
+    <div class="rank-hint hidden" id="rank-hint">
+      ↕ Drag and drop cards to set your personal priority ranking. Your order is saved automatically.
+    </div>
+    <div class="job-grid" id="saved-grid"></div>
+  </div>
+
+</main>
+
+<!-- JOB DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    <div class="modal-hero" id="modal-hero">
+      <div class="modal-hero-overlay"></div>
+      <div class="modal-hero-text">
+        <h2 id="modal-title">Job Title</h2>
+        <span class="modal-salary" id="modal-salary"></span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stats" id="modal-stats"></div>
+      <div class="modal-section" style="margin-top:1.5rem;">
+        <div class="modal-section-title">About This Role</div>
+        <p id="modal-about"></p>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">What You'll Do</div>
+        <p id="modal-duties"></p>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Requirements</div>
+        <div class="modal-pills" id="modal-reqs"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Perks & Benefits</div>
+        <div class="modal-pills" id="modal-perks"></div>
+      </div>
+      <div class="modal-actions">
+        <a href="#" class="btn btn-primary" id="modal-apply">Apply Now →</a>
+        <button class="btn btn-outline" id="modal-save-btn">🤍 Save Job</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 {% endblock %}
