@@ -1,5 +1,7 @@
-from flask import Flask, render_template, session, redirect, url_for, request
+from flask import Flask, request, jsonify, render_template, session, flash, url_for, redirect
+from passlib.hash import argon2
 from dotenv import load_dotenv
+from db import supabase
 import os
 
 load_dotenv()
@@ -12,6 +14,8 @@ app.register_blueprint(interview_bp, url_prefix='/interview')
 
 from roadmap_backend import roadmap_bp
 app.register_blueprint(roadmap_bp)
+
+from services.cv_translator_service import translate_to_cv
 
 @app.route("/")
 @app.route("/home")
@@ -63,6 +67,20 @@ def logout():
     session.clear()
     return redirect(url_for("home"))
 
+@app.route("/cv-translator")
+def cv_translator():
+    return render_template("cv_translator.html")
+
+@app.route("/cv-translator/translate", methods=["POST"])
+def cv_translate():
+    data = request.get_json()
+    if not data or 'text' not in data:
+        return jsonify({'error': 'No text provided'}), 400
+    try:
+        result = translate_to_cv(data['text'])
+        return jsonify({'result': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI CV Translator — NAIK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    .cv-hero {
+      background: var(--peach);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem clamp(1.5rem,5vw,4rem) 2.5rem;
+      text-align: center;
+    }
+    .cv-hero .section-label { color: var(--red); }
+    .cv-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem,3vw,2.6rem);
+      color: var(--ink); margin-bottom: 0.5rem;
+    }
+    .cv-hero h1 em { color: var(--red); font-style: normal; }
+    .cv-hero p { color: var(--ink-mid); font-size: 1rem; max-width: 520px; margin: 0 auto; }
+
+    .cv-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 3rem clamp(1rem,4vw,2rem) 5rem;
+    }
+
+    .cv-tip {
+      background: var(--teal); color: #fff;
+      border-radius: 12px; padding: 1rem 1.25rem;
+      font-size: 0.88rem; line-height: 1.6; margin-bottom: 2rem;
+    }
+    .cv-tip strong { color: #fff; }
+
+    .translator-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .translator-card label {
+      display: block;
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-lt); margin-bottom: 0.6rem;
+    }
+
+    .translator-card textarea {
+      width: 100%;
+      min-height: 110px;
+      padding: 0.9rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--cream);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem; color: var(--ink);
+      resize: vertical; outline: none;
+      transition: border-color 0.2s;
+      line-height: 1.6;
+    }
+    .translator-card textarea:focus { border-color: var(--teal); }
+    .translator-card textarea::placeholder { color: var(--ink-lt); }
+
+    .translate-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.75rem 1.75rem;
+      background: var(--red); color: #fff;
+      border: none; border-radius: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .translate-btn:hover { background: var(--red-dk); transform: translateY(-1px); }
+    .translate-btn:disabled { background: var(--ink-lt); cursor: not-allowed; transform: none; }
+
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .result-box {
+      display: none;
+      background: #fff;
+      border: 2px solid var(--teal);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .result-label {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 0.75rem; display: block;
+    }
+
+    .result-text {
+      font-size: 1rem; color: var(--ink);
+      line-height: 1.7; font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .result-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1.1rem;
+      background: var(--teal); color: #fff;
+      border: none; border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .copy-btn:hover { background: #6a9aa4; }
+    .copy-btn.copied { background: #1a7a4a; }
+
+    .try-again-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1.1rem;
+      background: transparent; color: var(--ink-mid);
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .try-again-btn:hover { border-color: var(--ink-mid); color: var(--ink); }
+
+    .examples-section { margin-top: 3rem; }
+    .examples-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; color: var(--ink); margin-bottom: 0.5rem;
+    }
+    .examples-section p { font-size: 0.88rem; color: var(--ink-lt); margin-bottom: 1.5rem; }
+
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(320px,100%), 1fr));
+      gap: 1rem;
+    }
+
+    .example-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .example-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+
+    .example-before { font-size: 0.85rem; color: var(--ink-mid); margin-bottom: 0.6rem; line-height: 1.5; }
+    .example-before::before { content: 'You said:'; display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-lt); margin-bottom: 0.3rem; }
+    .example-after { font-size: 0.88rem; color: var(--ink); font-weight: 600; line-height: 1.5; }
+    .example-after::before { content: 'CV language:'; display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.3rem; }
+    .example-hint { display: block; font-size: 0.72rem; color: var(--teal); margin-top: 0.75rem; font-weight: 600; }
+
+    .history-section { margin-top: 3rem; display: none; }
+    .history-section h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--ink); margin-bottom: 1rem; }
+    .history-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .history-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+    .history-item .h-text { font-size: 0.88rem; color: var(--ink); line-height: 1.5; flex: 1; }
+    .history-item .h-copy { flex-shrink: 0; padding: 0.3rem 0.7rem; background: var(--peach); border: none; border-radius: 6px; font-size: 0.75rem; font-weight: 600; color: var(--ink-mid); cursor: pointer; transition: background 0.2s; }
+    .history-item .h-copy:hover { background: var(--teal); color: #fff; }
+
+    .error-box { display: none; background: #fdf0f0; border: 1px solid #f0c0c0; border-radius: 12px; padding: 1rem 1.25rem; margin-top: 1rem; font-size: 0.88rem; color: #9b3838; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="naik-nav">
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="{{ url_for('explore') }}">🧭 Explore Careers</a></li>
+    <li><a href="{{ url_for('skills') }}" style="color:var(--red); font-weight:700;">💪 Skill Up</a></li>
+    <li><a href="{{ url_for('know') }}">⚖️ Know Your Rights</a></li>
+    <li><a href="{{ url_for('explore') }}">💼 Get Hired</a></li>
+    <li class="her-link"><a href="{{ url_for('home') }}#forher-full">🌸 For Her</a></li>
+  </ul>
+  <div class="nav-ctas">
+    {% if session.get("user_name") %}
+      <span style="font-size:0.85rem; color:var(--ink-mid);">👤 {{ session["user_name"] }}</span>
+      <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+    <button class="hamburger" aria-label="Open menu"
+            onclick="document.querySelector('.mobile-nav').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="mobile-nav">
+  <a href="{{ url_for('home') }}">🏠 Home</a>
+  <a href="{{ url_for('explore') }}">🧭 Explore Careers</a>
+  <a href="{{ url_for('skills') }}">💪 Skill Up</a>
+  <a href="{{ url_for('know') }}">⚖️ Know Your Rights</a>
+  <a href="{{ url_for('explore') }}">💼 Get Hired</a>
+  <div class="mobile-ctas">
+    {% if session.get("user_name") %}
+      <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+  </div>
+</div>
+
+
+<!-- HERO -->
+<div class="cv-hero">
+  <span class="section-label">Skill Up</span>
+  <h1>AI <em>CV Translator</em></h1>
+  <p>Describe what you do in everyday words — the AI rewrites it into professional CV language that impresses employers.</p>
+</div>
+
+
+<!-- MAIN -->
+<div class="cv-wrapper">
+
+  <div class="cv-tip">
+    <strong>💡 How it works:</strong> Type what you actually do or did — in English or Bahasa Melayu.
+    Don't worry about sounding professional. That's the AI's job.
+  </div>
+
+  <div class="translator-card">
+    <label for="raw-input">Describe your experience in your own words</label>
+    <textarea
+      id="raw-input"
+      placeholder="e.g. I helped my aunt at her food stall every weekend, taking orders and handling money..."
+    ></textarea>
+
+    <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+      <button class="translate-btn" id="translate-btn" onclick="translateCV()">
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-text">✨ Translate to CV Language</span>
+      </button>
+      <span id="char-count" style="font-size:0.78rem; color:var(--ink-lt);">0 / 300</span>
+    </div>
+
+    <div class="error-box" id="error-box"></div>
+
+    <div class="result-box" id="result-box">
+      <span class="result-label">✅ Your CV line</span>
+      <p class="result-text" id="result-text"></p>
+      <div class="result-actions">
+        <button class="copy-btn" id="copy-btn" onclick="copyResult()">📋 Copy to clipboard</button>
+        <button class="try-again-btn" onclick="tryAgain()">🔄 Try a different version</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Examples -->
+  <div class="examples-section">
+    <h2>Not sure what to write?</h2>
+    <p>Click any example below to try it instantly.</p>
+    <div class="examples-grid">
+
+      <div class="example-card" onclick="useExample(this)">
+        <p class="example-before">I helped my aunt at her nasi lemak stall every weekend, cooking and serving customers</p>
+        <p class="example-after">Assisted in daily food stall operations serving 80+ customers, managing food preparation and cash transactions simultaneously.</p>
+        <span class="example-hint">Click to try →</span>
+      </div>
+
+      <div class="example-card" onclick="useExample(this)">
+        <p class="example-before">I look after my younger siblings while my parents work, cooking and making sure they do homework</p>
+        <p class="example-after">Managed household responsibilities including meal preparation and academic supervision for two dependants, demonstrating reliability and multitasking.</p>
+        <span class="example-hint">Click to try →</span>
+      </div>
+
+      <div class="example-card" onclick="useExample(this)">
+        <p class="example-before">I fix phones for people in my neighbourhood and sometimes replace screens</p>
+        <p class="example-after">Provided mobile device repair services to local clients, specialising in screen replacement and hardware diagnostics with a strong repeat customer base.</p>
+        <span class="example-hint">Click to try →</span>
+      </div>
+
+      <div class="example-card" onclick="useExample(this)">
+        <p class="example-before">Saya jaga kaunter kedai runcit bapa saya dan uruskan stok barang</p>
+        <p class="example-after">Menguruskan operasi kaunter kedai runcit termasuk pengurusan stok, perkhidmatan pelanggan dan rekod jualan harian.</p>
+        <span class="example-hint">Click to try →</span>
+      </div>
+
+      <div class="example-card" onclick="useExample(this)">
+        <p class="example-before">I drove for Grab on weekends to earn extra money and got a 4.9 rating</p>
+        <p class="example-after">Operated as a freelance ride-hailing driver, maintaining a 4.9/5.0 passenger rating through consistent punctuality and professional service delivery.</p>
+        <span class="example-hint">Click to try →</span>
+      </div>
+
+      <div class="example-card" onclick="useExample(this)">
+        <p class="example-before">I volunteered at my school canteen and handled the cash register during recess</p>
+        <p class="example-after">Volunteered in school canteen operations, managing point-of-sale transactions and customer service during high-traffic periods.</p>
+        <span class="example-hint">Click to try →</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="history-section" id="history-section">
+    <h2>Your translated lines this session</h2>
+    <div class="history-list" id="history-list"></div>
+  </div>
+
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="wordmark">NAIK</span>
+      <p>Naikkan Taraf Hidup Anda — a free platform helping Malaysians find work, build skills, and know their rights.</p>
+      <div class="footer-btns">
+        <a href="{{ url_for('donate') }}" class="btn btn-primary" style="font-size:0.8rem;">Donate ♡</a>
+      </div>
+    </div>
+    <div>
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="{{ url_for('explore') }}">🧭 Explore Careers</a></li>
+        <li><a href="{{ url_for('skills') }}">💪 Skill Up</a></li>
+        <li><a href="{{ url_for('know') }}">⚖️ Know Your Rights</a></li>
+        <li><a href="{{ url_for('explore') }}">💼 Get Hired</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="{{ url_for('CVexamples') }}">CV Templates</a></li>
+        <li><a href="{{ url_for('jobGuide') }}">Job Guide</a></li>
+        <li><a href="{{ url_for('know') }}">Know Your Rights</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Organisation</h4>
+      <ul>
+        <li><a href="{{ url_for('home') }}#about">About NAIK</a></li>
+        <li><a href="{{ url_for('home') }}#team">Our Team</a></li>
+        <li><a href="https://github.com/CameliaCH/GetEmployed" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 NAIK — Naikkan Taraf Hidup Anda. All rights reserved.</span>
+    <span>Made with ❤️ in Malaysia</span>
+  </div>
+</footer>
+
+
+<script>
+  /* ── Mobile nav ── */
+  const hamburger = document.querySelector('.hamburger');
+  const mobileNav = document.querySelector('.mobile-nav');
+  if (hamburger && mobileNav) {
+    document.addEventListener('click', e => {
+      if (!mobileNav.contains(e.target) && !hamburger.contains(e.target))
+        mobileNav.classList.remove('open');
+    });
+    mobileNav.querySelectorAll('a').forEach(a =>
+      a.addEventListener('click', () => mobileNav.classList.remove('open'))
+    );
+  }
+
+  /* ── Character counter ── */
+  const textarea  = document.getElementById('raw-input');
+  const charCount = document.getElementById('char-count');
+  const MAX_CHARS = 300;
+
+  textarea.addEventListener('input', () => {
+    const len = textarea.value.length;
+    charCount.textContent = `${len} / ${MAX_CHARS}`;
+    charCount.style.color = len > MAX_CHARS ? 'var(--red)' : 'var(--ink-lt)';
+  });
+
+  /* ── Main translate function (named translateCV to avoid browser conflict) ── */
+  async function translateCV() {
+    const text = textarea.value.trim();
+    if (!text) { textarea.focus(); return; }
+    if (text.length > MAX_CHARS) {
+      showError('Please keep your input under 300 characters.');
+      return;
+    }
+
+    setLoading(true);
+    hideResult();
+    hideError();
+
+    try {
+      const res = await fetch('/cv-translator/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      const data = await res.json();
+      if (data.error) { showError(data.error); return; }
+      showResult(data.result);
+      addToHistory(data.result);
+    } catch (err) {
+      showError('Something went wrong. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function tryAgain() {
+    hideResult();
+    translateCV();
+  }
+
+  function copyResult() {
+    const text = document.getElementById('result-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✅ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 Copy to clipboard';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  function useExample(card) {
+    const before = card.querySelector('.example-before').textContent;
+    textarea.value = before;
+    charCount.textContent = `${before.length} / ${MAX_CHARS}`;
+    textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    textarea.focus();
+  }
+
+  /* ── Session history ── */
+  const sessionHistory = [];
+
+  function addToHistory(text) {
+    sessionHistory.unshift(text);
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const section = document.getElementById('history-section');
+    const list    = document.getElementById('history-list');
+    if (sessionHistory.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    list.innerHTML = sessionHistory.map((t, i) => `
+      <div class="history-item">
+        <span class="h-text">${t}</span>
+        <button class="h-copy" onclick="copyHistoryItem(${i})">📋 Copy</button>
+      </div>
+    `).join('');
+  }
+
+  function copyHistoryItem(index) {
+    navigator.clipboard.writeText(sessionHistory[index]);
+  }
+
+  /* ── UI helpers ── */
+  function setLoading(on) {
+    const btn     = document.getElementById('translate-btn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btn-text');
+    btn.disabled          = on;
+    spinner.style.display = on ? 'block' : 'none';
+    btnText.textContent   = on ? 'Translating...' : '✨ Translate to CV Language';
+  }
+
+  function showResult(text) {
+    document.getElementById('result-text').textContent = text;
+    document.getElementById('result-box').style.display = 'block';
+  }
+
+  function hideResult() {
+    document.getElementById('result-box').style.display = 'none';
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('error-box');
+    box.textContent = '⚠️ ' + msg;
+    box.style.display = 'block';
+  }
+
+  function hideError() {
+    document.getElementById('error-box').style.display = 'none';
+  }
+
+  /* Ctrl/Cmd + Enter to translate */
+  textarea.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') translateCV();
+  });
+</script>
+
+</body>
+</html>
