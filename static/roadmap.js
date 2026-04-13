@@ -20,11 +20,11 @@ let _fullRoadmapOpen = false; // true when detail view is open, false on path-se
 const T = {
   en: {
     back: 'Back', next: 'Next', generate: '✨ Build My Roadmap',
-    genMsgs: ['Analysing your profile…','Matching you to 3 realistic careers…','Searching real Jobstreet listings near you…','Finding the best free courses…','Writing your step-by-step plan…','Almost done…'],
+    genMsgs: ['Analysing your profile…','Matching you to your best realistic careers…','Searching real Jobstreet listings near you…','Finding the best free courses…','Writing your step-by-step plan…','Almost done…'],
     sectionTitle: 'Your Career Roadmap',
     greeting: n => `Here's your plan, ${n}`,
     choosePathTitle: '🎯 Choose Your Career Path',
-    choosePathSub: 'We found 3 realistic options for you. Pick the one that fits your situation best.',
+    choosePathSub: 'We found the best realistic options for you. Pick the one that fits your situation best.',
     yourPlan: 'YOUR STEP-BY-STEP PLAN',
     incomeLadder: 'INCOME LADDER',
     immediateJobs: '💼 APPLY NOW — Jobs You Can Get This Week',
