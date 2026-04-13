@@ -24,11 +24,11 @@
   </a>
 
   <ul class="nav-links">
-    <li><a href="#explore">🧭 Explore Careers</a></li>
+    <li><a href="#home">🧭 Explore Careers</a></li>
     <li><a href="#skillup">💪 Skill Up</a></li>
-    <li><a href="#rights">⚖️ Know Your Rights</a></li>
+    <!--<li><a href="#rights">⚖️ Know Your Rights</a></li>-->
     <li><a href="#hired">💼 Get Hired</a></li>
-    <li class="her-link"><a href="#forher-full">🌸 For Her</a></li>
+    <li class="her-link"><a href="#forher">🌸 For Her</a></li>
   </ul>
 
   <div class="nav-ctas">
@@ -49,11 +49,11 @@
 <!-- Mobile drawer (hidden until hamburger is clicked) -->
 <div class="mobile-nav">
   <a href="{{ url_for('home') }}">🏠 Home</a>
-  <a href="#explore">🧭 Explore Careers</a>
+  <a href="#home">🧭 Explore Careers</a>
   <a href="#skillup">💪 Skill Up</a>
-  <a href="#rights">⚖️ Know Your Rights</a>
+  <!--<a href="#rights">⚖️ Know Your Rights</a>-->
   <a href="#hired">💼 Get Hired</a>
-  <a href="#forher-full" class="her">🌸 For Her</a>
+  <a href="#forher" class="her">🌸 For Her</a>
   <div class="mobile-ctas">
     {% if session.get("user_name") %}
       <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
@@ -94,8 +94,8 @@
     <p class="subtitle">Whether you're a fresh graduate, a parent re-entering the workforce, or someone ready for a career change — NAIK gives you the tools, knowledge, and confidence to rise.</p>
 
     <div class="hero-ctas">
-      <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-lg">🧭 Take the Career Quiz</a>
-      <a href="{{ url_for('explore') }}" class="btn btn-outline btn-lg">💼 Browse Jobs</a>
+      <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-lg">Take the Career Quiz</a>
+      <a href="{{ url_for('explore') }}" class="btn btn-outline btn-lg">🧭 Explore Careers</a>
     </div>
 
     <div class="hero-stats">
@@ -119,6 +119,7 @@
   </div>
 
   <!-- Decorative phone illustration (desktop only) -->
+   <!--
   <div class="hero-visual" aria-hidden="true">
     <svg viewBox="0 0 360 480" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="60" y="20" width="240" height="440" rx="28" fill="#fff" stroke="#e8d9c8"/>
@@ -132,22 +133,22 @@
       <rect x="60" y="20" width="240" height="60" rx="28" fill="#BF4646"/>
       <rect x="60" y="60" width="240" height="20" fill="#BF4646"/>
       <text x="180" y="58" text-anchor="middle" font-family="Georgia,serif" font-size="20" font-weight="700" fill="white">NAIK</text>
-      <!-- Card: Career Quiz -->
+      Card: Career Quiz
       <rect x="80" y="100" width="200" height="70" rx="12" fill="#EDDCC6"/>
       <text x="100" y="128" font-family="Arial" font-size="11" font-weight="600" fill="#1c1713">🧭  Career Quiz Result</text>
       <text x="100" y="148" font-family="Arial" font-size="10" fill="#4a4039">Retail Associate · Part-time</text>
       <text x="100" y="163" font-family="Arial" font-size="10" fill="#BF4646" font-weight="700">RM 1,200–1,800 / month →</text>
-      <!-- Card: Skill Up -->
+      Card: Skill Up
       <rect x="80" y="188" width="200" height="70" rx="12" fill="#eaf4f6"/>
       <text x="100" y="215" font-family="Arial" font-size="11" font-weight="600" fill="#1c1713">💪  Skill Up</text>
       <text x="100" y="235" font-family="Arial" font-size="10" fill="#4a4039">Mock Interview · CV Builder</text>
       <text x="100" y="250" font-family="Arial" font-size="10" fill="#7EACB5" font-weight="700">Start practising →</text>
-      <!-- Card: For Her -->
+      Card: For Her
       <rect x="80" y="276" width="200" height="70" rx="12" fill="#fdf2f5"/>
       <text x="100" y="303" font-family="Arial" font-size="11" font-weight="600" fill="#1c1713">🌸  For Her</text>
       <text x="100" y="323" font-family="Arial" font-size="10" fill="#4a4039">Work-from-home · Flexible hours</text>
       <text x="100" y="338" font-family="Arial" font-size="10" fill="#D4738A" font-weight="700">Explore options →</text>
-      <!-- Bottom nav bar -->
+      Bottom nav bar
       <rect x="60" y="400" width="240" height="60" fill="#fff" stroke="#e8d9c8" stroke-width="0.5"/>
       <rect x="60" y="438" width="240" height="22" rx="28" fill="#fff"/>
       <text x="103" y="423" font-size="18" text-anchor="middle">🏠</text>
@@ -156,7 +157,7 @@
       <text x="258" y="423" font-size="18" text-anchor="middle">👤</text>
     </svg>
   </div>
-
+    -->
 </section>
 
 
@@ -185,53 +186,198 @@
   </div>
 </div>
 
-
 <!-- ══════════════════════════════════════════════════════════
-     ABOUT — PROBLEM / SOLUTION
-     naik.css → .split, .problem-card, .solution-card
+     HOW TO USE — 3 STEPS
+     naik.css → .steps, .step, .step-num
      ══════════════════════════════════════════════════════════ -->
-<section id="about">
-  <div class="section-header">
-    <span class="section-label">The Challenge</span>
-    <h2>Why NAIK Exists</h2>
-    <p>Millions of Malaysians are capable, talented, and hardworking — but lack the right information, support, and access to move up.</p>
+<section style="background:var(--cream);">
+  <div class="section-header center">
+    <span class="section-label">Getting Started</span>
+    <h2>Be Job-Ready in 3 Steps</h2>
+    <p>You don't need experience, a laptop, or a lot of time. Just a phone and 15 minutes.</p>
   </div>
 
-  <div class="split">
-    <div class="problem-card">
-      <span class="section-label" style="color:var(--red);">The Problem</span>
-      <h3>Barriers that hold people back</h3>
-      <ul class="problem-list">
-        <li>50% of Malaysian women are economically inactive, often due to family responsibilities</li>
-        <li>Many job seekers don't know their legal rights as workers</li>
-        <li>Information on real job opportunities is scattered or in English only</li>
-        <li>No affordable, accessible career coaching for low-income groups</li>
-        <li>Niche jobs exist but aren't visible to the people who need them</li>
-        <li>No "first-step" resource that works on low data / older phones</li>
-      </ul>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Take the Quiz</h3>
+      <p>Answer 10 quick questions about your life, skills, and goals. NAIK instantly shows you the jobs and pathways that fit <em>you</em>.</p>
     </div>
-
-    <div class="solution-card">
-      <span class="section-label" style="color:rgba(255,255,255,0.7);">Our Solution</span>
-      <h3>NAIK — Your all-in-one launchpad</h3>
-      <p>Free, multilingual, mobile-first. Designed with and for the communities it serves.</p>
-      <ul class="solution-list">
-        <li>Career quiz that matches you to real, reachable jobs in Malaysia</li>
-        <li>AI-powered tools to write your CV and practise interviews</li>
-        <li>Plain-language guide to your rights as a worker</li>
-        <li>A dedicated section for women re-entering the workforce</li>
-        <li>Scholarship and gig economy listings with deadline reminders</li>
-        <li>Runs on 3G — no data barrier</li>
-      </ul>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Build Your Profile</h3>
+      <p>Let AI translate your everyday experience into a professional CV and prepare for interviews with our voice-only mock interview tool.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Apply with Confidence</h3>
+      <p>Use our ready-made WhatsApp message templates, know your rights, and apply to curated job listings — all from NAIK.</p>
     </div>
   </div>
 </section>
 
 
 <!-- ══════════════════════════════════════════════════════════
+     SKILL UP — detail section
+     ══════════════════════════════════════════════════════════ -->
+<section class="detail-section" id="skillup">
+  <div class="detail-inner">
+
+    <div class="detail-copy">
+      <span class="section-label">Skill Up</span>
+      <h2>Turn What You Know<br>Into What Employers Want.</h2>
+      <p style="margin-bottom:1.5rem;">You already have more experience than you think. NAIK's AI-powered tools help you package it, practise for interviews, and walk into any room with confidence.</p>
+
+      <ul class="detail-features">
+        <li>AI CV Translator — turn everyday experience into professional language</li>
+        <li>Step-by-step CV Builder with live preview</li>
+        <li>Mock Interview tool — practice with real questions, get instant feedback</li>
+        <li>Voice-only interview mode — no laptop needed</li>
+        <li>WhatsApp message templates to follow up on applications</li>
+        <li>Portfolio Builder for freelancers and creatives</li>
+      </ul>
+
+      <a href="{{ url_for('skills') }}" class="btn btn-teal btn-lg" style="margin-top:1rem;">💪 Go to Skill Up →</a>
+    </div>
+
+    <div class="detail-stat-grid">
+      <div class="detail-stat-card c-teal">
+        <span class="n">3x</span>
+        <span class="d">more callbacks with an AI-polished CV</span>
+      </div>
+      <div class="detail-stat-card c-teal">
+        <span class="n">15 min</span>
+        <span class="d">to build your first CV on NAIK</span>
+      </div>
+      <div class="detail-stat-card c-teal">
+        <span class="n">Free</span>
+        <span class="d">All tools. No sign-up required.</span>
+      </div>
+      <div class="detail-stat-card c-teal">
+        <span class="n">BM + EN</span>
+        <span class="d">Available in Bahasa Malaysia & English</span>
+      </div>
+      <div class="detail-stat-card highlight-teal" style="grid-column:span 2;">
+        <span class="n" style="font-size:1rem; font-style:italic; margin-bottom:0.5rem; display:block;">
+          "The CV translator changed how I saw myself. I didn't know my pasar malam experience was 'customer service management'."
+        </span>
+        <span class="d">— Hafizah, 31, Kuala Terengganu</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     KNOW YOUR RIGHTS — detail section
+     ══════════════════════════════════════════════════════════ -->
+<!--
+<section class="detail-section detail-section--alt" id="rights">
+  <div class="detail-inner detail-inner--flip">
+
+    <div class="detail-stat-grid">
+      <div class="detail-stat-card c-red">
+        <span class="n">RM 1,700</span>
+        <span class="d">National minimum wage (Peninsular, 2024)</span>
+      </div>
+      <div class="detail-stat-card c-red">
+        <span class="n">1 in 4</span>
+        <span class="d">workers don't know their legal entitlements</span>
+      </div>
+      <div class="detail-stat-card c-red">
+        <span class="n">48 hrs</span>
+        <span class="d">maximum legal working week under EA 1955</span>
+      </div>
+      <div class="detail-stat-card c-red">
+        <span class="n">Free</span>
+        <span class="d">File a JTKSM complaint — no lawyer needed</span>
+      </div>
+      <div class="detail-stat-card highlight-red" style="grid-column:span 2;">
+        <span class="n" style="font-size:1rem; font-style:italic; margin-bottom:0.5rem; display:block;">
+          "I didn't know overtime had to be paid at 1.5x. NAIK showed me exactly how to calculate what I was owed."
+        </span>
+        <span class="d">— Ahmad Farid, 22, Johor Bahru</span>
+      </div>
+    </div>
+
+    <div class="detail-copy">
+      <span class="section-label" style="color:var(--red);">Know Your Rights</span>
+      <h2>Protect Yourself<br>Before You Sign Anything.</h2>
+      <p style="margin-bottom:1.5rem;">Too many Malaysians are underpaid, overworked, or exploited — because they don't know the law is on their side. NAIK gives you the knowledge to push back, safely.</p>
+
+      <ul class="detail-features">
+        <li>Plain-language guide to the Employment Act 1955</li>
+        <li>Minimum wage & overtime calculator</li>
+        <li>Red Flags Checklist — spot a bad offer before you accept</li>
+        <li>Step-by-step guide to filing a JTKSM complaint</li>
+        <li>Safe resignation template and notice period guide</li>
+        <li>Workplace harassment — what it is and what to do</li>
+      </ul>
+
+      <a href="{{ url_for('know') }}" class="btn btn-primary btn-lg" style="margin-top:1rem;">⚖️ Know Your Rights →</a>
+    </div>
+
+  </div>
+</section>
+-->
+
+<!-- ══════════════════════════════════════════════════════════
+     GET HIRED — detail section
+     ══════════════════════════════════════════════════════════ -->
+<section class="detail-section detail-section--alt" id="hired">
+  <div class="detail-inner">
+
+    <div class="detail-copy">
+      <span class="section-label" style="color:var(--teal);">Get Hired</span>
+      <h2>Real Jobs. Real Deadlines.<br>All in One Place.</h2>
+      <p style="margin-bottom:1.5rem;">No more jumping between five different apps. NAIK brings together part-time listings, skilled trades, gig platforms, and scholarship opportunities — filtered for Malaysians, with reminders so you never miss a deadline.</p>
+
+      <ul class="detail-features">
+        <li>Part-time & shift-based jobs across all 14 states</li>
+        <li>Gig economy guide — Grab, Lalamove, Shopee, Fiver & more</li>
+        <li>Scholarship listings with closing-date reminders</li>
+        <li>Skilled trades board — plumbing, electrical, F&B, retail</li>
+        <li>Referral network — get referred by NAIK community members</li>
+        <li>Employer red-flag registry — community-verified warnings</li>
+      </ul>
+
+      <a href="{{ url_for('home') }}" class="btn btn-teal btn-lg" style="margin-top:1rem;">💼 Create Your CV →</a>
+    </div>
+
+    <div class="detail-stat-grid">
+      <div class="detail-stat-card c-teal">
+        <span class="n">380+</span>
+        <span class="d">active job listings across Malaysia</span>
+      </div>
+      <div class="detail-stat-card c-teal">
+        <span class="n">14</span>
+        <span class="d">states covered, including Sabah & Sarawak</span>
+      </div>
+      <div class="detail-stat-card c-teal">
+        <span class="n">RM 750+</span>
+        <span class="d">average monthly earnings gained by users</span>
+      </div>
+      <div class="detail-stat-card c-teal">
+        <span class="n">Weekly</span>
+        <span class="d">New listings added every week</span>
+      </div>
+      <div class="detail-stat-card highlight-teal" style="grid-column:span 2;">
+        <span class="n" style="font-size:1rem; font-style:italic; margin-bottom:0.5rem; display:block;">
+          "I found a part-time warehouse shift that fits around my kids' school hours. I never would have found it on my own."
+        </span>
+        <span class="d">— Rozita, 38, Shah Alam</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
      FEATURE OVERVIEW — 6 SECTIONS
      naik.css → .features-grid, .feature-card, .tag, .feature-link
      ══════════════════════════════════════════════════════════ -->
+<!--
 <section style="background:var(--peach);">
   <div class="section-header center">
     <span class="section-label">Everything You Need</span>
@@ -241,7 +387,7 @@
 
   <div class="features-grid">
 
-    <!-- 1. Explore Careers -->
+    1. Explore Careers
     <div class="feature-card c-teal" id="explore">
       <div class="feature-icon teal">🧭</div>
       <h3>Explore Careers</h3>
@@ -256,7 +402,7 @@
       <a href="{{ url_for('explore') }}" class="feature-link">Explore now →</a>
     </div>
 
-    <!-- 2. Skill Up -->
+    2. Skill Up
     <div class="feature-card c-teal" id="skillup">
       <div class="feature-icon teal">💪</div>
       <h3>Skill Up</h3>
@@ -271,7 +417,7 @@
       <a href="{{ url_for('skills') }}" class="feature-link">Start learning →</a>
     </div>
 
-    <!-- 3. Know Your Rights -->
+    3. Know Your Rights
     <div class="feature-card c-red" id="rights">
       <div class="feature-icon red">⚖️</div>
       <h3>Know Your Rights</h3>
@@ -285,7 +431,7 @@
       <a href="{{ url_for('know') }}" class="feature-link">Know your rights →</a>
     </div>
 
-    <!-- 4. Get Hired -->
+    4. Get Hired
     <div class="feature-card c-red" id="hired">
       <div class="feature-icon amber">💼</div>
       <h3>Get Hired</h3>
@@ -299,7 +445,7 @@
       <a href="{{ url_for('explore') }}" class="feature-link">Find jobs →</a>
     </div>
 
-    <!-- 5. For Her -->
+    5. For Her
     <div class="feature-card c-rose" id="forher">
       <div class="feature-icon rose">🌸</div>
       <h3>For Her</h3>
@@ -313,7 +459,7 @@
       <a href="#forher-full" class="feature-link" style="color:var(--rose);">Explore For Her →</a>
     </div>
 
-    <!-- 6. CTA card -->
+    6. CTA card 
     <div class="feature-card" style="background:var(--ink); border-color:var(--ink);">
       <div class="feature-icon ink">🚀</div>
       <h3 style="color:#fff;">New to NAIK?</h3>
@@ -325,13 +471,14 @@
 
   </div>
 </section>
+-->
 
 
 <!-- ══════════════════════════════════════════════════════════
      FOR HER — full feature section
      naik.css → .for-her, .for-her-inner, .her-stat-grid, .her-features
      ══════════════════════════════════════════════════════════ -->
-<section class="for-her" id="forher-full">
+<section class="for-her" id="forher">
   <div class="for-her-inner">
     <div>
       <span class="section-label" style="color:var(--rose);">For Her</span>
@@ -379,31 +526,44 @@
 
 
 <!-- ══════════════════════════════════════════════════════════
-     HOW TO USE — 3 STEPS
-     naik.css → .steps, .step, .step-num
+     ABOUT — PROBLEM / SOLUTION
+     naik.css → .split, .problem-card, .solution-card
      ══════════════════════════════════════════════════════════ -->
-<section style="background:var(--cream);">
-  <div class="section-header center">
-    <span class="section-label">Getting Started</span>
-    <h2>Be Job-Ready in 3 Steps</h2>
-    <p>You don't need experience, a laptop, or a lot of time. Just a phone and 15 minutes.</p>
+<section id="about">
+  <div class="about-inner">
+  <div class="section-header">
+    <span class="section-label">The Challenge</span>
+    <h2>Why NAIK Exists</h2>
+    <p>Millions of Malaysians are capable, talented, and hardworking — but lack the right information, support, and access to move up.</p>
+  </div>
   </div>
 
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Take the Quiz</h3>
-      <p>Answer 10 quick questions about your life, skills, and goals. NAIK instantly shows you the jobs and pathways that fit <em>you</em>.</p>
+  <div class="split">
+    <div class="problem-card">
+      <span class="section-label" style="color:var(--red);">The Problem</span>
+      <h3>Barriers that hold people back</h3>
+      <ul class="problem-list">
+        <li>50% of Malaysian women are economically inactive, often due to family responsibilities</li>
+        <li>Many job seekers don't know their legal rights as workers</li>
+        <li>Information on real job opportunities is scattered or in English only</li>
+        <li>No affordable, accessible career coaching for low-income groups</li>
+        <li>Niche jobs exist but aren't visible to the people who need them</li>
+        <li>No "first-step" resource that works on low data / older phones</li>
+      </ul>
     </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>Build Your Profile</h3>
-      <p>Let AI translate your everyday experience into a professional CV and prepare for interviews with our voice-only mock interview tool.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>Apply with Confidence</h3>
-      <p>Use our ready-made WhatsApp message templates, know your rights, and apply to curated job listings — all from NAIK.</p>
+
+    <div class="solution-card">
+      <span class="section-label" style="color:rgba(255,255,255,0.7);">Our Solution</span>
+      <h3>NAIK — Your all-in-one launchpad</h3>
+      <p>Free, multilingual, mobile-first. Designed with and for the communities it serves.</p>
+      <ul class="solution-list">
+        <li>Career quiz that matches you to real, reachable jobs in Malaysia</li>
+        <li>AI-powered tools to write your CV and practise interviews</li>
+        <li>Plain-language guide to your rights as a worker</li>
+        <li>A dedicated section for women re-entering the workforce</li>
+        <li>Scholarship and gig economy listings with deadline reminders</li>
+        <li>Runs on 3G — no data barrier</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -430,11 +590,11 @@
       <p class="tester-name">Siti Nor, 26</p>
       <p class="tester-role">Retail Executive · Penang</p>
     </div>
-    <div class="testimonial-card">
+    <!-- <div class="testimonial-card">
       <p class="quote">I had no idea I was being underpaid. The 'Know Your Rights' section literally saved me. I filed a complaint and recovered 3 months of missing wages.</p>
       <p class="tester-name">Ahmad Farid, 22</p>
       <p class="tester-role">Warehouse Staff · Johor</p>
-    </div>
+    </div> -->
   </div>
 </section>
 
@@ -481,10 +641,10 @@
      ══════════════════════════════════════════════════════════ -->
 <section style="background:var(--red); text-align:center; padding:4rem 2rem;">
   <h2 style="color:#fff; margin-bottom:1rem; font-size:clamp(1.6rem,3vw,2.4rem);">Your next step starts here.</h2>
-  <p style="color:rgba(255,255,255,0.85); font-size:1.05rem; margin-bottom:2rem;">Free. In Bahasa Malaysia &amp; English. Works on 3G.</p>
+  <p style="color:rgba(255,255,255,0.85); font-size:1.05rem; margin-bottom:2rem;">Free. In Bahasa Malaysia &amp; English.</p>
   <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-    <a href="{{ url_for('quiz') }}" class="btn btn-lg" style="background:#fff; color:var(--red);">🧭 Take the Career Quiz</a>
-    <a href="{{ url_for('explore') }}" class="btn btn-lg" style="background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.6);">💼 Browse Job Listings</a>
+    <a href="{{ url_for('quiz') }}" class="btn btn-lg" style="background:#fff; color:var(--red);">Take the Career Quiz</a>
+    <a href="{{ url_for('explore') }}" class="btn btn-lg" style="background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.6);">🧭 Explore Careers</a>
   </div>
 </section>
 
@@ -510,9 +670,9 @@
       <ul>
         <li><a href="{{ url_for('explore') }}">🧭 Explore Careers</a></li>
         <li><a href="{{ url_for('skills') }}">💪 Skill Up</a></li>
-        <li><a href="{{ url_for('know') }}">⚖️ Know Your Rights</a></li>
-        <li><a href="{{ url_for('explore') }}">💼 Get Hired</a></li>
-        <li><a href="#forher-full">🌸 For Her</a></li>
+        <!-- <li><a href="{{ url_for('know') }}">⚖️ Know Your Rights</a></li> -->
+        <li><a href="{{ url_for('home') }}">💼 Get Hired</a></li>
+        <li><a href="#forher">🌸 For Her</a></li>
       </ul>
     </div>
 

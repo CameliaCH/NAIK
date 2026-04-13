@@ -1,9 +1,661 @@
 {% extends "base.html" %}
-{% block title %}Coming Soon — NAIK{% endblock %}
+
+{% block title %}Sign In — NAIK{% endblock %}
+
+{% block head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <style>
+    /* ── PAGE LAYOUT ───────────────────────────────────────── */
+    .auth-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--cream);
+    }
+    @media (max-width: 860px) {
+      .auth-page { grid-template-columns: 1fr; }
+      .auth-panel { display: none; }
+    }
+
+    /* ── LEFT DECORATIVE PANEL ─────────────────────────────── */
+    .auth-panel {
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 3rem;
+    }
+    .auth-panel svg.panel-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.07;
+    }
+    .auth-panel-content { position: relative; z-index: 1; }
+    .auth-panel .wordmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #fff;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .auth-panel .panel-tagline {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 2rem;
+      display: block;
+    }
+    .auth-panel p {
+      color: rgba(255,255,255,0.65);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 340px;
+      margin-bottom: 2rem;
+    }
+    .panel-quotes { margin-top: 1rem; }
+    .panel-quote {
+      border-left: 3px solid var(--teal);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      background: rgba(255,255,255,0.03);
+      border-radius: 0 8px 8px 0;
+    }
+    .panel-quote q {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+      quotes: none;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .panel-quote cite {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.4);
+      font-style: normal;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── RIGHT FORM PANEL ──────────────────────────────────── */
+    .auth-form-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3.5rem);
+      overflow-y: auto;
+    }
+    .auth-form-inner {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* Mobile-only logo */
+    .mobile-auth-logo {
+      display: none;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .mobile-auth-logo .wordmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--red);
+    }
+    @media (max-width: 860px) { .mobile-auth-logo { display: block; } }
+
+    /* ── TOGGLE TABS ───────────────────────────────────────── */
+    .auth-tabs {
+      display: flex;
+      background: var(--peach);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 2rem;
+      gap: 4px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 0.55rem 1rem;
+      border: none;
+      background: transparent;
+      border-radius: 7px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ink-lt);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .auth-tab.active {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    /* ── FORM HEADING ──────────────────────────────────────── */
+    .auth-heading { margin-bottom: 1.75rem; }
+    .auth-heading h2 {
+      font-size: 1.6rem;
+      margin-bottom: 0.3rem;
+      color: var(--ink);
+    }
+    .auth-heading p {
+      font-size: 0.88rem;
+      color: var(--ink-lt);
+    }
+
+    /* ── SOCIAL BUTTONS ────────────────────────────────────── */
+    .social-btns { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .social-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.65rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink-mid);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      text-decoration: none;
+    }
+    .social-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      border-color: #ccc;
+    }
+    .social-btn svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      /* Greyscale by default, colour on hover */
+      filter: grayscale(100%);
+      transition: filter 0.25s, transform 0.25s;
+    }
+    .social-btn:hover svg {
+      filter: grayscale(0%);
+      transform: scale(1.15);
+    }
+
+    /* ── DIVIDER ───────────────────────────────────────────── */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--ink-lt);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── FORM FIELDS ───────────────────────────────────────── */
+    .form-row { display: flex; gap: 0.75rem; }
+    .form-row .field-group { flex: 1; }
+
+    .field-group {
+      margin-bottom: 1rem;
+    }
+    .field-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink-mid);
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.02em;
+    }
+    .field-group input,
+    .field-group select {
+      width: 100%;
+      padding: 0.6rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--ink);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      appearance: none;
+    }
+    .field-group input:focus,
+    .field-group select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(126,172,181,0.15);
+    }
+    .field-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a6e66' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      padding-right: 2.25rem;
+      cursor: pointer;
+    }
+
+    /* password wrapper — for the eye toggle */
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 2.75rem; }
+    .pw-toggle {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--ink-lt);
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .pw-toggle:hover { color: var(--ink); }
+
+    /* error hint */
+    .field-error {
+      font-size: 0.72rem;
+      color: var(--red);
+      margin-top: 0.3rem;
+      display: none;
+    }
+    .field-group.has-error input,
+    .field-group.has-error select {
+      border-color: var(--red);
+    }
+    .field-group.has-error .field-error { display: block; }
+
+    /* ── FORGOT PASSWORD ───────────────────────────────────── */
+    .forgot-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+    }
+    .forgot-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--teal);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .forgot-link:hover { color: var(--ink); text-decoration: underline; }
+
+    /* ── SUBMIT BUTTON ─────────────────────────────────────── */
+    .auth-submit {
+      width: 100%;
+      padding: 0.8rem 1.5rem;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+      margin-top: 0.5rem;
+    }
+    .auth-submit:hover {
+      background: var(--red-dk);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(191,70,70,0.28);
+    }
+    .auth-submit:active { transform: translateY(0); }
+
+    /* ── FOOTER NOTE ───────────────────────────────────────── */
+    .auth-footer-note {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--ink-lt);
+    }
+    .auth-footer-note a {
+      color: var(--red);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .auth-footer-note a:hover { text-decoration: underline; }
+
+    /* ── TERMS NOTE ────────────────────────────────────────── */
+    .terms-note {
+      font-size: 0.72rem;
+      color: var(--ink-lt);
+      text-align: center;
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+    .terms-note a { color: var(--ink-lt); text-decoration: underline; }
+
+    /* ── PANEL BATIK CIRCLES (decorative) ──────────────────── */
+    .panel-deco {
+      position: absolute;
+      top: -3rem;
+      right: -3rem;
+      width: 320px;
+      height: 320px;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    /* ── FORM STATE: show/hide ─────────────────────────────── */
+    #register-fields { display: none; }
+    #signin-fields   { display: block; }
+  </style>
+{% endblock %}
+
 {% block content %}
-<div style="text-align:center; padding:100px 20px; font-family:sans-serif;">
-  <h2>🚧 Coming Soon</h2>
-  <p style="color:#888;">This page is under construction.</p>
-  <a href="/" style="color:#BF4646;">← Back to Home</a>
+
+<div class="auth-page">
+
+  <!-- ════════════════════════════════════════════════════════
+       LEFT PANEL — decorative
+       ════════════════════════════════════════════════════════ -->
+  <div class="auth-panel">
+
+    <!-- Batik-inspired background SVG -->
+    <svg class="panel-bg" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <circle cx="500" cy="100" r="250" fill="none" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="500" cy="100" r="180" fill="none" stroke="#7EACB5" stroke-width="1"/>
+      <circle cx="500" cy="100" r="120" fill="none" stroke="#fff" stroke-width="0.5"/>
+      <circle cx="100" cy="800" r="200" fill="none" stroke="#7EACB5" stroke-width="1.2"/>
+      <circle cx="100" cy="800" r="140" fill="none" stroke="#fff" stroke-width="0.8"/>
+      <circle cx="300" cy="450" r="300" fill="none" stroke="#EDDCC6" stroke-width="1"/>
+      <rect x="420" y="380" width="50" height="50" fill="none" stroke="#7EACB5" stroke-width="1" transform="rotate(45 445 405)"/>
+      <rect x="460" y="430" width="30" height="30" fill="none" stroke="#fff" stroke-width="0.7" transform="rotate(45 475 445)"/>
+      <rect x="50" y="200" width="36" height="36" fill="none" stroke="#BF4646" stroke-width="0.8" transform="rotate(45 68 218)"/>
+      <rect x="80" y="240" width="22" height="22" fill="none" stroke="#7EACB5" stroke-width="0.6" transform="rotate(45 91 251)"/>
+    </svg>
+
+    <div class="auth-panel-content">
+      <a href="{{ url_for('home') }}" style="text-decoration:none;">
+        <span class="wordmark">NAIK</span>
+        <span class="panel-tagline">Naikkan Taraf Hidup Anda</span>
+      </a>
+
+      <p>Join thousands of Malaysians who've found jobs, built skills, and taken back control of their careers — all for free.</p>
+
+      <div class="panel-quotes">
+        <div class="panel-quote">
+          <q>NAIK's CV translator turned my market stall experience into something I was proud to send to employers.</q>
+          <cite>— Siti Nor, 26 · Retail Executive, Penang</cite>
+        </div>
+        <div class="panel-quote">
+          <q>I thought my career was over when I had my baby. NAIK showed me it was just beginning again.</q>
+          <cite>— Nurul, 28 · Selangor</cite>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       RIGHT PANEL — form
+       ════════════════════════════════════════════════════════ -->
+  <div class="auth-form-wrap">
+    <div class="auth-form-inner">
+
+      <!-- Mobile logo (shown only on small screens) -->
+      <div class="mobile-auth-logo">
+        <a href="{{ url_for('home') }}" style="text-decoration:none;">
+          <span class="wordmark">NAIK</span>
+        </a>
+      </div>
+
+      <!-- Toggle tabs -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" id="tab-signin" role="tab" aria-selected="true" aria-controls="form-signin" onclick="switchTab('signin')">Sign In</button>
+        <button class="auth-tab" id="tab-register" role="tab" aria-selected="false" aria-controls="form-signin" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- Heading (updates via JS) -->
+      <div class="auth-heading">
+        <h2 id="auth-title">Welcome back</h2>
+        <p id="auth-subtitle">Sign in to continue your journey.</p>
+      </div>
+
+      <!-- Social sign-in / register -->
+      <div class="social-btns">
+
+        <!-- Google -->
+        <a href="/auth/google" class="social-btn" aria-label="Continue with Google">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Google
+        </a>
+
+        <!-- Meta / Facebook -->
+        <a href="/auth/facebook" class="social-btn" aria-label="Continue with Facebook">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" fill="#1877F2"/>
+          </svg>
+          Facebook
+        </a>
+
+      </div>
+
+      <div class="auth-divider">or continue with email</div>
+
+      <!-- ══════════════════════════════════════
+           FORM
+           ══════════════════════════════════════ -->
+      <form id="auth-form" novalidate>
+
+        <!-- ─── REGISTER FIELDS ─── -->
+        <div id="register-fields">
+          <div class="form-row">
+            <div class="field-group" id="fg-surname">
+              <label for="surname">Surname</label>
+              <input type="text" id="surname" name="surname" placeholder="e.g. Ahmad" autocomplete="family-name">
+              <span class="field-error">Please enter your surname.</span>
+            </div>
+            <div class="field-group" id="fg-name">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" placeholder="e.g. Farid" autocomplete="given-name">
+              <span class="field-error">Please enter your name.</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group" id="fg-age">
+              <label for="age">Age</label>
+              <input type="number" id="age" name="age" placeholder="e.g. 25" min="13" max="100">
+              <span class="field-error">Please enter a valid age.</span>
+            </div>
+            <div class="field-group" id="fg-gender">
+              <label for="gender">Gender</label>
+              <select id="gender" name="gender">
+                <option value="" disabled selected>Select…</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="prefer_not">Prefer not to say</option>
+              </select>
+              <span class="field-error">Please select an option.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── SIGN-IN + SHARED FIELDS ─── -->
+        <div id="signin-fields">
+          <!-- Email lives here and is shared by both modes (moved via JS) -->
+        </div>
+
+        <!-- Email (always present, positioned by JS) -->
+        <div class="field-group" id="fg-email">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email">
+          <span class="field-error">Please enter a valid email address.</span>
+        </div>
+
+        <!-- Password -->
+        <div class="field-group" id="fg-password">
+          <label for="password">Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="pw-toggle" onclick="togglePw('password', this)" aria-label="Show password">
+              <svg id="eye-password" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="field-error" id="pw-error">Password must be at least 8 characters.</span>
+        </div>
+
+        <!-- Forgot password link (sign-in only) -->
+        <div class="forgot-row" id="forgot-row">
+          <a href="{{ url_for('home') }}" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <!-- Confirm password (register only) -->
+        <div class="field-group" id="fg-confirm" style="display:none;">
+          <label for="confirm-password">Confirm Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="confirm-password" name="confirm_password" placeholder="••••••••" autocomplete="new-password">
+            <button type="button" class="pw-toggle" onclick="togglePw('confirm-password', this)" aria-label="Show confirm password">
+              <svg id="eye-confirm-password" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="field-error" id="confirm-error">Passwords do not match.</span>
+        </div>
+
+        <button type="submit" class="auth-submit" id="submit-btn">Sign In</button>
+
+      </form>
+
+      <p class="terms-note">
+        By continuing, you agree to NAIK's <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
+      </p>
+
+    </div>
+  </div>
+
 </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+  /* ── STATE ───────────────────────────────────────────────── */
+  let mode = 'signin'; // 'signin' | 'register'
+
+  const titles = {
+    signin:   { h: 'Welcome back',         p: 'Sign in to continue your journey.' },
+    register: { h: 'Create your account',  p: 'Free forever. No credit card needed.' }
+  };
+
+  /* ── SWITCH TAB ──────────────────────────────────────────── */
+  function switchTab(newMode) {
+    mode = newMode;
+
+    // Tab styling
+    document.getElementById('tab-signin').classList.toggle('active',   mode === 'signin');
+    document.getElementById('tab-register').classList.toggle('active', mode === 'register');
+
+    // Heading
+    document.getElementById('auth-title').textContent    = titles[mode].h;
+    document.getElementById('auth-subtitle').textContent = titles[mode].p;
+
+    // Register-only fields
+    const registerFields = document.getElementById('register-fields');
+    const confirmField   = document.getElementById('fg-confirm');
+    const forgotRow      = document.getElementById('forgot-row');
+
+    if (mode === 'register') {
+      registerFields.style.display = 'block';
+      confirmField.style.display   = 'block';
+      forgotRow.style.display      = 'none';
+      document.getElementById('password').setAttribute('autocomplete', 'new-password');
+      document.getElementById('submit-btn').textContent = 'Create Account';
+    } else {
+      registerFields.style.display = 'none';
+      confirmField.style.display   = 'none';
+      forgotRow.style.display      = 'flex';
+      document.getElementById('password').setAttribute('autocomplete', 'current-password');
+      document.getElementById('submit-btn').textContent = 'Sign In';
+    }
+
+    // Clear errors on switch
+    clearErrors();
+  }
+
+  /* ── PASSWORD VISIBILITY TOGGLE ──────────────────────────── */
+  const eyeOpen  = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  const eyeClosed = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+
+  function togglePw(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const eyeSvg = document.getElementById('eye-' + inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      eyeSvg.innerHTML = eyeClosed;
+      btn.setAttribute('aria-label', 'Hide password');
+    } else {
+      input.type = 'password';
+      eyeSvg.innerHTML = eyeOpen;
+      btn.setAttribute('aria-label', 'Show password');
+    }
+  }
+
+  /* ── VALIDATION ──────────────────────────────────────────── */
+  function setError(groupId, show) {
+    document.getElementById(groupId).classList.toggle('has-error', show);
+  }
+  function clearErrors() {
+    document.querySelectorAll('.field-group.has-error').forEach(el => el.classList.remove('has-error'));
+  }
+
+  document.getElementById('auth-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    clearErrors();
+    let valid = true;
+
+    const email = document.getElementById('email').value.trim();
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRe.test(email)) { setError('fg-email', true); valid = false; }
+
+    const pw = document.getElementById('password').value;
+    if (pw.length < 8) { setError('fg-password', true); valid = false; }
+
+    if (mode === 'register') {
+      if (!document.getElementById('surname').value.trim())   { setError('fg-surname', true); valid = false; }
+      if (!document.getElementById('name').value.trim())      { setError('fg-name', true);    valid = false; }
+      const age = parseInt(document.getElementById('age').value);
+      if (isNaN(age) || age < 13 || age > 100)                { setError('fg-age', true);     valid = false; }
+      if (!document.getElementById('gender').value)           { setError('fg-gender', true);  valid = false; }
+
+      const confirm = document.getElementById('confirm-password').value;
+      if (confirm !== pw) { setError('fg-confirm', true); valid = false; }
+    }
+
+    if (!valid) return;
+
+    // Submit via form POST
+    // In a real app, replace with fetch() to your Flask endpoint:
+    //   POST /register or /sign-in
+    this.submit();
+  });
+</script>
 {% endblock %}

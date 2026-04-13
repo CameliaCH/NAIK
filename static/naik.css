@@ -304,6 +304,102 @@ section { padding: clamp(3rem,7vw,6rem) clamp(1.5rem,5vw,4rem); }
 }
 .feature-link:hover { gap: 0.6rem; }
 
+/* ── DETAIL SECTIONS (Skill Up / Know Your Rights / Get Hired) ──────────────── */
+.detail-section {
+  background: var(--peach);
+  border-top: 1px solid var(--border);
+}
+.detail-section--alt {
+  background: var(--cream);
+  border-top: 1px solid #f5d5d5;
+  border-bottom: 1px solid #f5d5d5;
+}
+
+.detail-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.detail-inner--flip { direction: rtl; }
+.detail-inner--flip > * { direction: ltr; }
+
+@media(max-width: 720px) {
+  .detail-inner,
+  .detail-inner--flip { grid-template-columns: 1fr; direction: ltr; }
+}
+
+.detail-features {
+  list-style: none;
+  margin: 1.5rem 0;
+}
+.detail-features li {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+  color: var(--ink-mid);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+.detail-features li::before {
+  content: '✓';
+  font-weight: 700;
+  flex-shrink: 0;
+  color: var(--teal);
+}
+
+/* Stat grid shared by all three sections */
+.detail-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.detail-stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.detail-stat-card .n {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.detail-stat-card .d {
+  font-size: 0.75rem;
+  color: var(--ink-lt);
+}
+
+/* Colour variants for the number */
+.detail-stat-card.c-teal .n { color: var(--teal); }
+.detail-stat-card.c-red   .n { color: var(--red); }
+
+/* Full-width testimonial card */
+.highlight-teal {
+  background: var(--teal);
+  border-color: var(--teal);
+  text-align: left;
+  padding: 1.5rem;
+}
+.highlight-teal .n { color: #fff; }
+.highlight-teal .d { color: rgba(255,255,255,0.75); font-size: 0.8rem; }
+
+.highlight-red {
+  background: var(--red);
+  border-color: var(--red);
+  text-align: left;
+  padding: 1.5rem;
+}
+.highlight-red .n { color: #fff; }
+.highlight-red .d { color: rgba(255,255,255,0.75); font-size: 0.8rem; }
+
 /* ── FOR HER SECTION ─────────────────────────────────────── */
 .for-her {
   background: linear-gradient(135deg, #fdf2f5 0%, #fff4ea 100%);
@@ -336,6 +432,10 @@ section { padding: clamp(3rem,7vw,6rem) clamp(1.5rem,5vw,4rem); }
 .her-features li::before {
   content: ''; display: block; width: 8px; height: 8px;
   border-radius: 50%; background: var(--rose); flex-shrink: 0;
+}
+
+.about-inner {
+  max-width: 1100px; margin: 0 auto;
 }
 
 /* ── HOW TO USE ──────────────────────────────────────────── */
@@ -738,3 +838,15 @@ footer ul a:hover { color: #fff; }
   .sort-select { margin-left: 0; }
   .modal-stats { grid-template-columns: 1fr 1fr; }
 }
+
+/* sign in toast styling */
+.toast-stack { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+.toast {
+  padding: 0.8rem 1.25rem; border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem; font-weight: 600;
+  background: var(--ink); color: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: toast-in 0.3s ease, toast-out 0.4s ease 3.5s forwards;
+}
+@keyframes toast-in  { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes toast-out { from { opacity: 1; } to { opacity: 0; transform: translateY(8px); } }

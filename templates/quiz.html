@@ -1,0 +1,796 @@
+{% extends "base.html" %}
+{% block title %}Career Quiz — NAIK{% endblock %}
+
+{% block head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <style>
+    /* ── QUIZ PAGE ────────────────────────────────────────────── */
+
+    /* Progress bar at top */
+    .quiz-progress-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--border);
+      z-index: 200;
+    }
+    .quiz-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--red));
+      transition: width 0.4s cubic-bezier(.4,0,.2,1);
+      width: 0%;
+    }
+
+    /* Page layout */
+    .quiz-page {
+      min-height: 100vh;
+      background: var(--cream);
+      padding-bottom: 6rem;
+    }
+
+    /* Header */
+    .quiz-header {
+      background: var(--ink);
+      padding: 3.5rem clamp(1.5rem, 5vw, 4rem) 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .quiz-header-bg {
+      position: absolute; inset: 0; opacity: 0.06; pointer-events: none;
+    }
+    .quiz-header-content {
+      position: relative; z-index: 1; max-width: 680px;
+    }
+    .quiz-eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--teal);
+      margin-bottom: 0.6rem; display: block;
+    }
+    .quiz-header h1 {
+      color: #fff;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      margin-bottom: 0.6rem;
+    }
+    .quiz-header h1 em { color: var(--teal); font-style: normal; }
+    .quiz-header p { color: rgba(255,255,255,0.6); font-size: 0.95rem; max-width: 480px; }
+
+    .quiz-meta {
+      display: flex; gap: 1.5rem; margin-top: 1.75rem; flex-wrap: wrap;
+    }
+    .quiz-meta-item {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.78rem; color: rgba(255,255,255,0.5); font-weight: 500;
+    }
+    .quiz-meta-item span:first-child { color: var(--teal); font-size: 0.9rem; }
+
+    /* ── COMPLETED STATE ── */
+    .quiz-completed {
+      display: none;
+      max-width: 560px;
+      margin: 4rem auto;
+      text-align: center;
+      padding: 0 1.5rem;
+    }
+    .quiz-completed.visible { display: block; }
+
+    .completed-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 8px 40px rgba(28,23,19,0.08);
+    }
+    .completed-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-lt));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.5rem;
+    }
+    .completed-card h2 { font-size: 1.6rem; color: var(--ink); margin-bottom: 0.75rem; }
+    .completed-card p { font-size: 0.92rem; color: var(--ink-lt); line-height: 1.6; margin-bottom: 2rem; }
+
+    .completed-summary {
+      background: var(--peach);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+    .completed-summary-title {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--red);
+      margin-bottom: 0.75rem;
+    }
+    .completed-summary-grid {
+      display: grid; gap: 0.4rem;
+    }
+    .completed-summary-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.82rem;
+    }
+    .completed-summary-row .q-short { color: var(--ink-mid); font-weight: 500; }
+    .completed-summary-row .q-ans {
+      font-weight: 700; color: var(--ink);
+      padding: 0.1rem 0.55rem;
+      border-radius: 50px;
+      background: rgba(126,172,181,0.15);
+      font-size: 0.75rem;
+    }
+
+    .completed-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .completed-actions .btn { flex: 1; justify-content: center; }
+
+    /* ── QUIZ FORM ── */
+    .quiz-form-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem clamp(1rem, 4vw, 2rem) 2rem;
+    }
+    .quiz-form-wrap.hidden { display: none; }
+
+    /* Question card */
+    .q-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem 2rem 1.5rem;
+      margin-bottom: 1.25rem;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+    }
+    .q-card:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 4px 20px rgba(126,172,181,0.18);
+    }
+    .q-card.answered {
+      border-color: rgba(126,172,181,0.5);
+    }
+
+    /* Question number + text */
+    .q-num {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--teal);
+      margin-bottom: 0.4rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .q-num .q-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--teal);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .q-card.answered .q-num .q-dot { opacity: 1; }
+
+    .q-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 1.75rem;
+    }
+
+    /* Slider area */
+    .q-slider-area {
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+
+    /* Labels row */
+    .q-labels {
+      display: flex; justify-content: space-between;
+      margin-bottom: 0.15rem;
+    }
+    .q-labels span {
+      font-size: 0.65rem; font-weight: 600; color: var(--ink-lt);
+      letter-spacing: 0.02em; text-align: center;
+      width: 20%; transition: color 0.25s, font-weight 0.25s;
+    }
+    .q-labels span.active-label {
+      color: var(--red); font-weight: 700;
+    }
+
+    /* Custom range input — greyscale until touched */
+    .q-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 50px;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      /* Greyscale default */
+      background: #d4cdc6;
+    }
+    .q-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      transition: transform 0.15s cubic-bezier(.34,1.56,.64,1), background 0.3s;
+      background: #aaa6a0; /* greyscale thumb */
+    }
+    .q-slider::-moz-range-thumb {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      transition: transform 0.15s cubic-bezier(.34,1.56,.64,1), background 0.3s;
+      background: #aaa6a0;
+    }
+    .q-slider:hover::-webkit-slider-thumb,
+    .q-slider:focus::-webkit-slider-thumb { transform: scale(1.2); }
+    .q-slider:hover::-moz-range-thumb,
+    .q-slider:focus::-moz-range-thumb    { transform: scale(1.2); }
+
+    /* Once touched — coloured */
+    .q-slider.touched {
+      background: linear-gradient(90deg, var(--teal) var(--fill-pct, 50%), #d4cdc6 var(--fill-pct, 50%));
+    }
+    .q-slider.touched::-webkit-slider-thumb { background: var(--red); }
+    .q-slider.touched::-moz-range-thumb     { background: var(--red); }
+
+    /* Selected value badge */
+    .q-value-badge {
+      display: inline-block;
+      font-size: 0.75rem; font-weight: 700;
+      padding: 0.2rem 0.7rem; border-radius: 50px;
+      background: var(--peach);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      opacity: 0;
+      transition: opacity 0.25s;
+      align-self: flex-start;
+      margin-top: 0.3rem;
+    }
+    .q-value-badge.visible { opacity: 1; }
+
+    /* Clear button */
+    .q-footer {
+      display: flex; justify-content: flex-end;
+      margin-top: 1rem;
+    }
+    .q-clear-btn {
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--ink-lt); border: none; background: none;
+      cursor: pointer; padding: 0.3rem 0.5rem; border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+      opacity: 0; pointer-events: none;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .q-card.answered .q-clear-btn {
+      opacity: 1; pointer-events: auto;
+    }
+    .q-clear-btn:hover { color: var(--red); background: #fdf0f0; }
+
+    /* Required indicator */
+    .q-required {
+      position: absolute; top: 1.25rem; right: 1.25rem;
+      font-size: 0.68rem; color: var(--ink-lt); font-weight: 500;
+    }
+    .q-card.answered .q-required { color: var(--teal); }
+    .q-card.answered .q-required::before { content: '✓ '; }
+
+    /* ── SUBMIT AREA ── */
+    .submit-area {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 4vw, 2rem) 2rem;
+    }
+
+    .submit-note {
+      display: flex; align-items: center; gap: 0.75rem;
+      background: var(--peach); border: 1px solid var(--border);
+      border-radius: 12px; padding: 0.9rem 1.25rem;
+      font-size: 0.83rem; color: var(--ink-mid);
+      margin-bottom: 1.25rem;
+    }
+    .submit-note.error {
+      background: #fdf0f0; border-color: var(--red);
+      color: var(--red); font-weight: 600;
+    }
+    .submit-note .icon { font-size: 1rem; flex-shrink: 0; }
+
+    .submit-btn {
+      width: 100%; padding: 1rem 2rem;
+      background: var(--red); color: #fff;
+      border: none; border-radius: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+    }
+    .submit-btn:hover { background: var(--red-dk); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(191,70,70,0.3); }
+    .submit-btn:active { transform: translateY(0); }
+    .submit-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ── FLOATING SAVE BUTTON ── */
+    .float-save {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      z-index: 150;
+      display: flex; align-items: center; gap: 0.55rem;
+      padding: 0.7rem 1.3rem;
+      background: var(--ink);
+      color: #fff;
+      border: none; border-radius: 50px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(28,23,19,0.28);
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .float-save:hover { background: #333; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(28,23,19,0.35); }
+    .float-save.saved-state { background: var(--teal); }
+    .float-save .save-icon { font-size: 1rem; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
+    .float-save:hover .save-icon { transform: scale(1.25) rotate(-10deg); }
+    .float-save .save-label { transition: opacity 0.2s; }
+
+    /* Hide float save when quiz is completed */
+    .float-save.quiz-done { display: none; }
+
+    /* ── TOAST ── */
+    .quiz-toast {
+      position: fixed; bottom: 5.5rem; right: 2rem; z-index: 300;
+      background: var(--ink); color: #fff;
+      padding: 0.65rem 1.25rem; border-radius: 50px;
+      font-size: 0.82rem; font-weight: 600;
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+      white-space: nowrap;
+    }
+    .quiz-toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 540px) {
+      .q-labels span { font-size: 0.58rem; }
+      .float-save { bottom: 1.25rem; right: 1.25rem; }
+      .quiz-toast { right: 1.25rem; bottom: 5rem; }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Top progress bar -->
+<div class="quiz-progress-bar">
+  <div class="quiz-progress-fill" id="progress-fill"></div>
+</div>
+
+<!-- NAV -->
+<nav class="naik-nav">
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+  <div class="nav-ctas">
+    {% if session.get("user_name") %}
+      <span style="font-size:0.85rem; color:var(--ink-mid);">👤 {{ session["user_name"] }}</span>
+      <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+  </div>
+</nav>
+
+<div class="quiz-page">
+
+  <!-- Header -->
+  <div class="quiz-header">
+    <svg class="quiz-header-bg" viewBox="0 0 1200 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <circle cx="1100" cy="50" r="180" fill="none" stroke="#7EACB5" stroke-width="1"/>
+      <circle cx="1100" cy="50" r="120" fill="none" stroke="#BF4646" stroke-width="0.5"/>
+      <circle cx="80"  cy="200" r="130" fill="none" stroke="#7EACB5" stroke-width="0.8"/>
+      <circle cx="600" cy="120" r="260" fill="none" stroke="#EDDCC6" stroke-width="1.5"/>
+      <rect x="880" y="120" width="30" height="30" fill="none" stroke="#7EACB5" stroke-width="0.6" transform="rotate(45 895 135)"/>
+    </svg>
+    <div class="quiz-header-content">
+      <span class="quiz-eyebrow">🧭 Career Discovery</span>
+      <h1>Find Your <em>Right Fit</em></h1>
+      <p>Answer 10 short questions about your work preferences and lifestyle. We'll match you to jobs that actually suit your life.</p>
+      <div class="quiz-meta">
+        <div class="quiz-meta-item"><span>⏱</span> 3–5 minutes</div>
+        <div class="quiz-meta-item"><span>📋</span> 10 questions</div>
+        <div class="quiz-meta-item"><span>🔒</span> Saved to your profile</div>
+        <div class="quiz-meta-item"><span>✨</span> Free, always</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLETED STATE -->
+  <div class="quiz-completed" id="quiz-completed">
+    <div class="completed-card">
+      <div class="completed-icon">✓</div>
+      <h2>Quiz Complete!</h2>
+      <p>Your responses have been saved. We're using them to personalise your job recommendations and career roadmap.</p>
+
+      <div class="completed-summary">
+        <div class="completed-summary-title">Your Responses</div>
+        <div class="completed-summary-grid" id="completed-summary-grid">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+      <div class="completed-actions">
+        <a href="{{ url_for('explore') }}" class="btn btn-primary">💼 See My Jobs</a>
+        <button class="btn btn-outline" id="retake-btn">↺ Retake Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ FORM -->
+  <div class="quiz-form-wrap" id="quiz-form-wrap">
+    <!-- Questions injected by JS -->
+  </div>
+
+  <!-- SUBMIT AREA -->
+  <div class="submit-area" id="submit-area">
+    <div class="submit-note" id="submit-note">
+      <span class="icon">ℹ️</span>
+      <span id="submit-note-text">All 10 questions are required before you can submit.</span>
+    </div>
+    <button class="submit-btn" id="submit-btn" disabled>
+      <span>Submit Quiz</span> <span>→</span>
+    </button>
+  </div>
+
+</div><!-- .quiz-page -->
+
+<!-- Floating save button -->
+<button class="float-save" id="float-save" aria-label="Save responses">
+  <span class="save-icon">💾</span>
+  <span class="save-label">Save Responses</span>
+</button>
+
+<!-- Toast -->
+<div class="quiz-toast" id="quiz-toast"></div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='naik.js') }}"></script>
+  <script>
+  /* ══════════════════════════════════════════════════════════
+     QUIZ DATA
+  ══════════════════════════════════════════════════════════ */
+  const QUESTIONS = [
+    {
+      id: 1,
+      text: "I enjoy working directly with other people — customers, clients, or the public.",
+      category: "people"
+    },
+    {
+      id: 2,
+      text: "I prefer a fixed, predictable schedule over choosing my own hours each week.",
+      category: "schedule"
+    },
+    {
+      id: 3,
+      text: "I am comfortable working outdoors or travelling around as part of my job.",
+      category: "environment"
+    },
+    {
+      id: 4,
+      text: "I would rather earn more with higher effort than earn less with less stress.",
+      category: "ambition"
+    },
+    {
+      id: 5,
+      text: "I am confident using a smartphone or computer for work tasks every day.",
+      category: "digital"
+    },
+    {
+      id: 6,
+      text: "I would enjoy work that involves creativity — designing, writing, or making things.",
+      category: "creative"
+    },
+    {
+      id: 7,
+      text: "Family responsibilities mean I need a job with flexible or part-time hours.",
+      category: "flexibility"
+    },
+    {
+      id: 8,
+      text: "I am willing to learn a completely new skill if it leads to better pay.",
+      category: "growth"
+    },
+    {
+      id: 9,
+      text: "I would feel comfortable managing or leading a small team of people.",
+      category: "leadership"
+    },
+    {
+      id: 10,
+      text: "Working from home, even occasionally, is important to me.",
+      category: "remote"
+    }
+  ];
+
+  const SCALE_LABELS = [
+    "Strongly\nDisagree",
+    "Disagree",
+    "Neutral",
+    "Agree",
+    "Strongly\nAgree"
+  ];
+  const SCALE_SHORT = ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"];
+
+  const STORAGE_KEY    = 'naik_quiz_answers';
+  const COMPLETED_KEY  = 'naik_quiz_completed';
+
+  /* ══════════════════════════════════════════════════════════
+     STATE
+  ══════════════════════════════════════════════════════════ */
+  // answers: { [questionId]: 0-4 | null }
+  let answers = {};
+
+  /* ══════════════════════════════════════════════════════════
+     BUILD QUESTIONS
+  ══════════════════════════════════════════════════════════ */
+  function buildQuiz() {
+    const wrap = document.getElementById('quiz-form-wrap');
+    wrap.innerHTML = '';
+    answers = {};
+
+    QUESTIONS.forEach((q, idx) => {
+      const card = document.createElement('div');
+      card.className = 'q-card';
+      card.id = `q-card-${q.id}`;
+
+      card.innerHTML = `
+        <span class="q-required" id="q-req-${q.id}">Required</span>
+        <div class="q-num">
+          <span class="q-dot"></span>
+          Question ${idx + 1} of ${QUESTIONS.length}
+        </div>
+        <div class="q-text">${q.text}</div>
+        <div class="q-slider-area">
+          <div class="q-labels" id="q-labels-${q.id}">
+            ${SCALE_LABELS.map((l, i) => `<span data-idx="${i}">${l.replace('\n','<br>')}</span>`).join('')}
+          </div>
+          <input
+            type="range"
+            class="q-slider"
+            id="q-slider-${q.id}"
+            min="0" max="4" step="1"
+            value="2"
+            aria-label="Response for question ${idx + 1}"
+          >
+          <span class="q-value-badge" id="q-badge-${q.id}">Neutral</span>
+        </div>
+        <div class="q-footer">
+          <button class="q-clear-btn" id="q-clear-${q.id}" type="button" aria-label="Clear response">
+            ✕ Clear response
+          </button>
+        </div>
+      `;
+
+      wrap.appendChild(card);
+
+      // Attach events
+      const slider = card.querySelector('.q-slider');
+      const badge  = card.querySelector('.q-value-badge');
+      const labels = card.querySelectorAll('.q-labels span');
+
+      function updateVisuals(val, isTouched) {
+        // Fill gradient position
+        const pct = (val / 4) * 100;
+        if (isTouched) {
+          slider.style.setProperty('--fill-pct', pct + '%');
+          slider.classList.add('touched');
+        }
+
+        // Badge
+        badge.textContent = SCALE_SHORT[val];
+        if (isTouched) badge.classList.add('visible');
+
+        // Labels highlight
+        labels.forEach((l, i) => {
+          l.classList.toggle('active-label', i === val);
+        });
+      }
+
+      slider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value);
+        answers[q.id] = val;
+        card.classList.add('answered');
+        updateVisuals(val, true);
+        updateProgress();
+        updateSubmitState();
+      });
+
+      // Clear button
+      card.querySelector('.q-clear-btn').addEventListener('click', () => {
+        clearAnswer(q.id);
+      });
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CLEAR ANSWER
+  ══════════════════════════════════════════════════════════ */
+  function clearAnswer(qId) {
+    delete answers[qId];
+    const card   = document.getElementById(`q-card-${qId}`);
+    const slider = document.getElementById(`q-slider-${qId}`);
+    const badge  = document.getElementById(`q-badge-${qId}`);
+    const labels = document.querySelectorAll(`#q-labels-${qId} span`);
+
+    card.classList.remove('answered');
+    slider.classList.remove('touched');
+    slider.value = 2;
+    slider.style.removeProperty('--fill-pct');
+    badge.classList.remove('visible');
+    labels.forEach(l => l.classList.remove('active-label'));
+
+    updateProgress();
+    updateSubmitState();
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     PROGRESS
+  ══════════════════════════════════════════════════════════ */
+  function answeredCount() {
+    return Object.keys(answers).length;
+  }
+
+  function updateProgress() {
+    const count = answeredCount();
+    const pct   = (count / QUESTIONS.length) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SUBMIT STATE
+  ══════════════════════════════════════════════════════════ */
+  function updateSubmitState() {
+    const count    = answeredCount();
+    const allDone  = count === QUESTIONS.length;
+    const btn      = document.getElementById('submit-btn');
+    const note     = document.getElementById('submit-note');
+    const noteText = document.getElementById('submit-note-text');
+
+    btn.disabled = !allDone;
+    note.classList.toggle('error', !allDone && count > 0);
+
+    if (allDone) {
+      noteText.textContent = '✓ All questions answered. Ready to submit!';
+      note.classList.remove('error');
+    } else {
+      const remaining = QUESTIONS.length - count;
+      noteText.textContent = `${remaining} question${remaining !== 1 ? 's' : ''} still need${remaining === 1 ? 's' : ''} an answer before you can submit.`;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SAVE RESPONSES (partial)
+  ══════════════════════════════════════════════════════════ */
+  function saveResponses() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
+    showToast('💾 Responses saved!');
+    const btn = document.getElementById('float-save');
+    btn.classList.add('saved-state');
+    setTimeout(() => btn.classList.remove('saved-state'), 1800);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SUBMIT QUIZ
+  ══════════════════════════════════════════════════════════ */
+  function submitQuiz() {
+    localStorage.setItem(STORAGE_KEY,   JSON.stringify(answers));
+    localStorage.setItem(COMPLETED_KEY, 'true');
+    showCompletedState();
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SHOW / HIDE COMPLETED STATE
+  ══════════════════════════════════════════════════════════ */
+  function showCompletedState() {
+    document.getElementById('quiz-form-wrap').classList.add('hidden');
+    document.getElementById('submit-area').style.display = 'none';
+    document.getElementById('float-save').classList.add('quiz-done');
+
+    // Build summary
+    const grid = document.getElementById('completed-summary-grid');
+    grid.innerHTML = '';
+    QUESTIONS.forEach(q => {
+      const val = answers[q.id];
+      const row = document.createElement('div');
+      row.className = 'completed-summary-row';
+      const qShort = q.text.length > 48 ? q.text.slice(0, 48) + '…' : q.text;
+      row.innerHTML = `
+        <span class="q-short">${qShort}</span>
+        <span class="q-ans">${val !== undefined ? SCALE_SHORT[val] : '—'}</span>
+      `;
+      grid.appendChild(row);
+    });
+
+    document.getElementById('quiz-completed').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function hideCompletedState() {
+    document.getElementById('quiz-form-wrap').classList.remove('hidden');
+    document.getElementById('submit-area').style.display = '';
+    document.getElementById('float-save').classList.remove('quiz-done');
+    document.getElementById('quiz-completed').classList.remove('visible');
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     RETAKE QUIZ
+  ══════════════════════════════════════════════════════════ */
+  function retakeQuiz() {
+    localStorage.removeItem(COMPLETED_KEY);
+    localStorage.removeItem(STORAGE_KEY);
+    answers = {};
+    buildQuiz();
+    hideCompletedState();
+    updateProgress();
+    updateSubmitState();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     TOAST
+  ══════════════════════════════════════════════════════════ */
+  function showToast(msg) {
+    const t = document.getElementById('quiz-toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     INIT
+  ══════════════════════════════════════════════════════════ */
+  buildQuiz();
+  updateProgress();
+  updateSubmitState();
+
+  // Restore saved partial answers
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    Object.entries(parsed).forEach(([qId, val]) => {
+      const id     = parseInt(qId);
+      const slider = document.getElementById(`q-slider-${id}`);
+      const badge  = document.getElementById(`q-badge-${id}`);
+      const card   = document.getElementById(`q-card-${id}`);
+      const labels = document.querySelectorAll(`#q-labels-${id} span`);
+      if (!slider) return;
+
+      answers[id] = val;
+      slider.value = val;
+      const pct = (val / 4) * 100;
+      slider.style.setProperty('--fill-pct', pct + '%');
+      slider.classList.add('touched');
+      badge.textContent = SCALE_SHORT[val];
+      badge.classList.add('visible');
+      card.classList.add('answered');
+      labels.forEach((l, i) => l.classList.toggle('active-label', i === val));
+    });
+    updateProgress();
+    updateSubmitState();
+  }
+
+  // Check if already completed
+  if (localStorage.getItem(COMPLETED_KEY) === 'true') {
+    showCompletedState();
+  }
+
+  // Event listeners
+  document.getElementById('submit-btn').addEventListener('click', submitQuiz);
+  document.getElementById('retake-btn').addEventListener('click', retakeQuiz);
+  document.getElementById('float-save').addEventListener('click', saveResponses);
+  </script>
+{% endblock %}
