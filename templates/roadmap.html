@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAIK — Personalised Career Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/roadmap.css">
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="naik-nav">
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+  <div class="nav-ctas">
+    <!--
+      GLOBAL LANG TOGGLE
+      ──────────────────
+      The class "lang-btn" is what roadmap.js queries with
+      document.querySelectorAll('.lang-btn') so it can update
+      ALL toggle buttons at once (including any injected into
+      the roadmap body). The id="lang-toggle" is kept for
+      backward compatibility only.
+    -->
+    <button class="lang-btn" id="lang-toggle" onclick="toggleLang()">BM</button>
+    <a href="{{ url_for('donate') }}" class="btn btn-primary" style="font-size:0.8rem;">Donate ♡</a>
+    <a href="{{ url_for('savedRoadmaps') }}" class="btn btn-outline" style="font-size:0.8rem;">📋 My Saves</a>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════
+     SCREEN 2: ONBOARDING QUIZ
+══════════════════════════════════════════ -->
+<div class="screen active" id="screen-onboarding">
+  <div class="onboard-header">
+    <div class="onboard-header-top">
+      <button class="btn-back-header" id="btn-back-header" onclick="goBack()" style="display:none">← <span data-en="Back" data-bm="Kembali"></span></button>
+      <span class="step-count" id="step-count">1 / 7</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:14%"></div></div>
+    <p class="step-hint" id="step-hint"></p>
+  </div>
+  <div class="onboard-body" id="onboard-body"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN 3: GENERATING
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-generating">
+  <div class="gen-inner">
+    <div class="gen-logo">NAIK</div>
+    <div class="gen-spinner"></div>
+    <p class="gen-msg" id="gen-msg"></p>
+    <p class="gen-sub" data-en="Searching real job listings from Jobstreet..." data-bm="Mencari senarai kerja sebenar dari Jobstreet..."></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN 4: ROADMAP
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-roadmap">
+  <div class="roadmap-header">
+    <div class="roadmap-header-meta">
+      <span class="section-label" id="rmap-section-title">Your Career Roadmap</span>
+      <button class="btn-restart" onclick="restartApp()">↺ <span data-en="Start Over" data-bm="Mulakan Semula"></span></button>
+    </div>
+    <h1 class="roadmap-title" id="rmap-title"></h1>
+    <div class="job-pill" id="rmap-job-pill"></div>
+  </div>
+
+  <!-- Income Mode Toggle -->
+  <div class="mode-banner" id="mode-banner"></div>
+
+  <div class="roadmap-body" id="roadmap-body"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="static/roadmap.js"></script>
+<script>
+  /*
+    AUTO-LOAD FROM URL
+    ──────────────────
+    When the user visits /roadmap?load=<uuid> (e.g. from the
+    saved roadmaps page), we call loadSavedRoadmap() instead
+    of showing the quiz. This runs AFTER roadmap.js has loaded.
+  */
+  window.addEventListener('load', () => {
+    const params = new URLSearchParams(window.location.search);
+    const loadId = params.get('load');
+    if (loadId) {
+      showScreen('generating');
+      loadSavedRoadmap(loadId);
+    }
+  });
+</script>
+</body>
+</html>

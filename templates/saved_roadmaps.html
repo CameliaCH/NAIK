@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAIK — My Saved Roadmaps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/roadmap.css">
+<style>
+  body { background: var(--bg, #FAF8F5); min-height: 100vh; }
+  .saved-wrap   { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  .saved-title  { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--ink, #1A1A2E); margin-bottom: 0.4rem; }
+  .saved-sub    { font-size: 0.9rem; color: var(--ink-mid, #6B6B80); margin-bottom: 2rem; }
+  .saved-lookup { display: flex; gap: 0.6rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+  .saved-input  {
+    flex: 1; min-width: 0;
+    border: 1.5px solid #ddd; border-radius: 10px;
+    padding: 0.65rem 1rem; font-size: 0.9rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    outline: none; transition: border-color 0.2s;
+    background: #fff;
+  }
+  .saved-input:focus { border-color: var(--teal, #7EACB5); }
+  .btn-load {
+    background: var(--red, #BF4646); color: #fff;
+    border: none; border-radius: 10px; padding: 0.65rem 1.4rem;
+    font-size: 0.88rem; font-weight: 700; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .btn-load:hover { background: #a33b3b; }
+
+  .saved-section-label {
+    font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em;
+    color: var(--ink-mid, #6B6B80); text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .saved-card {
+    background: #fff; border-radius: 14px; padding: 1.1rem 1.25rem;
+    margin-bottom: 0.75rem; border: 1.5px solid #eee;
+    display: flex; align-items: center; gap: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer;
+  }
+  .saved-card:hover { border-color: var(--teal, #7EACB5); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .saved-card-emoji { font-size: 1.8rem; flex-shrink: 0; }
+  .saved-card-body  { flex: 1; min-width: 0; }
+  .saved-card-name  { font-weight: 700; font-size: 0.95rem; color: var(--ink, #1A1A2E); }
+  .saved-card-meta  { font-size: 0.78rem; color: var(--ink-mid, #6B6B80); margin-top: 0.2rem; }
+  .saved-card-date  { font-size: 0.72rem; color: #aaa; margin-top: 0.2rem; }
+  .saved-card-id    { font-size: 0.7rem; color: #ccc; font-family: monospace; margin-top: 0.15rem; word-break: break-all; }
+  .saved-card-cta   { font-size: 0.82rem; font-weight: 700; color: var(--teal, #7EACB5); white-space: nowrap; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-mid, #6B6B80); }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+  .empty-state p { font-size: 0.9rem; }
+  .empty-link { color: var(--red, #BF4646); font-weight: 600; text-decoration: none; }
+  .empty-link:hover { text-decoration: underline; }
+  .error-msg { color: var(--red, #BF4646); font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+  .loader-row { display: flex; align-items: center; gap: 0.6rem; padding: 1rem 0; color: var(--ink-mid, #6B6B80); font-size: 0.88rem; }
+  .mini-spin  { width: 18px; height: 18px; border: 2px solid #ddd; border-top-color: var(--teal, #7EACB5); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* interest → emoji map */
+  .interest-emoji { display: inline; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="naik-nav">
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+  <div class="nav-ctas">
+    <button class="lang-btn" id="lang-toggle" onclick="togglePageLang()">BM</button>
+    <a href="{{ url_for('quiz') }}" class="btn btn-primary" style="font-size:0.8rem;">✨ New Roadmap</a>
+  </div>
+</nav>
+
+<div class="saved-wrap">
+  <h1 class="saved-title" id="pg-title">My Saved Roadmaps</h1>
+  <p class="saved-sub" id="pg-sub">Load a roadmap by ID, or pick one from your recent saves on this device.</p>
+
+  <!-- Manual ID lookup -->
+  <div>
+    <div class="saved-section-label" id="lbl-lookup">Load by Roadmap ID</div>
+    <div class="saved-lookup">
+      <input type="text" class="saved-input" id="roadmap-id-input"
+        placeholder="Paste your roadmap ID here (e.g. a1b2c3d4-…)">
+      <button class="btn-load" onclick="handleLoad()" id="btn-load-manual">Load →</button>
+    </div>
+    <div class="error-msg" id="load-error">❌ Roadmap not found. Check your ID and try again.</div>
+  </div>
+
+  <!-- Recent saves from localStorage -->
+  <div id="recent-section">
+    <div class="saved-section-label" id="lbl-recent">Recent on This Device</div>
+    <div id="recent-list"></div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG (must match roadmap.js) ──────────────────────────
+const SUPABASE_URL  = 'https://rpspjasltxmfaoinagrb.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJwc3BqYXNsdHhtZmFvaW5hZ3JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5Nzc0MTEsImV4cCI6MjA4NTU1MzQxMX0.hF1ZEFUbRSIu5iE_u07FYkiQRZGXsKQxPjyu5I_gn9s';
+
+let pageLang = 'en';
+
+const TEXT = {
+  en: {
+    title:  'My Saved Roadmaps',
+    sub:    'Load a roadmap by ID, or pick one from your recent saves on this device.',
+    lookup: 'Load by Roadmap ID',
+    recent: 'Recent on This Device',
+    placeholder: 'Paste your roadmap ID here (e.g. a1b2c3d4-…)',
+    loadBtn: 'Load →',
+    loadingBtn: 'Loading…',
+    empty:  "You haven't saved any roadmaps on this device yet.",
+    goCreate: 'Create your first roadmap →',
+    error:  '❌ Roadmap not found. Check your ID and try again.',
+    open:   'Open →',
+    interestMap: { tech:'💻 Tech', food:'🍜 Food & Beverage', beauty:'💅 Beauty', trades:'🔧 Trades', biz:'💼 Sales & Biz', care:'🏥 Care', creative:'🎨 Creative', logistics:'🚚 Logistics' }
+  },
+  bm: {
+    title:  'Peta Jalan Tersimpan',
+    sub:    'Muatkan peta jalan menggunakan ID, atau pilih dari simpanan terbaru pada peranti ini.',
+    lookup: 'Muat Menggunakan ID Peta Jalan',
+    recent: 'Terbaru di Peranti Ini',
+    placeholder: 'Tampal ID peta jalan anda di sini…',
+    loadBtn: 'Muat →',
+    loadingBtn: 'Memuatkan…',
+    empty:  'Anda belum menyimpan sebarang peta jalan pada peranti ini.',
+    goCreate: 'Cipta peta jalan pertama anda →',
+    error:  '❌ Peta jalan tidak dijumpai. Semak ID anda dan cuba lagi.',
+    open:   'Buka →',
+    interestMap: { tech:'💻 Teknologi', food:'🍜 Makanan', beauty:'💅 Kecantikan', trades:'🔧 Teknikal', biz:'💼 Perniagaan', care:'🏥 Penjagaan', creative:'🎨 Kreatif', logistics:'🚚 Logistik' }
+  }
+};
+
+function togglePageLang() {
+  pageLang = pageLang === 'en' ? 'bm' : 'en';
+  document.getElementById('lang-toggle').textContent = pageLang === 'en' ? 'BM' : 'EN';
+  try { localStorage.setItem('naik_lang', pageLang); } catch(e) {}
+  applyPageLang();
+}
+
+function applyPageLang() {
+  const t = TEXT[pageLang];
+  document.getElementById('pg-title').textContent   = t.title;
+  document.getElementById('pg-sub').textContent     = t.sub;
+  document.getElementById('lbl-lookup').textContent = t.lookup;
+  document.getElementById('lbl-recent').textContent = t.recent;
+  document.getElementById('roadmap-id-input').placeholder = t.placeholder;
+  document.getElementById('btn-load-manual').textContent  = t.loadBtn;
+  document.getElementById('load-error').textContent = t.error;
+  renderRecent(); // re-render cards in correct language
+}
+
+// ── LOAD BY ID ──────────────────────────────────────────────
+async function handleLoad() {
+  const id  = document.getElementById('roadmap-id-input').value.trim();
+  const err = document.getElementById('load-error');
+  const btn = document.getElementById('btn-load-manual');
+  err.style.display = 'none';
+  if (!id) return;
+
+  btn.textContent = TEXT[pageLang].loadingBtn;
+  btn.disabled    = true;
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/saved_roadmaps?id=eq.${encodeURIComponent(id)}&select=*`,
+      { headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}` } }
+    );
+    if (!res.ok) throw new Error('fetch failed');
+    const rows = await res.json();
+    if (!rows.length) throw new Error('not found');
+
+    // Store in local recent list then redirect
+    storeLocal(rows[0]);
+    goToRoadmap(id);
+  } catch(e) {
+    err.style.display = 'block';
+    btn.textContent = TEXT[pageLang].loadBtn;
+    btn.disabled    = false;
+  }
+}
+
+function goToRoadmap(id) {
+  // Pass id as query param so roadmap.js can load it on init
+  window.location.href = `/roadmap?load=${encodeURIComponent(id)}`;
+}
+
+// ── LOCAL STORAGE RECENT LIST ───────────────────────────────
+function getSaved() {
+  try { return JSON.parse(localStorage.getItem('naik_saved_ids') || '[]'); }
+  catch(e) { return []; }
+}
+
+function storeLocal(row) {
+  try {
+    const existing = getSaved().filter(r => r.id !== row.id);
+    existing.unshift({
+      id:       row.id,
+      name:     row.name,
+      interest: row.interest,
+      income_mode: row.income_mode,
+      date:     row.created_at || new Date().toISOString()
+    });
+    localStorage.setItem('naik_saved_ids', JSON.stringify(existing.slice(0, 10)));
+  } catch(e) {}
+}
+
+function renderRecent() {
+  const list = getSaved();
+  const container = document.getElementById('recent-list');
+  const t = TEXT[pageLang];
+
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>${t.empty}</p>
+      <p style="margin-top:0.75rem"><a href="/roadmap" class="empty-link">${t.goCreate}</a></p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(item => {
+    const interestLabel = t.interestMap[item.interest] || item.interest || '🎯';
+    const modeLabel     = item.income_mode === 'immediate'
+      ? (pageLang === 'en' ? '⚡ Immediate' : '⚡ Segera')
+      : (pageLang === 'en' ? '🎓 Upskill' : '🎓 Tingkat Kemahiran');
+    const dateStr = item.date ? new Date(item.date).toLocaleDateString(pageLang === 'en' ? 'en-MY' : 'ms-MY', { day:'numeric', month:'short', year:'numeric' }) : '';
+    return `<div class="saved-card" onclick="goToRoadmap('${item.id}')">
+      <div class="saved-card-emoji">${interestLabel.split(' ')[0]}</div>
+      <div class="saved-card-body">
+        <div class="saved-card-name">${item.name || 'Saved Roadmap'}</div>
+        <div class="saved-card-meta">${interestLabel} · ${modeLabel}</div>
+        <div class="saved-card-date">${dateStr}</div>
+        <div class="saved-card-id">${item.id}</div>
+      </div>
+      <div class="saved-card-cta">${t.open}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── INIT ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const saved = localStorage.getItem('naik_lang');
+    if (saved === 'bm') {
+      pageLang = 'bm';
+      document.getElementById('lang-toggle').textContent = 'EN';
+    }
+  } catch(e) {}
+  applyPageLang();
+
+  // Allow pressing Enter in the input
+  document.getElementById('roadmap-id-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLoad();
+  });
+});
+</script>
+</body>
+</html>
