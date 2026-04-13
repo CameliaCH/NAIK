@@ -7,6 +7,8 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret")
 
+from blueprints.interview import interview_bp
+app.register_blueprint(interview_bp, url_prefix='/interview')
 
 @app.route("/")
 @app.route("/home")

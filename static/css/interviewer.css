@@ -1,0 +1,132 @@
+#interview-container {
+    max-width: 700px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .interview-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .interview-controls select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbddff;
+    background: white;
+    color: #122357;
+    font-size: 14px;
+  }
+  
+  #reset-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: #cbddff;
+    color: #122357;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  #reset-btn:hover { background: #b3ceff; }
+  
+  #avatar-container {
+    position: relative;
+    width: 320px;
+    height: 240px;
+  }
+  
+  #avatar-video {
+    width: 320px;
+    height: 240px;
+    border-radius: 16px;
+    display: none;
+    object-fit: cover;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  
+  #avatar-placeholder {
+    width: 320px;
+    height: 240px;
+    background: #cbddff;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  #avatar-placeholder span { font-size: 64px; }
+  #avatar-placeholder p { color: #122357; font-weight: bold; margin: 8px 0 0; }
+  
+  #status-bar {
+    background: #f0f5fe;
+    border: 1px solid #cbddff;
+    border-radius: 8px;
+    padding: 10px 20px;
+    color: #1f3b9d;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .mic-container { text-align: center; }
+  
+  #mic-btn {
+    padding: 18px 40px;
+    font-size: 18px;
+    border-radius: 50px;
+    border: none;
+    background: #1f3b9d;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(31,59,157,0.3);
+  }
+  #mic-btn:hover { background: #122357; transform: scale(1.05); }
+  #mic-btn.recording {
+    background: #c00000;
+    animation: pulse 1s infinite;
+  }
+  #mic-btn:disabled { background: #aaa; cursor: not-allowed; transform: none; }
+  
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 15px rgba(192,0,0,0.3); }
+    50% { box-shadow: 0 4px 30px rgba(192,0,0,0.6); }
+  }
+  
+  #transcript {
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 0 18px rgba(0,0,0,0.08);
+  }
+  #transcript h3 { color: #1f3b9d; margin: 0 0 12px; }
+  
+  #transcript-log { display: flex; flex-direction: column; gap: 10px; }
+  
+  .msg-user, .msg-ai {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    max-width: 85%;
+    line-height: 1.5;
+  }
+  .msg-user {
+    background: #cbddff;
+    color: #122357;
+    align-self: flex-end;
+  }
+  .msg-ai {
+    background: #f0f5fe;
+    color: #1f3b9d;
+    align-self: flex-start;
+    border-left: 3px solid #1f3b9d;
+  }

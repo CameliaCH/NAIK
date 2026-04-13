@@ -1,9 +1,219 @@
-{% extends "base.html" %}
-{% block title %}Coming Soon — NAIK{% endblock %}
-{% block content %}
-<div style="text-align:center; padding:100px 20px; font-family:sans-serif;">
-  <h2>🚧 Coming Soon</h2>
-  <p style="color:#888;">This page is under construction.</p>
-  <a href="/" style="color:#BF4646;">← Back to Home</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock Interview — NAIK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/interviewer.css') }}">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    .interview-page-hero {
+      background: var(--peach);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem clamp(1.5rem,5vw,4rem) 2rem;
+      text-align: center;
+    }
+    .interview-page-hero .section-label { color: var(--red); }
+    .interview-page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem,3vw,2.6rem);
+      color: var(--ink); margin-bottom: 0.5rem;
+    }
+    .interview-page-hero p { color: var(--ink-mid); font-size: 1rem; }
+
+    #interview-wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem clamp(1rem,4vw,2rem) 5rem;
+    }
+
+    .interview-tip {
+      background: var(--teal); color: #fff;
+      border-radius: 12px; padding: 1rem 1.25rem;
+      font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.5rem;
+    }
+
+    /* Override interviewer.css colours to match NAIK */
+    .interview-controls select { border-color: var(--border); color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; }
+    #reset-btn { background: var(--peach); color: var(--ink); border: 1px solid var(--border); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; }
+    #reset-btn:hover { background: var(--teal); color: #fff; }
+    #avatar-placeholder { background: var(--peach); }
+    #avatar-placeholder p { color: var(--ink-mid); }
+    #status-bar { background: var(--card-bg); border-color: var(--border); color: var(--ink-mid); }
+    #mic-btn { background: var(--red); box-shadow: 0 4px 15px rgba(191,70,70,0.35); }
+    #mic-btn:hover { background: var(--red-dk); }
+    #mic-btn.recording { background: #8b0000; }
+    #mic-btn:disabled { background: var(--ink-lt); }
+    #transcript { border: 1px solid var(--border); box-shadow: none; }
+    #transcript h3 { color: var(--ink); font-family: 'Playfair Display', serif; }
+    .msg-user { background: var(--peach); color: var(--ink); }
+    .msg-ai   { background: var(--card-bg); color: var(--ink-mid); border-left-color: var(--teal); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="naik-nav">
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="{{ url_for('explore') }}">🧭 Explore Careers</a></li>
+    <li><a href="{{ url_for('skills') }}" style="color:var(--red); font-weight:700;">💪 Skill Up</a></li>
+    <li><a href="{{ url_for('know') }}">⚖️ Know Your Rights</a></li>
+    <li><a href="{{ url_for('explore') }}">💼 Get Hired</a></li>
+    <li class="her-link"><a href="{{ url_for('home') }}#forher-full">🌸 For Her</a></li>
+  </ul>
+  <div class="nav-ctas">
+    {% if session.get("user_name") %}
+      <span style="font-size:0.85rem; color:var(--ink-mid);">👤 {{ session["user_name"] }}</span>
+      <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+    <button class="hamburger" aria-label="Open menu"
+            onclick="document.querySelector('.mobile-nav').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="mobile-nav">
+  <a href="{{ url_for('home') }}">🏠 Home</a>
+  <a href="{{ url_for('explore') }}">🧭 Explore Careers</a>
+  <a href="{{ url_for('skills') }}">💪 Skill Up</a>
+  <a href="{{ url_for('know') }}">⚖️ Know Your Rights</a>
+  <a href="{{ url_for('explore') }}">💼 Get Hired</a>
+  <div class="mobile-ctas">
+    {% if session.get("user_name") %}
+      <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+  </div>
 </div>
-{% endblock %}
+
+
+<!-- HERO -->
+<div class="interview-page-hero">
+  <span class="section-label">Skill Up</span>
+  <h1>AI Mock Interview</h1>
+  <p>Practise in English, Bahasa Melayu, or Mandarin — anytime, for free.</p>
+</div>
+
+
+<!-- INTERVIEW UI -->
+<div id="interview-wrapper">
+
+  <div class="interview-tip">
+    <strong>💡 Tip:</strong> Speak naturally — the AI responds in whichever language you use.
+    You can restart at any time. Your answers are never saved.
+  </div>
+
+  <div id="interview-container">
+
+    <div class="interview-controls">
+      <label style="font-weight:600; color:var(--ink);">Language:</label>
+      <select id="lang-select" onchange="setManualLanguage(this.value)">
+        <option value="auto">Auto-detect</option>
+        <option value="en">English</option>
+        <option value="ms">Bahasa Melayu</option>
+        <option value="zh">Mandarin 普通话</option>
+      </select>
+      <button id="reset-btn" onclick="resetInterview()">🔄 Restart</button>
+    </div>
+
+    <div id="avatar-container">
+      <video id="avatar-video" autoplay playsinline></video>
+      <div id="avatar-placeholder">
+        <span>👤</span>
+        <p>AI Interviewer</p>
+      </div>
+    </div>
+
+    <div id="status-bar">
+      <span id="status-text">Starting interview...</span>
+    </div>
+
+    <div class="mic-container">
+      <button id="mic-btn" onclick="toggleRecording()">🎙️ Speak</button>
+    </div>
+
+    <div id="transcript">
+      <h3>Conversation</h3>
+      <div id="transcript-log"></div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="wordmark">NAIK</span>
+      <p>Naikkan Taraf Hidup Anda — a free platform helping Malaysians find work, build skills, and know their rights.</p>
+      <div class="footer-btns">
+        <a href="{{ url_for('donate') }}" class="btn btn-primary" style="font-size:0.8rem;">Donate ♡</a>
+      </div>
+    </div>
+    <div>
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="{{ url_for('explore') }}">🧭 Explore Careers</a></li>
+        <li><a href="{{ url_for('skills') }}">💪 Skill Up</a></li>
+        <li><a href="{{ url_for('know') }}">⚖️ Know Your Rights</a></li>
+        <li><a href="{{ url_for('explore') }}">💼 Get Hired</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="{{ url_for('CVexamples') }}">CV Templates</a></li>
+        <li><a href="{{ url_for('jobGuide') }}">Job Guide</a></li>
+        <li><a href="{{ url_for('know') }}">Know Your Rights</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Organisation</h4>
+      <ul>
+        <li><a href="{{ url_for('home') }}#about">About NAIK</a></li>
+        <li><a href="{{ url_for('home') }}#team">Our Team</a></li>
+        <li><a href="https://github.com/CameliaCH/GetEmployed" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 NAIK — Naikkan Taraf Hidup Anda. All rights reserved.</span>
+    <span>Made with ❤️ in Malaysia</span>
+  </div>
+</footer>
+
+
+<script src="{{ url_for('static', filename='js/interviewer.js') }}"></script>
+<script>
+  const hamburger = document.querySelector('.hamburger');
+  const mobileNav = document.querySelector('.mobile-nav');
+  if (hamburger && mobileNav) {
+    document.addEventListener('click', e => {
+      if (!mobileNav.contains(e.target) && !hamburger.contains(e.target))
+        mobileNav.classList.remove('open');
+    });
+    mobileNav.querySelectorAll('a').forEach(a =>
+      a.addEventListener('click', () => mobileNav.classList.remove('open'))
+    );
+  }
+</script>
+
+</body>
+</html>
