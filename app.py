@@ -62,10 +62,73 @@ def donate():
 def signIn():
     return render_template("signIn.html")
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("home"))
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    try:
+        # Sign in using Supabase Auth
+        res = supabase.auth.sign_in_with_password({
+            "email": email, 
+            "password": password
+        })
+        
+        # Store the user ID in the Flask session
+        session["user_id"] = res.users.id
+        flash("Successfully logged in!", "success")
+        return redirect(url_for("home"))
+        
+    except Exception as e:
+        flash(f"Login failed: {str(e)}", "danger")
+        return redirect(url_for("signIn"))
+
+
+@app.route("/auth/login", methods=["POST"])
+def auth_login():
+    data = request.json
+    try:
+        # Sign in using Supabase Auth
+        res = supabase.auth.sign_in_with_password({
+            "email": data['email'], 
+            "password": data['password']
+        })
+        
+        session["user_id"] = res.user.id 
+        return jsonify({"success": True, "redirect": url_for('home')})
+        
+    except Exception as e:
+        # Better error extraction for Supabase
+        error_msg = str(e)
+        return jsonify({"success": False, "error": error_msg}), 400
+
+@app.route("/auth/signup", methods=["POST"])
+def auth_signup():
+    data = request.json
+    try:
+        auth_res = supabase.auth.sign_up({
+            "email": data['email'],
+            "password": data['password']
+        })
+
+        # FIX: Changed .users to .user
+        if auth_res.user:
+            user_id = auth_res.user.id
+            
+            profile_data = {
+                "id": user_id, 
+                "email": data['email'],
+                "surname": data.get('surname'),
+                "name": data.get('name'),
+                "age": data.get('age'),
+                "gender": data.get('gender')
+            }
+            
+            supabase.table("users").insert(profile_data).execute()
+            return jsonify({"success": True, "message": "Account and profile created!"})
+            
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
 
 @app.route("/cv-translator")
 def cv_translator():
