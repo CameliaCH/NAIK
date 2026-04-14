@@ -1,0 +1,714 @@
+{% extends "base.html" %}
+{% from '_nav.html' import naik_nav %}
+
+{% block title %}My Profile — NAIK{% endblock %}
+
+{% block head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='nav-avatar.css') }}">
+  <style>
+    /* ═══════════════════════════════════════════
+       PROFILE PAGE
+    ═══════════════════════════════════════════ */
+    .profile-page {
+      min-height: 100vh;
+      background: var(--cream);
+    }
+
+    /* ── PROFILE HERO BANNER ─────────────────── */
+    .profile-banner {
+      background: var(--ink);
+      padding: 2.5rem clamp(1.5rem,5vw,4rem) 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-banner-bg {
+      position: absolute; inset: 0; opacity: 0.06; pointer-events: none;
+    }
+    .profile-banner-inner {
+      position: relative; z-index: 1;
+      display: flex; align-items: flex-end; gap: 2rem;
+      max-width: 960px; margin: 0 auto;
+      padding-bottom: 1.5rem;
+    }
+
+    /* Avatar in banner */
+    .profile-banner-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .profile-banner-avatar {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid rgba(255,255,255,0.15);
+      display: block;
+      background: var(--peach);
+    }
+
+    .profile-banner-info { flex: 1; min-width: 0; }
+    .profile-banner-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .profile-banner-headline {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 0.5rem;
+    }
+    .profile-banner-desc {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.4);
+      max-width: 480px;
+      line-height: 1.55;
+    }
+
+    /* ── TABS ─────────────────────────────────── */
+    .profile-tabs {
+      display: flex; gap: 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      max-width: 960px; margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+    .ptab-btn {
+      padding: 0.85rem 1.75rem;
+      border: none; background: transparent;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem; font-weight: 600;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .ptab-btn:hover  { color: rgba(255,255,255,0.8); }
+    .ptab-btn.active { color: #fff; border-bottom-color: var(--teal); }
+
+    /* ── MAIN BODY ───────────────────────────── */
+    .profile-body {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2.5rem clamp(1rem,4vw,2rem) 5rem;
+    }
+
+    /* ── TAB PANELS ──────────────────────────── */
+    .ptab-panel { display: none; }
+    .ptab-panel.active { display: block; }
+
+    /* ── DASHBOARD: saved jobs ───────────────── */
+    .dash-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .dash-header h2 { font-size: 1.25rem; color: var(--ink); }
+
+    .saved-jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(260px,100%), 1fr));
+      gap: 1.25rem;
+    }
+
+    /* Mini job card (simpler than explore card) */
+    .mini-job-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+    }
+    .mini-job-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(28,23,19,0.1); }
+    .mjc-thumb {
+      height: 110px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .mjc-badge {
+      position: absolute; top: 8px; left: 8px;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 50px;
+      background: rgba(255,255,255,0.92); color: var(--ink-mid);
+    }
+    .mjc-body { padding: 0.9rem 1rem; }
+    .mjc-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.2rem; }
+    .mjc-salary { font-size: 0.75rem; font-weight: 700; color: var(--teal); }
+
+    .dash-empty {
+      grid-column: 1/-1;
+      text-align: center; padding: 3.5rem 1rem;
+      background: var(--peach); border-radius: 16px; border: 1px dashed var(--border);
+    }
+    .dash-empty .emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .dash-empty h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .dash-empty p  { font-size: 0.85rem; color: var(--ink-lt); margin-bottom: 1.5rem; }
+
+    /* ── EDIT PROFILE FORM ───────────────────── */
+    .edit-section {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .edit-section-title {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--red);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Avatar upload — the big element */
+    .avatar-upload-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 2rem;
+    }
+    .avatar-preview-ring {
+      position: relative;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .avatar-preview-img {
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--teal);
+      display: block;
+      transition: filter 0.2s;
+    }
+    .avatar-preview-ring:hover .avatar-preview-img { filter: brightness(0.7); }
+    .avatar-overlay {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: rgba(28,23,19,0.45);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+      color: #fff; font-size: 1.6rem;
+      pointer-events: none;
+    }
+    .avatar-preview-ring:hover .avatar-overlay { opacity: 1; }
+    #avatar-file-input { display: none; }
+    .avatar-upload-hint {
+      font-size: 0.78rem; color: var(--ink-lt); text-align: center; line-height: 1.5;
+    }
+    .avatar-upload-btn {
+      font-size: 0.82rem; font-weight: 700; padding: 0.5rem 1.25rem;
+      border-radius: 8px; background: var(--teal); color: #fff; border: none;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .avatar-upload-btn:hover { background: #6a9aa4; }
+
+    /* Form grid */
+    .edit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media(max-width:560px) { .edit-grid { grid-template-columns: 1fr; } }
+    .edit-grid.full { grid-template-columns: 1fr; }
+
+    .ef-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .ef-group label {
+      font-size: 0.75rem; font-weight: 700; color: var(--ink-mid);
+      letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .ef-group input,
+    .ef-group select,
+    .ef-group textarea {
+      padding: 0.6rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: var(--cream);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+    .ef-group input:focus,
+    .ef-group select:focus,
+    .ef-group textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(126,172,181,0.15);
+    }
+    .ef-group textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+    .ef-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a6e66' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      padding-right: 2.25rem;
+    }
+
+    .save-row {
+      display: flex; justify-content: flex-end; gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    /* Danger zone */
+    .danger-zone {
+      background: #fdf0f0;
+      border: 1px solid #f5c0c0;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    .danger-zone h3 { font-size: 1rem; color: var(--red); margin-bottom: 0.5rem; }
+    .danger-zone p  { font-size: 0.83rem; color: var(--ink-lt); margin-bottom: 1rem; }
+    .danger-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    /* ── QUIZ RESPONSES ──────────────────────── */
+    .quiz-response-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .qrc-meta {
+      font-size: 0.72rem; color: var(--ink-lt); font-weight: 500;
+      margin-bottom: 1rem; letter-spacing: 0.03em;
+    }
+    .qrc-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.45rem 0; border-bottom: 1px solid var(--border);
+      font-size: 0.83rem;
+    }
+    .qrc-row:last-child { border-bottom: none; }
+    .qrc-q { color: var(--ink-mid); max-width: 70%; }
+    .qrc-a {
+      font-weight: 700; color: var(--ink);
+      background: var(--peach); border: 1px solid var(--border);
+      padding: 0.1rem 0.55rem; border-radius: 50px;
+      font-size: 0.72rem;
+    }
+    .quiz-empty {
+      text-align: center; padding: 3rem 1rem;
+      background: var(--peach); border-radius: 16px;
+    }
+    .quiz-empty .emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    /* ── TOAST ───────────────────────────────── */
+    .p-toast {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink); color: #fff;
+      padding: 0.65rem 1.5rem; border-radius: 50px;
+      font-size: 0.85rem; font-weight: 600;
+      opacity: 0; transition: opacity 0.3s, transform 0.3s;
+      z-index: 300; white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    }
+    .p-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* upload progress bar */
+    .avatar-progress {
+      width: 140px; height: 4px; border-radius: 4px;
+      background: var(--border); overflow: hidden; display: none;
+    }
+    .avatar-progress-fill {
+      height: 100%; background: var(--teal);
+      width: 0%; transition: width 0.3s;
+      border-radius: 4px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+{{ naik_nav(active='') }}
+
+<div class="profile-page">
+
+  <!-- ════════════════════════════════════════
+       PROFILE BANNER
+       ════════════════════════════════════════ -->
+  <div class="profile-banner">
+    <svg class="profile-banner-bg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <circle cx="1100" cy="40"  r="200" fill="none" stroke="#7EACB5" stroke-width="1"/>
+      <circle cx="80"   cy="180" r="160" fill="none" stroke="#BF4646" stroke-width="0.8"/>
+      <circle cx="600"  cy="100" r="300" fill="none" stroke="#EDDCC6" stroke-width="1.2"/>
+    </svg>
+    <div class="profile-banner-inner">
+      <div class="profile-banner-avatar-wrap">
+        <img
+          src="{{ user.get('avatar_url') or url_for('static', filename='images/default-avatar.svg') }}"
+          alt="{{ user.get('name','') }}"
+          class="profile-banner-avatar"
+          id="banner-avatar"
+          onerror="this.src='{{ url_for('static', filename='images/default-avatar.svg') }}'"
+        >
+      </div>
+      <div class="profile-banner-info">
+        <div class="profile-banner-name">{{ user.get('name','') }} {{ user.get('surname','') }}</div>
+        <div class="profile-banner-headline">{{ user.get('headline') or 'NAIK Member' }}</div>
+        {% if user.get('description') %}
+          <div class="profile-banner-desc">{{ user['description'] }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Tabs sit on the dark banner -->
+    <div class="profile-tabs" role="tablist">
+      <button class="ptab-btn active" data-tab="dashboard"  role="tab" aria-selected="true">📋 Dashboard</button>
+      <button class="ptab-btn"        data-tab="edit"       role="tab" aria-selected="false">✏️ Edit Profile</button>
+      <button class="ptab-btn"        data-tab="quiz"       role="tab" aria-selected="false">🧭 Quiz Results</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       BODY
+       ════════════════════════════════════════ -->
+  <div class="profile-body">
+
+    <!-- ────────────────────────────────────
+         TAB: DASHBOARD
+         ──────────────────────────────────── -->
+    <div class="ptab-panel active" id="panel-dashboard">
+      <div class="dash-header">
+        <h2>Saved Jobs</h2>
+        <a href="{{ url_for('explore') }}" class="btn btn-teal">🔍 Find More Jobs</a>
+      </div>
+
+      <div class="saved-jobs-grid" id="saved-jobs-grid">
+        <!-- Filled by JS from localStorage -->
+        <div class="dash-empty" id="dash-empty">
+          <div class="emoji">🤍</div>
+          <h3>No saved jobs yet</h3>
+          <p>Heart any job in Explore to save it here.</p>
+          <a href="{{ url_for('explore') }}" class="btn btn-primary">🔍 Find Jobs</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────────
+         TAB: EDIT PROFILE
+         ──────────────────────────────────── -->
+    <div class="ptab-panel" id="panel-edit">
+
+      <!-- Avatar upload -->
+      <div class="edit-section">
+        <div class="edit-section-title">Profile Picture</div>
+        <div class="avatar-upload-area">
+          <div class="avatar-preview-ring" id="avatar-ring" onclick="document.getElementById('avatar-file-input').click()" title="Click to change photo">
+            <img
+              src="{{ user.get('avatar_url') or url_for('static', filename='images/default-avatar.svg') }}"
+              alt="Your avatar"
+              class="avatar-preview-img"
+              id="avatar-preview"
+              onerror="this.src='{{ url_for('static', filename='images/default-avatar.svg') }}'"
+            >
+            <div class="avatar-overlay">📷</div>
+          </div>
+          <div class="avatar-progress" id="avatar-progress"><div class="avatar-progress-fill" id="avatar-progress-fill"></div></div>
+          <input type="file" id="avatar-file-input" accept="image/jpeg,image/png,image/webp,image/gif">
+          <div class="avatar-upload-hint">Click the photo to change it.<br>JPG, PNG or WebP — max 5 MB.</div>
+          <button class="avatar-upload-btn" id="avatar-upload-btn" style="display:none;">Upload Photo</button>
+        </div>
+      </div>
+
+      <!-- Name & details -->
+      <div class="edit-section">
+        <div class="edit-section-title">Personal Details</div>
+        <div class="edit-grid">
+          <div class="ef-group">
+            <label for="ef-surname">Surname</label>
+            <input type="text" id="ef-surname" value="{{ user.get('surname','') }}" placeholder="e.g. Ahmad">
+          </div>
+          <div class="ef-group">
+            <label for="ef-name">Name</label>
+            <input type="text" id="ef-name" value="{{ user.get('name','') }}" placeholder="e.g. Farid">
+          </div>
+          <div class="ef-group">
+            <label for="ef-age">Age</label>
+            <input type="number" id="ef-age" value="{{ user.get('age','') }}" placeholder="e.g. 25" min="13" max="100">
+          </div>
+          <div class="ef-group">
+            <label for="ef-gender">Gender</label>
+            <select id="ef-gender">
+              <option value="">Select…</option>
+              <option value="male"       {{ 'selected' if user.get('gender') == 'male' }}>Male</option>
+              <option value="female"     {{ 'selected' if user.get('gender') == 'female' }}>Female</option>
+              <option value="prefer_not" {{ 'selected' if user.get('gender') == 'prefer_not' }}>Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+        <div class="edit-grid full" style="margin-top:1rem;">
+          <div class="ef-group">
+            <label for="ef-email">Email</label>
+            <input type="email" id="ef-email" value="{{ user.get('email','') }}" placeholder="you@example.com">
+          </div>
+        </div>
+        <div class="save-row">
+          <button class="btn btn-teal" onclick="saveDetails()">Save Details</button>
+        </div>
+      </div>
+
+      <!-- Headline & description -->
+      <div class="edit-section">
+        <div class="edit-section-title">Headline &amp; Bio</div>
+        <div class="edit-grid full">
+          <div class="ef-group">
+            <label for="ef-headline">Headline <span style="font-weight:400; text-transform:none; letter-spacing:0;">(shown under your name)</span></label>
+            <input type="text" id="ef-headline" value="{{ user.get('headline','') }}" placeholder="e.g. Barista · Part-time · Kuala Lumpur">
+          </div>
+          <div class="ef-group" style="margin-top:0.75rem;">
+            <label for="ef-description">Bio</label>
+            <textarea id="ef-description" placeholder="A few words about yourself…">{{ user.get('description','') }}</textarea>
+          </div>
+        </div>
+        <div class="save-row">
+          <button class="btn btn-teal" onclick="saveBio()">Save Bio</button>
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="danger-zone">
+        <h3>⚠️ Danger Zone</h3>
+        <p>These actions are permanent and cannot be undone.</p>
+        <div class="danger-btns">
+          <a href="{{ url_for('auth_logout') }}" class="btn btn-outline" style="color:var(--red); border-color:var(--red);">🚪 Sign Out</a>
+          <button class="btn btn-primary" style="background:#c0392b;" onclick="confirmDelete()">🗑 Delete Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────────
+         TAB: QUIZ RESULTS
+         ──────────────────────────────────── -->
+    <div class="ptab-panel" id="panel-quiz">
+      {% if quiz_responses %}
+        {% for resp in quiz_responses %}
+        <div class="quiz-response-card">
+          <div class="qrc-meta">
+            Submitted {{ resp.get('created_at','')[:10] if resp.get('created_at') else 'Unknown date' }}
+          </div>
+          {% set answers = resp.get('answers', {}) %}
+          {% set scale = ['Strongly Disagree','Disagree','Neutral','Agree','Strongly Agree'] %}
+          {% set questions = [
+            'I enjoy working directly with other people.',
+            'I prefer a fixed, predictable schedule.',
+            'I am comfortable working outdoors or travelling.',
+            'I would rather earn more with higher effort.',
+            'I am confident using a smartphone or computer.',
+            'I would enjoy creative work — designing, writing.',
+            'I need a job with flexible or part-time hours.',
+            'I am willing to learn a new skill for better pay.',
+            'I would feel comfortable managing a small team.',
+            'Working from home is important to me.'
+          ] %}
+          {% for i in range(1, 11) %}
+            {% set val = answers.get(i|string) %}
+            <div class="qrc-row">
+              <span class="qrc-q">{{ questions[i-1] }}</span>
+              <span class="qrc-a">{{ scale[val] if val is not none else '—' }}</span>
+            </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="quiz-empty">
+          <div class="emoji">🧭</div>
+          <h3 style="margin-bottom:0.5rem;">No quiz results yet</h3>
+          <p style="font-size:0.85rem; color:var(--ink-lt); margin-bottom:1.5rem;">Take the career quiz to see your personalised job matches.</p>
+          <a href="{{ url_for('quiz') }}" class="btn btn-primary">Take the Quiz</a>
+        </div>
+      {% endif %}
+    </div>
+
+  </div><!-- .profile-body -->
+</div><!-- .profile-page -->
+
+<!-- Toast -->
+<div class="p-toast" id="p-toast"></div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='naik.js') }}"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   PROFILE PAGE JS
+═══════════════════════════════════════════════════════════ */
+
+/* ── TAB SWITCHING ──────────────────────────────────────── */
+document.querySelectorAll('.ptab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.ptab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.ptab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    document.getElementById(`panel-${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
+// Support deep-linking via hash (e.g. /profile#edit)
+if (window.location.hash === '#edit') {
+  document.querySelector('[data-tab="edit"]').click();
+}
+
+/* ── TOAST ──────────────────────────────────────────────── */
+function showToast(msg) {
+  const t = document.getElementById('p-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ── SAVE DETAILS ───────────────────────────────────────── */
+function saveDetails() {
+  const payload = {
+    surname: document.getElementById('ef-surname').value.trim(),
+    name:    document.getElementById('ef-name').value.trim(),
+    age:     document.getElementById('ef-age').value || null,
+    gender:  document.getElementById('ef-gender').value || null,
+    email:   document.getElementById('ef-email').value.trim(),
+  };
+  postUpdate(payload, '✅ Details saved!');
+}
+
+function saveBio() {
+  const payload = {
+    headline:    document.getElementById('ef-headline').value.trim(),
+    description: document.getElementById('ef-description').value.trim(),
+  };
+  postUpdate(payload, '✅ Bio saved!');
+}
+
+function postUpdate(payload, successMsg) {
+  fetch('/auth/profile/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.success) {
+      showToast(successMsg);
+      // Update banner live
+      const n = (payload.name || '') + ' ' + (payload.surname || '');
+      if (n.trim() && document.querySelector('.profile-banner-name'))
+        document.querySelector('.profile-banner-name').textContent = n.trim();
+      if (payload.headline && document.querySelector('.profile-banner-headline'))
+        document.querySelector('.profile-banner-headline').textContent = payload.headline;
+    } else {
+      showToast('❌ ' + (res.error || 'Update failed'));
+    }
+  })
+  .catch(() => showToast('❌ Network error'));
+}
+
+/* ── AVATAR UPLOAD ──────────────────────────────────────── */
+let pendingFile = null;
+
+document.getElementById('avatar-file-input').addEventListener('change', function() {
+  const file = this.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('❌ File too large (max 5 MB)'); return; }
+
+  pendingFile = file;
+  // Preview locally
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('avatar-preview').src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('avatar-upload-btn').style.display = 'inline-block';
+});
+
+document.getElementById('avatar-upload-btn').addEventListener('click', async () => {
+  if (!pendingFile) return;
+  const bar  = document.getElementById('avatar-progress');
+  const fill = document.getElementById('avatar-progress-fill');
+  bar.style.display = 'block';
+  fill.style.width  = '30%';
+
+  const formData = new FormData();
+  formData.append('avatar', pendingFile);
+
+  try {
+    fill.style.width = '60%';
+    const res  = await fetch('/auth/profile/avatar', { method: 'POST', body: formData });
+    const data = await res.json();
+    fill.style.width = '100%';
+    setTimeout(() => { bar.style.display = 'none'; fill.style.width = '0%'; }, 600);
+
+    if (data.success) {
+      // Update banner avatar too
+      document.getElementById('banner-avatar').src = data.avatar_url;
+      document.getElementById('nav-avatar-img') && (document.getElementById('nav-avatar-img').src = data.avatar_url);
+      document.getElementById('avatar-upload-btn').style.display = 'none';
+      pendingFile = null;
+      showToast('✅ Photo updated!');
+    } else {
+      showToast('❌ ' + (data.error || 'Upload failed'));
+    }
+  } catch {
+    showToast('❌ Upload failed — check your connection');
+    bar.style.display = 'none';
+  }
+});
+
+/* ── DELETE ACCOUNT ─────────────────────────────────────── */
+function confirmDelete() {
+  if (!confirm('Are you sure you want to delete your account? This cannot be undone.')) return;
+  fetch('/auth/delete', { method: 'POST' })
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) window.location.href = '/';
+      else showToast('❌ ' + (res.error || 'Delete failed'));
+    });
+}
+
+/* ── LOAD SAVED JOBS FROM LOCALSTORAGE ──────────────────── */
+const JOBS = {{ jobs_json | safe }};
+
+function loadSavedJobs() {
+  const savedIds = new Set(JSON.parse(localStorage.getItem('naik_saved') || '[]'));
+  const savedOrder = JSON.parse(localStorage.getItem('naik_saved_order') || '[]');
+  const grid = document.getElementById('saved-jobs-grid');
+  const empty = document.getElementById('dash-empty');
+
+  if (savedIds.size === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  const ordered = savedOrder.filter(id => savedIds.has(id));
+  const remaining = [...savedIds].filter(id => !savedOrder.includes(id));
+  const allIds = [...ordered, ...remaining];
+
+  allIds.forEach(id => {
+    const job = JOBS.find(j => j.id === id);
+    if (!job) return;
+    const a = document.createElement('a');
+    a.href = '/explore';
+    a.className = 'mini-job-card';
+    a.innerHTML = `
+      <div class="mjc-thumb" style="background-image:url('${job.thumb}')">
+        <span class="mjc-badge">${job.type.replace('-',' ')}</span>
+      </div>
+      <div class="mjc-body">
+        <div class="mjc-name">${job.name}</div>
+        <div class="mjc-salary">${job.salaryLabel}</div>
+      </div>
+    `;
+    grid.insertBefore(a, empty);
+  });
+}
+
+loadSavedJobs();
+</script>
+{% endblock %}

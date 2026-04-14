@@ -73,7 +73,7 @@
   <div class="nav-ctas">
     {% if session.get("user_name") %}
       <span style="font-size:0.85rem; color:var(--ink-mid);">👤 {{ session["user_name"] }}</span>
-      <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+      <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
     {% else %}
       <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
     {% endif %}
@@ -94,7 +94,7 @@
   <a href="{{ url_for('explore') }}">💼 Get Hired</a>
   <div class="mobile-ctas">
     {% if session.get("user_name") %}
-      <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+      <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
     {% else %}
       <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
     {% endif %}

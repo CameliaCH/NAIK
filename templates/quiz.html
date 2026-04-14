@@ -374,7 +374,7 @@
   <div class="nav-ctas">
     {% if session.get("user_name") %}
       <span style="font-size:0.85rem; color:var(--ink-mid);">👤 {{ session["user_name"] }}</span>
-      <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+      <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
     {% else %}
       <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
     {% endif %}
@@ -688,6 +688,12 @@
   function submitQuiz() {
     localStorage.setItem(STORAGE_KEY,   JSON.stringify(answers));
     localStorage.setItem(COMPLETED_KEY, 'true');
+    fetch('/api/quiz/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers })
+    }).catch(() => {}); // silent fail — localStorage is the primary store
+
     showCompletedState();
   }
 

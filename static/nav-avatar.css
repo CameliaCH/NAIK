@@ -1,0 +1,165 @@
+/* ══════════════════════════════════════════════════════════
+   NAV AVATAR — profile picture + hover card
+   Add this block to the bottom of naik.css
+   ══════════════════════════════════════════════════════════ */
+
+/* ── NAV ACTIVE LINK ─────────────────────────────────────── */
+.nav-links a.nav-active {
+  background: var(--peach);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ── AVATAR WRAPPER ──────────────────────────────────────── */
+.nav-avatar-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-avatar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 50%;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
+  display: flex;
+  align-items: center;
+}
+
+.nav-avatar-btn:hover {
+  transform: scale(1.12);
+}
+
+.nav-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid var(--teal);
+  box-shadow: 0 2px 10px rgba(126,172,181,0.35);
+  display: block;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.nav-avatar-btn:hover .nav-avatar-img,
+.nav-avatar-wrap.open .nav-avatar-img {
+  border-color: var(--red);
+  box-shadow: 0 4px 16px rgba(191,70,70,0.25);
+}
+
+/* ── PROFILE HOVER CARD ──────────────────────────────────── */
+.nav-profile-card {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 240px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(28,23,19,0.14);
+  padding: 0.75rem 0;
+  z-index: 500;
+
+  /* Hidden state */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px) scale(0.97);
+  transform-origin: top right;
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(.34,1.2,.64,1);
+}
+
+/* Arrow pointer */
+.nav-profile-card::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 14px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  transform: rotate(45deg);
+  border-radius: 2px 0 0 0;
+}
+
+/* Visible state */
+.nav-avatar-wrap.open .nav-profile-card,
+.nav-avatar-wrap:hover .nav-profile-card {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+/* Card header */
+.npc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem 0.75rem;
+}
+
+.npc-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--teal);
+  flex-shrink: 0;
+}
+
+.npc-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.npc-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.npc-headline {
+  font-size: 0.72rem;
+  color: var(--ink-lt);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.1rem;
+}
+
+.npc-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.25rem 0;
+}
+
+.npc-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--ink-mid);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.npc-link:hover {
+  background: var(--peach);
+  color: var(--ink);
+}
+
+.npc-signout {
+  color: var(--red);
+}
+
+.npc-signout:hover {
+  background: #fdf0f0;
+  color: var(--red-dk);
+}

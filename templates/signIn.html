@@ -676,16 +676,13 @@
     })
     .then(response => response.json())
     .then(result => {
-        if (result.success) {
-            if (mode === 'register') {
-                alert(result.message);
-                switchTab('signin'); // Switch back to sign in after success
-            } else {
-                window.location.href = result.redirect;
-            }
-        } else {
-            alert("Error: " + result.error);
-        }
+        // NEW LOGIC
+      if (result.success) {
+          // Both login and register now just go to the homepage
+          window.location.href = result.redirect;
+      } else {
+          alert("Error: " + result.error);
+      }
     })
     .catch(err => {
         console.error("Auth Error:", err);

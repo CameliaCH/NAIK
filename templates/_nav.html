@@ -1,0 +1,91 @@
+{# ══════════════════════════════════════════════════════════
+   _nav.html — Shared navigation macro for all NAIK pages
+   Usage: {% from '_nav.html' import naik_nav %}
+          {{ naik_nav(active='home') }}
+   active values: 'home' | 'explore' | 'skills' | 'rights' |
+                  'hired' | 'forher' | 'roadmap'
+   ══════════════════════════════════════════════════════════ #}
+
+{% macro naik_nav(active='') %}
+<nav class="naik-nav">
+
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="{{ url_for('explore') }}" class="{{ 'nav-active' if active == 'explore' }}">🧭 Explore Careers</a></li>
+    <li><a href="{{ url_for('skills') }}"  class="{{ 'nav-active' if active == 'skills' }}">💪 Skill Up</a></li>
+    <li><a href="{{ url_for('home') }}#hired" class="{{ 'nav-active' if active == 'hired' }}">💼 Get Hired</a></li>
+    <li class="her-link"><a href="{{ url_for('home') }}#forher" class="{{ 'nav-active' if active == 'forher' }}">🌸 For Her</a></li>
+  </ul>
+
+  <div class="nav-ctas">
+    {% if session.get('user_id') %}
+      <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+      {# ── Logged-in: avatar + hover card ── #}
+      <div class="nav-avatar-wrap" id="nav-avatar-wrap">
+        <button class="nav-avatar-btn" id="nav-avatar-btn" aria-label="Your profile" aria-expanded="false">
+          <img
+            src="{{ session.get('avatar_url') or url_for('static', filename='images/default-avatar.svg') }}"
+            alt="{{ session.get('user_name', 'Profile') }}"
+            class="nav-avatar-img"
+            id="nav-avatar-img"
+            onerror="this.src='{{ url_for('static', filename='images/default-avatar.svg') }}'"
+          >
+        </button>
+
+        {# Hover / click dropdown #}
+        <div class="nav-profile-card" id="nav-profile-card" role="menu">
+          <div class="npc-header">
+            <img
+              src="{{ session.get('avatar_url') or url_for('static', filename='images/default-avatar.svg') }}"
+              alt=""
+              class="npc-avatar"
+              onerror="this.src='{{ url_for('static', filename='images/default-avatar.svg') }}'"
+            >
+            <div class="npc-info">
+              <span class="npc-name">{{ session.get('user_name', '') }}</span>
+              <span class="npc-headline">{{ session.get('headline', 'NAIK Member') }}</span>
+            </div>
+          </div>
+          <div class="npc-divider"></div>
+          <a href="{{ url_for('profile') }}" class="npc-link" role="menuitem">👤 View Profile</a>
+          <a href="{{ url_for('profile') }}#edit"  class="npc-link" role="menuitem">✏️ Edit Profile</a>
+          <div class="npc-divider"></div>
+          <a href="{{ url_for('auth_logout') }}" class="npc-link npc-signout" role="menuitem">🚪 Sign Out</a>
+        </div>
+      </div>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+      <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+    {% endif %}
+
+
+    <button class="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+</nav>
+
+{# ── MOBILE DRAWER ── #}
+<div class="mobile-nav" id="mobile-nav">
+  <a href="{{ url_for('home') }}">🏠 Home</a>
+  <a href="{{ url_for('explore') }}">🧭 Explore Careers</a>
+  <a href="{{ url_for('skills') }}">💪 Skill Up</a>
+  <a href="{{ url_for('home') }}#hired">💼 Get Hired</a>
+  <a href="{{ url_for('home') }}#forher" class="her">🌸 For Her</a>
+  {% if session.get('user_id') %}
+    <a href="{{ url_for('profile') }}">👤 My Profile</a>
+    <a href="{{ url_for('auth_logout') }}">🚪 Sign Out</a>
+  {% endif %}
+  <div class="mobile-ctas">
+    {% if not session.get('user_id') %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+  </div>
+</div>
+{% endmacro %}

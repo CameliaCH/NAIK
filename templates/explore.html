@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from '_nav.html' import naik_nav %}
 
 {% block title %}NAIK — Naikkan Taraf Hidup Anda{% endblock %}
 
@@ -17,17 +18,8 @@
 {% endblock %}
 
 {% block content %}
-<!-- NAV -->
-<nav class="naik-nav">
-  <a href="/" class="nav-logo">
-    <span class="wordmark">NAIK</span>
-    <span class="tagline">Naikkan Taraf Hidup Anda</span>
-  </a>
-  <div class="nav-ctas">
-    <a href="/signin" class="btn btn-outline">Sign In</a>
-    <a href="/donate" class="btn btn-primary">Donate ♡</a>
-  </div>
-</nav>
+
+{{ naik_nav(active='explore') }}   {# change active value per page #}
 
 <!-- PAGE HEADER + TABS -->
 <div class="page-header">
