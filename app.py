@@ -62,70 +62,54 @@ def donate():
 def signIn():
     return render_template("signIn.html")
 
-@app.route("/login", methods=["POST"])
-def login():
-    email = request.form.get("email")
-    password = request.form.get("password")
-
-    try:
-        # Sign in using Supabase Auth
-        res = supabase.auth.sign_in_with_password({
-            "email": email, 
-            "password": password
-        })
-        
-        # Store the user ID in the Flask session
-        session["user_id"] = res.users.id
-        flash("Successfully logged in!", "success")
-        return redirect(url_for("home"))
-        
-    except Exception as e:
-        flash(f"Login failed: {str(e)}", "danger")
-        return redirect(url_for("signIn"))
-
-
-@app.route("/auth/login", methods=["POST"])
-def auth_login():
-    data = request.json
-    try:
-        # Sign in using Supabase Auth
-        res = supabase.auth.sign_in_with_password({
-            "email": data['email'], 
-            "password": data['password']
-        })
-        
-        session["user_id"] = res.user.id 
-        return jsonify({"success": True, "redirect": url_for('home')})
-        
-    except Exception as e:
-        # Better error extraction for Supabase
-        error_msg = str(e)
-        return jsonify({"success": False, "error": error_msg}), 400
+from passlib.hash import argon2 # Ensure this is at the top
 
 @app.route("/auth/signup", methods=["POST"])
 def auth_signup():
     data = request.json
     try:
-        auth_res = supabase.auth.sign_up({
-            "email": data['email'],
-            "password": data['password']
-        })
+        # 1. Check if the email already exists
+        check = supabase.table("users").select("email").eq("email", data['email']).execute()
+        if check.data:
+            return jsonify({"success": False, "error": "Email already registered"}), 400
 
-        # FIX: Changed .users to .user
-        if auth_res.user:
-            user_id = auth_res.user.id
+        # 2. Hash the password before saving
+        hashed_pw = argon2.hash(data['password'])
+
+        # 3. Insert the data directly into your 'users' table
+        user_data = {
+            "email": data['email'],
+            "password_hash": hashed_pw,
+            "surname": data.get('surname'),
+            "name": data.get('name'),
+            "age": data.get('age'),
+            "gender": data.get('gender')
+        }
+        
+        supabase.table("users").insert(user_data).execute()
+        return jsonify({"success": True, "message": "Account created successfully!"})
             
-            profile_data = {
-                "id": user_id, 
-                "email": data['email'],
-                "surname": data.get('surname'),
-                "name": data.get('name'),
-                "age": data.get('age'),
-                "gender": data.get('gender')
-            }
-            
-            supabase.table("users").insert(profile_data).execute()
-            return jsonify({"success": True, "message": "Account and profile created!"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+
+@app.route("/auth/login", methods=["POST"])
+def auth_login():
+    data = request.json
+    try:
+        # 1. Look for the user by email
+        res = supabase.table("users").select("*").eq("email", data['email']).execute()
+        
+        if not res.data:
+            return jsonify({"success": False, "error": "User not found"}), 404
+        
+        user = res.data[0]
+
+        # 2. Verify the password provided matches the hash in the DB
+        if argon2.verify(data['password'], user['password_hash']):
+            session["user_id"] = user['id'] # Save their database ID
+            return jsonify({"success": True, "redirect": url_for('home')})
+        else:
+            return jsonify({"success": False, "error": "Incorrect password"}), 401
             
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 400
