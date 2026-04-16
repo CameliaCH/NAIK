@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from '_nav.html' import naik_nav %}
 {% block title %}Your Career Roadmap — NAIK{% endblock %}
 
 {% block head %}
@@ -7,22 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
 <style>
+/* alternate styling
 :root{--red:#BF4646;--teal:#7EACB5;--ink:#1A1A2E;--ink-mid:#6B6B80;--ink-lt:#9B9BAE;--cream:#FAF8F5;--peach:#FFF0E6;--border:#E8E3DD;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);min-height:100vh;}
-
-/* NAV */
-.naik-nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-.nav-logo{text-decoration:none;display:flex;flex-direction:column;}
-.wordmark{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);}
-.tagline{font-size:.6rem;color:var(--ink-lt);letter-spacing:.06em;text-transform:uppercase;}
-.nav-ctas{display:flex;gap:.75rem;align-items:center;}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:.5rem 1.1rem;border-radius:8px;font-size:.85rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
-.btn-primary{background:var(--red);color:#fff;}
-.btn-primary:hover{background:#a33b3b;}
-.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
-.btn-outline:hover{border-color:var(--teal);}
-
+*/
 /* LOADING */
 .loading-full{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;}
 .spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;}
@@ -175,22 +165,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);min-heig
 {% endblock %}
 
 {% block content %}
-<!-- NAV -->
-<nav class="naik-nav">
-  <a href="{{ url_for('home') }}" class="nav-logo">
-    <span class="wordmark">NAIK</span>
-    <span class="tagline">Naikkan Taraf Hidup Anda</span>
-  </a>
-  <div class="nav-ctas">
-    {% if session.get("user_id") %}
-      <span style="font-size:.85rem;color:var(--ink-mid);">👤 {{ session.get("user_name","") }}</span>
-      <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
-    {% else %}
-      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
-    {% endif %}
-    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
-  </div>
-</nav>
+{{ naik_nav(active='skills') }}
 
 <!-- HERO (populated by JS) -->
 <div class="roadmap-hero" id="roadmap-hero" style="display:none;">
