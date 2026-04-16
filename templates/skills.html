@@ -1,215 +1,282 @@
 {% extends "base.html" %}
-
 {% block title %}Skill Up — NAIK{% endblock %}
 
 {% block head %}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+<style>
+:root{--red:#BF4646;--teal:#7EACB5;--ink:#1A1A2E;--ink-mid:#6B6B80;--ink-lt:#9B9BAE;--cream:#FAF8F5;--peach:#FFF0E6;--border:#E8E3DD;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
+.naik-nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{text-decoration:none;display:flex;flex-direction:column;}
+.wordmark{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);}
+.tagline{font-size:.6rem;color:var(--ink-lt);letter-spacing:.06em;text-transform:uppercase;}
+.nav-ctas{display:flex;gap:.75rem;align-items:center;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.5rem 1.1rem;border-radius:8px;font-size:.85rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
+.btn-primary{background:var(--red);color:#fff;}
+.btn-primary:hover{background:#a33b3b;}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--teal);}
 
-    .skillup-hero {
-      background: var(--peach);
-      border-bottom: 1px solid var(--border);
-      padding: 4rem clamp(1.5rem,5vw,4rem) 3rem;
-      text-align: center;
-    }
-    .skillup-hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem,4vw,3rem);
-      color: var(--ink); margin-bottom: 0.75rem;
-    }
-    .skillup-hero h1 em { color: var(--red); font-style: normal; }
-    .skillup-hero p { font-size: 1.05rem; color: var(--ink-mid); max-width: 560px; margin: 0 auto; }
+/* ── FLOW BANNER ── */
+.flow-banner{background:#fff;border-bottom:1px solid var(--border);padding:.7rem clamp(1rem,4vw,3rem);overflow-x:auto;}
+.flow-steps{display:flex;gap:0;align-items:center;white-space:nowrap;max-width:700px;margin:0 auto;}
+.flow-step{display:flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;color:var(--ink-lt);}
+.flow-step.done{color:var(--teal);}
+.flow-step.active{color:var(--red);font-weight:800;}
+.fs-num{width:20px;height:20px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;flex-shrink:0;}
+.flow-step.done .fs-num{background:var(--teal);border-color:var(--teal);color:#fff;}
+.flow-step.active .fs-num{background:var(--red);border-color:var(--red);color:#fff;}
+.fa{color:var(--border);margin:0 .3rem;font-size:.85rem;}
 
-    .skillup-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(300px,100%), 1fr));
-      gap: 1.5rem;
-      padding: clamp(2rem,5vw,4rem) clamp(1.5rem,5vw,4rem);
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+/* ── HERO ── */
+.skill-hero{background:var(--ink);padding:3rem clamp(1.5rem,5vw,4rem) 2.5rem;text-align:center;position:relative;overflow:hidden;}
+.skill-hero svg{position:absolute;inset:0;opacity:.06;pointer-events:none;width:100%;height:100%;}
+.skill-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:.4rem;position:relative;}
+.skill-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);color:#fff;position:relative;margin-bottom:.4rem;}
+.skill-hero h1 em{color:var(--teal);font-style:normal;}
+.skill-hero p{color:rgba(255,255,255,.65);font-size:.88rem;position:relative;max-width:520px;margin:0 auto;}
 
-    .skill-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem 1.75rem;
-      display: flex; flex-direction: column;
-      transition: transform 0.2s, box-shadow 0.2s;
-      position: relative; overflow: hidden;
-      text-decoration: none;
-    }
-    .skill-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.09); }
-    .skill-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; }
-    .skill-card.red::before   { background: var(--red); }
-    .skill-card.teal::before  { background: var(--teal); }
-    .skill-card.rose::before  { background: var(--rose); }
-    .skill-card.amber::before { background: #e0a020; }
-    .skill-card.ink::before   { background: var(--ink-mid); }
+/* ── SECTION WRAP ── */
+.section-wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem 0;}
+.section-label{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:.75rem;display:block;}
 
-    .skill-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 1.25rem; flex-shrink: 0; }
-    .skill-icon.red   { background: #fdf0f0; }
-    .skill-icon.teal  { background: #eaf4f6; }
-    .skill-icon.rose  { background: var(--rose-lt); }
-    .skill-icon.amber { background: #fef6e4; }
-    .skill-icon.ink   { background: #f0ede8; }
+/* ── SAVED JOBS SECTION ── */
+.saved-jobs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem;}
+.saved-jobs-header .section-label{margin-bottom:0;}
+.saved-jobs-sub{font-size:.8rem;color:var(--ink-mid);margin-bottom:1rem;line-height:1.5;}
+.saved-scroll{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;margin-bottom:1.5rem;}
+.saved-scroll::-webkit-scrollbar{height:4px;}
+.saved-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
-    .skill-card h2 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; color: var(--ink); margin-bottom: 0.5rem; }
-    .skill-card p  { font-size: 0.88rem; color: var(--ink-lt); line-height: 1.65; margin-bottom: 1.5rem; flex: 1; }
+/* Saved job chip → clicking links to roadmap */
+.saved-job-chip{background:#fff;border:2px solid var(--border);border-radius:14px;padding:.9rem 1.1rem;min-width:190px;cursor:pointer;transition:all .18s;text-decoration:none;display:block;position:relative;}
+.saved-job-chip:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(0,0,0,.07);}
+.sjc-emoji{font-size:1.5rem;margin-bottom:.3rem;}
+.sjc-title{font-weight:700;font-size:.84rem;color:var(--ink);line-height:1.3;}
+.sjc-salary{font-size:.73rem;color:var(--teal);font-weight:600;margin-top:.2rem;}
+.sjc-cta{font-size:.72rem;color:var(--red);font-weight:700;margin-top:.45rem;display:flex;align-items:center;gap:.25rem;}
 
-    .skill-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 50px; margin-bottom: 1.25rem; width: fit-content; }
-    .skill-badge.live { background: #eaf6f0; color: #1a7a4a; }
-    .skill-badge.soon { background: var(--peach); color: var(--ink-mid); }
+/* Empty saved state */
+.no-saved{background:#fff;border:2px dashed var(--border);border-radius:14px;padding:2rem 1.5rem;text-align:center;color:var(--ink-lt);font-size:.85rem;}
+.no-saved .ns-icon{font-size:2rem;margin-bottom:.5rem;}
+.no-saved p{margin-bottom:.75rem;line-height:1.6;}
+.no-saved a{color:var(--red);font-weight:700;text-decoration:none;}
+.no-saved a:hover{text-decoration:underline;}
 
-    .skill-cta { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.88rem; font-weight: 700; color: var(--red); margin-top: auto; transition: gap 0.2s; }
-    .skill-card.teal  .skill-cta { color: var(--teal); }
-    .skill-card.rose  .skill-cta { color: var(--rose); }
-    .skill-card.amber .skill-cta { color: #b07d10; }
-    .skill-card.ink   .skill-cta { color: var(--ink-mid); }
-    .skill-card:hover .skill-cta { gap: 0.7rem; }
+/* Loading spinner */
+.mini-spin{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-row{display:flex;align-items:center;gap:.6rem;font-size:.85rem;color:var(--ink-mid);padding:.5rem 0 1rem;}
 
-    .skill-card.disabled { cursor: default; pointer-events: none; opacity: 0.7; }
-    .skill-card.disabled:hover { transform: none; box-shadow: none; }
+/* ── DIVIDER ── */
+.divider{border:none;border-top:1px solid var(--border);margin:2rem 0;}
 
-    .skillup-cta { background: var(--ink); color: #fff; text-align: center; padding: 3.5rem clamp(1.5rem,5vw,4rem); }
-    .skillup-cta h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem,3vw,2.2rem); color: #fff; margin-bottom: 0.75rem; }
-    .skillup-cta p { color: rgba(255,255,255,0.7); margin-bottom: 2rem; }
-  </style>
+/* ── TOOLS GRID ── */
+.tools-wrap{max-width:900px;margin:0 auto;padding:0 1.5rem 4rem;}
+.tools-header{margin-bottom:1.25rem;}
+.tools-header h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--ink);margin-bottom:.25rem;}
+.tools-header p{font-size:.84rem;color:var(--ink-mid);line-height:1.5;}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+
+.tool-card{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:1.5rem 1.25rem;text-decoration:none;display:block;transition:all .2s;}
+.tool-card:hover{border-color:var(--teal);box-shadow:0 6px 20px rgba(0,0,0,.07);transform:translateY(-2px);}
+.tool-icon{font-size:1.75rem;margin-bottom:.6rem;}
+.tool-title{font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:.3rem;}
+.tool-desc{font-size:.76rem;color:var(--ink-mid);line-height:1.5;}
+.tool-tag{display:inline-block;font-size:.66rem;font-weight:700;padding:.15rem .5rem;border-radius:50px;margin-top:.5rem;}
+.tag-free{background:rgba(126,172,181,.15);color:var(--teal);}
+.tag-ai{background:rgba(191,70,70,.08);color:var(--red);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:#fff;padding:.6rem 1.4rem;border-radius:50px;font-size:.82rem;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:400;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:600px){
+  .saved-jobs-header{flex-direction:column;align-items:flex-start;}
+  .tools-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
 {% endblock %}
 
 {% block content %}
-
-<!-- ── NAV ── -->
+<!-- NAV -->
 <nav class="naik-nav">
   <a href="{{ url_for('home') }}" class="nav-logo">
     <span class="wordmark">NAIK</span>
     <span class="tagline">Naikkan Taraf Hidup Anda</span>
   </a>
-  <ul class="nav-links">
-    <li><a href="{{ url_for('explore') }}">🧭 Explore Careers</a></li>
-    <li><a href="{{ url_for('skills') }}" style="color:var(--red); font-weight:700;">💪 Skill Up</a></li>
-    <li><a href="{{ url_for('know') }}">⚖️ Know Your Rights</a></li>
-    <li><a href="{{ url_for('explore') }}">💼 Get Hired</a></li>
-    <li class="her-link"><a href="{{ url_for('home') }}#forher-full">🌸 For Her</a></li>
-  </ul>
   <div class="nav-ctas">
-    {% if session.get("user_name") %}
-      <span style="font-size:0.85rem; color:var(--ink-mid);">👤 {{ session["user_name"] }}</span>
+    {% if session.get("user_id") %}
+      <span style="font-size:.85rem;color:var(--ink-mid);">👤 {{ session.get("user_name","") }}</span>
       <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
     {% else %}
       <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
     {% endif %}
     <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
-    <button class="hamburger" aria-label="Open menu"
-            onclick="document.querySelector('.mobile-nav').classList.toggle('open')">
-      <span></span><span></span><span></span>
-    </button>
   </div>
 </nav>
 
-<!-- Mobile drawer -->
-<div class="mobile-nav">
-  <a href="{{ url_for('home') }}">🏠 Home</a>
-  <a href="{{ url_for('explore') }}">🧭 Explore Careers</a>
-  <a href="{{ url_for('skills') }}">💪 Skill Up</a>
-  <a href="{{ url_for('know') }}">⚖️ Know Your Rights</a>
-  <a href="{{ url_for('explore') }}">💼 Get Hired</a>
-  <div class="mobile-ctas">
-    {% if session.get("user_name") %}
-      <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
-    {% else %}
-      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
-    {% endif %}
-    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+<!-- FLOW BANNER -->
+<div class="flow-banner">
+  <div class="flow-steps">
+    <div class="flow-step done"><div class="fs-num">✓</div> Sign In</div>
+    <span class="fa">→</span>
+    <div class="flow-step done"><div class="fs-num">✓</div> Career Quiz</div>
+    <span class="fa">→</span>
+    <div class="flow-step done"><div class="fs-num">✓</div> See Your Jobs</div>
+    <span class="fa">→</span>
+    <div class="flow-step done"><div class="fs-num">✓</div> Save Favourites</div>
+    <span class="fa">→</span>
+    <div class="flow-step active"><div class="fs-num">5</div> Skill Up &amp; Apply</div>
   </div>
 </div>
 
-
-<!-- ── HERO ── -->
-<div class="skillup-hero">
-  <span class="section-label">Skill Up</span>
-  <h1>Turn Your Experience<br>Into <em>Opportunity</em></h1>
-  <p>Free AI-powered tools to build your CV, practise interviews, and present yourself professionally — even with no formal work history.</p>
+<!-- HERO -->
+<div class="skill-hero">
+  <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <circle cx="800" cy="50" r="160" fill="none" stroke="#7EACB5" stroke-width="1"/>
+    <circle cx="100" cy="160" r="120" fill="none" stroke="#BF4646" stroke-width=".8"/>
+    <circle cx="450" cy="100" r="240" fill="none" stroke="#EDDCC6" stroke-width="1.5"/>
+  </svg>
+  <span class="skill-eyebrow">💪 Skill Up &amp; Apply</span>
+  <h1>Your Roadmaps &amp; <em>Tools</em></h1>
+  <p>Click any saved job to see your step-by-step career roadmap, then use our free tools to prepare and apply with confidence.</p>
 </div>
 
 
-<!-- ── 5 FEATURE CARDS ── -->
-<div class="skillup-grid">
+<!-- ══ SAVED JOBS SECTION ══ -->
+<div class="section-wrap">
+  <div class="saved-jobs-header">
+    <span class="section-label">📋 Your Saved Jobs — Click to View Roadmap</span>
+    <a href="{{ url_for('recommendations') }}" style="font-size:.78rem;color:var(--teal);font-weight:700;text-decoration:none;">+ Add more jobs</a>
+  </div>
+  <p class="saved-jobs-sub">Each saved job has a personalised career roadmap — real steps, free courses, and salary targets built around <em>your</em> quiz answers.</p>
 
-  <!-- 1. Mock Interview — LIVE -->
-  <a href="/interview/" class="skill-card teal">
-    <div class="skill-icon teal">🎤</div>
-    <span class="skill-badge live">● Live</span>
-    <h2>Mock Interview</h2>
-    <p>Practise answering real interview questions with an AI interviewer. Speak naturally in English, Bahasa Melayu, or Mandarin — it adapts to you. Voice-only, low data usage.</p>
-    <span class="skill-cta">Start practising →</span>
-  </a>
-
-  <!-- 2. AI CV Translator — COMING SOON -->
-  <a href="{{ url_for('cv_translator') }}" class="skill-card red">
-    <div class="skill-icon red">✨</div>
-    <span class="skill-badge live">● Live</span>
-    <h2>AI CV Translator</h2>
-    <p>Tell the AI what you do in everyday language — "I help at my aunt's stall on weekends" — and it rewrites it into professional CV language that impresses employers.</p>
-    <span class="skill-cta">Try it out →</span>
-  </a>
-
-  <!-- 3. CV Builder — COMING SOON -->
-  <div class="skill-card amber disabled">
-    <div class="skill-icon amber">📄</div>
-    <span class="skill-badge soon">Coming soon</span>
-    <h2>CV Builder</h2>
-    <p>Fill in a simple form and download a clean, professional CV as a PDF — no Word, no design skills needed. Includes example CVs for common Malaysian jobs.</p>
-    <span class="skill-cta">Coming soon</span>
+  <div id="saved-jobs-loading" class="loading-row">
+    <div class="mini-spin"></div>
+    <span>Loading your saved jobs…</span>
   </div>
 
-  <!-- 4. WhatsApp Templates — COMING SOON -->
-  <div class="skill-card rose disabled">
-    <div class="skill-icon rose">💬</div>
-    <span class="skill-badge soon">Coming soon</span>
-    <h2>WhatsApp Templates</h2>
-    <p>Ready-made messages for texting a potential employer for the first time, following up after an interview, or politely declining a job offer.</p>
-    <span class="skill-cta">Coming soon</span>
+  <div class="saved-scroll" id="saved-scroll" style="display:none;"></div>
+  <div id="no-saved-msg" style="display:none;">
+    <div class="no-saved">
+      <div class="ns-icon">📋</div>
+      <p>You haven't saved any jobs yet.<br>Save jobs from your recommendations or explore page — they'll show up here with full career roadmaps.</p>
+      <a href="{{ url_for('recommendations') }}">See My Recommended Jobs →</a>
+      &nbsp;&nbsp;or&nbsp;&nbsp;
+      <a href="{{ url_for('explore') }}">Browse All Jobs →</a>
+    </div>
   </div>
-
-  <!-- 5. Portfolio Builder — COMING SOON -->
-  <div class="skill-card ink disabled">
-    <div class="skill-icon ink">🗂️</div>
-    <span class="skill-badge soon">Coming soon</span>
-    <h2>Portfolio Builder</h2>
-    <p>Create a simple one-page online portfolio you can share as a link — perfect for gig work, freelancing, or showing off your skills without a formal resume.</p>
-    <span class="skill-cta">Coming soon</span>
-  </div>
-
 </div>
 
+<hr class="divider" style="max-width:900px;margin:2rem auto;">
 
-<!-- ── BOTTOM CTA ── -->
-<div class="skillup-cta">
-  <h2>Ready to practise?</h2>
-  <p>The Mock Interview is live now — start a session in under 30 seconds.</p>
-  <a href="/interview/" class="btn btn-primary btn-lg">🎤 Start Mock Interview</a>
+<!-- ══ TOOLS SECTION ══ -->
+<div class="tools-wrap">
+  <div class="tools-header">
+    <h2>Free Tools to Get You Hired</h2>
+    <p>Use these tools to build your CV, practise for interviews, and apply with confidence — all free, all in one place.</p>
+  </div>
+
+  <div class="tools-grid">
+
+    <a href="{{ url_for('interview') }}" class="tool-card">
+      <div class="tool-icon">🎙️</div>
+      <div class="tool-title">AI Mock Interview</div>
+      <div class="tool-desc">Practise interview questions in English, Bahasa Melayu, or Mandarin. Get instant feedback. No camera needed.</div>
+      <span class="tool-tag tag-ai">🤖 AI-Powered</span>
+      <span class="tool-tag tag-free">Free</span>
+    </a>
+
+    <a href="{{ url_for('cv_translator') }}" class="tool-card">
+      <div class="tool-icon">📝</div>
+      <div class="tool-title">CV Translator</div>
+      <div class="tool-desc">Turn everyday experience into professional CV language. "Jual nasi lemak" → "Customer service &amp; food operations".</div>
+      <span class="tool-tag tag-ai">🤖 AI-Powered</span>
+      <span class="tool-tag tag-free">Free</span>
+    </a>
+
+    <a href="#cv-builder" class="tool-card">
+      <div class="tool-icon">📄</div>
+      <div class="tool-title">CV Builder</div>
+      <div class="tool-desc">Build a professional CV in 15 minutes with a live preview. Download as PDF, ready to send.</div>
+      <span class="tool-tag tag-free">Free</span>
+      <span class="tool-tag" style="background:#f5f0ea;color:var(--ink-lt);">Coming Soon</span>
+    </a>
+
+    <a href="#resources" class="tool-card">
+      <div class="tool-icon">📚</div>
+      <div class="tool-title">General Resources</div>
+      <div class="tool-desc">WhatsApp templates to follow up on applications, job-hunt checklists, and know-your-rights guides.</div>
+      <span class="tool-tag tag-free">Free</span>
+    </a>
+
+  </div>
 </div>
 
+<div class="toast" id="toast"></div>
 {% endblock %}
-
 
 {% block scripts %}
 <script>
-  const hamburger = document.querySelector('.hamburger');
-  const mobileNav = document.querySelector('.mobile-nav');
-  if (hamburger && mobileNav) {
-    document.addEventListener('click', e => {
-      if (!mobileNav.contains(e.target) && !hamburger.contains(e.target))
-        mobileNav.classList.remove('open');
+// ════════════════════════════════════════════════════════
+//  Load saved jobs from API, render chips linking to roadmap
+// ════════════════════════════════════════════════════════
+
+async function loadSavedJobs() {
+  const loadingEl = document.getElementById('saved-jobs-loading');
+  const scrollEl  = document.getElementById('saved-scroll');
+  const noSavedEl = document.getElementById('no-saved-msg');
+
+  {% if not session.get('user_id') %}
+    loadingEl.style.display = 'none';
+    noSavedEl.style.display = 'block';
+    noSavedEl.querySelector('.no-saved p').textContent =
+      'Sign in to save jobs and see your personalised career roadmaps here.';
+    noSavedEl.querySelector('.no-saved').innerHTML = `
+      <div class="ns-icon">🔒</div>
+      <p>Sign in to save jobs and see your personalised career roadmaps here.</p>
+      <a href="{{ url_for('signIn') }}">Sign In or Create Account →</a>
+    `;
+    return;
+  {% endif %}
+
+  try {
+    const res  = await fetch('/api/jobs/saved');
+    const data = await res.json();
+    loadingEl.style.display = 'none';
+
+    if (!data.jobs || !data.jobs.length) {
+      noSavedEl.style.display = 'block';
+      return;
+    }
+
+    scrollEl.style.display = 'flex';
+    data.jobs.forEach(job => {
+      if (!job) return;
+      const chip = document.createElement('a');
+      chip.href = `/roadmap/view?job=${job.id}`;
+      chip.className = 'saved-job-chip';
+      chip.innerHTML = `
+        <div class="sjc-emoji">${job.emoji || '💼'}</div>
+        <div class="sjc-title">${job.title_en || 'Saved Job'}</div>
+        <div class="sjc-salary">${job.target_salary_min ? 'Up to RM' + job.target_salary_max?.toLocaleString() + '/month' : ''}</div>
+        <div class="sjc-cta">🗺 View Career Roadmap →</div>
+      `;
+      scrollEl.appendChild(chip);
     });
-    mobileNav.querySelectorAll('a').forEach(a =>
-      a.addEventListener('click', () => mobileNav.classList.remove('open'))
-    );
+
+  } catch (err) {
+    loadingEl.style.display = 'none';
+    noSavedEl.style.display = 'block';
+    console.error('Error loading saved jobs:', err);
   }
+}
+
+document.addEventListener('DOMContentLoaded', loadSavedJobs);
 </script>
 {% endblock %}

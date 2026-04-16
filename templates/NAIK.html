@@ -154,33 +154,94 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     HOW TO USE — 3 STEPS
-     naik.css → .steps, .step, .step-num
-     ══════════════════════════════════════════════════════════ -->
-<section style="background:var(--cream);">
-  <div class="section-header center">
+
+<style>
+/* ── 6-STEP FLOW ─────────────────────────────────────── */
+.flow-section { background: var(--cream); padding: 4rem clamp(1.5rem, 5vw, 4rem); }
+.flow-section .section-header { text-align: center; margin-bottom: 2.5rem; }
+.flow-section .section-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 3vw, 2.2rem); color: var(--ink); margin-bottom: .5rem; }
+.flow-section .section-header p { font-size: .92rem; color: var(--ink-mid); max-width: 520px; margin: 0 auto; }
+
+.flow-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; max-width: 1000px; margin: 0 auto 2.5rem; }
+.flow-card { background: #fff; border: 1.5px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; transition: border-color .2s, box-shadow .2s; }
+.flow-card:hover { border-color: var(--teal); box-shadow: 0 6px 20px rgba(0,0,0,.06); }
+.flow-card.active-step { border-color: var(--red); }
+.flow-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; margin-bottom: .75rem; background: var(--ink-lt); flex-shrink: 0; }
+.flow-card.active-step .flow-num { background: var(--red); }
+.flow-card h3 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--ink); margin-bottom: .35rem; }
+.flow-card p { font-size: .8rem; color: var(--ink-mid); line-height: 1.55; margin-bottom: .75rem; }
+.flow-card-cta { font-size: .78rem; font-weight: 700; color: var(--teal); text-decoration: none; display: inline-flex; align-items: center; gap: .25rem; }
+.flow-card-cta:hover { color: var(--red); }
+.flow-card .step-badge { position: absolute; top: 1rem; right: 1rem; font-size: .62rem; font-weight: 700; padding: .15rem .5rem; border-radius: 50px; background: var(--peach); color: var(--red); border: 1px solid #f0d9c4; }
+
+/* Connector arrow between cards (desktop) */
+.flow-connector { display: none; }
+@media (min-width: 900px) {
+  .flow-connector { display: flex; align-items: center; justify-content: center; color: var(--border); font-size: 1.1rem; }
+}
+
+/* CTA row below cards */
+.flow-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-lg { padding: .8rem 1.75rem; font-size: 1rem; }
+</style>
+
+<section class="flow-section">
+  <div class="section-header">
     <span class="section-label">Getting Started</span>
-    <h2>Be Job-Ready in 3 Steps</h2>
-    <p>You don't need experience, a laptop, or a lot of time. Just a phone and 15 minutes.</p>
+    <h2>Be Job-Ready in 6 Simple Steps</h2>
+    <p>You don't need a laptop or lots of time — just a phone and 15 minutes to start. Each step moves you closer to a better income.</p>
   </div>
 
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Take the Quiz</h3>
-      <p>Answer 10 quick questions about your life, skills, and goals. NAIK instantly shows you the jobs and pathways that fit <em>you</em>.</p>
+  <div class="flow-cards">
+
+    <div class="flow-card">
+      <div class="flow-num">1</div>
+      <span class="step-badge">Start here</span>
+      <h3>Create an Account</h3>
+      <p>Sign up free in 60 seconds. Your profile saves your progress so everything on NAIK is personalised to you.</p>
+      <a href="{{ url_for('signIn') }}#register" class="flow-card-cta">Sign Up Free →</a>
     </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>Build Your Profile</h3>
-      <p>Let AI translate your everyday experience into a professional CV and prepare for interviews with our voice-only mock interview tool.</p>
+
+    <div class="flow-card active-step">
+      <div class="flow-num">2</div>
+      <h3>Take the Career Quiz</h3>
+      <p>5 quick questions about your interests, skills, and income goal. Takes under 3 minutes. Your answers drive everything.</p>
+      <a href="{{ url_for('quiz') }}" class="flow-card-cta">Take the Quiz →</a>
     </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>Apply with Confidence</h3>
-      <p>Use our ready-made WhatsApp message templates, know your rights, and apply to curated job listings — all from NAIK.</p>
+
+    <div class="flow-card">
+      <div class="flow-num">3</div>
+      <h3>See Your Top 3 Jobs</h3>
+      <p>NAIK instantly shows the 3 jobs best matched to your quiz answers, with salary ranges and a personalised "why it fits you" explanation.</p>
+      <a href="{{ url_for('recommendations') }}" class="flow-card-cta">See Recommendations →</a>
     </div>
+
+    <div class="flow-card">
+      <div class="flow-num">4</div>
+      <h3>Save Your Favourites</h3>
+      <p>Heart any job to save it — from your recommendations or the explore page. Saved jobs unlock your personalised career roadmap.</p>
+      <a href="{{ url_for('explore') }}" class="flow-card-cta">Browse All Jobs →</a>
+    </div>
+
+    <div class="flow-card">
+      <div class="flow-num">5</div>
+      <h3>Get Your Career Roadmap</h3>
+      <p>Each saved job comes with a step-by-step roadmap: where to apply today, free courses to take, and how to reach your salary target.</p>
+      <a href="{{ url_for('skills') }}" class="flow-card-cta">View Saved Jobs →</a>
+    </div>
+
+    <div class="flow-card">
+      <div class="flow-num">6</div>
+      <h3>Skill Up &amp; Apply</h3>
+      <p>Use the AI Mock Interview, CV Translator, and CV Builder to walk into any interview with confidence — all free, no laptop needed.</p>
+      <a href="{{ url_for('skills') }}" class="flow-card-cta">Go to Skill Up →</a>
+    </div>
+
+  </div>
+
+  <div class="flow-ctas">
+    <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-lg">✨ Start — Take the Quiz</a>
+    <a href="{{ url_for('explore') }}" class="btn btn-outline btn-lg">🧭 Browse All Jobs</a>
   </div>
 </section>
 

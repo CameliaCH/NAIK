@@ -1,0 +1,570 @@
+{% extends "base.html" %}
+{% block title %}Your Career Roadmap — NAIK{% endblock %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+<style>
+:root{--red:#BF4646;--teal:#7EACB5;--ink:#1A1A2E;--ink-mid:#6B6B80;--ink-lt:#9B9BAE;--cream:#FAF8F5;--peach:#FFF0E6;--border:#E8E3DD;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);min-height:100vh;}
+
+/* NAV */
+.naik-nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{text-decoration:none;display:flex;flex-direction:column;}
+.wordmark{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);}
+.tagline{font-size:.6rem;color:var(--ink-lt);letter-spacing:.06em;text-transform:uppercase;}
+.nav-ctas{display:flex;gap:.75rem;align-items:center;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.5rem 1.1rem;border-radius:8px;font-size:.85rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
+.btn-primary{background:var(--red);color:#fff;}
+.btn-primary:hover{background:#a33b3b;}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--teal);}
+
+/* LOADING */
+.loading-full{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;}
+.spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-full p{color:var(--ink-mid);font-size:.9rem;}
+
+/* HERO STRIP */
+.roadmap-hero{background:var(--ink);padding:2rem clamp(1.5rem,5vw,4rem);position:relative;overflow:hidden;}
+.roadmap-hero svg{position:absolute;inset:0;opacity:.05;pointer-events:none;width:100%;height:100%;}
+.rh-inner{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+.rh-breadcrumb{font-size:.72rem;color:rgba(255,255,255,.5);margin-bottom:.5rem;}
+.rh-breadcrumb a{color:var(--teal);text-decoration:none;}
+.rh-title{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,2rem);color:#fff;margin-bottom:.3rem;}
+.rh-subtitle{font-size:.88rem;color:rgba(255,255,255,.6);}
+.rh-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem;}
+.rh-pill{font-size:.72rem;font-weight:700;padding:.2rem .7rem;border-radius:50px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);}
+.rh-pill.green{background:rgba(126,172,181,.25);color:var(--teal);}
+.rh-pill.red{background:rgba(191,70,70,.25);color:#ff8888;}
+
+/* MAIN WRAP */
+.roadmap-wrap{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+
+/* SECTION LABEL */
+.sect-label{font-size:.65rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:.75rem;display:block;margin-top:2rem;}
+
+/* JOB OVERVIEW CARD */
+.job-overview{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:1.5rem;margin-bottom:1.5rem;}
+.jo-top{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1rem;}
+.jo-emoji{font-size:2.2rem;width:54px;height:54px;background:var(--peach);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.jo-info h2{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--ink);}
+.jo-info p{font-size:.82rem;color:var(--ink-mid);margin-top:.25rem;line-height:1.5;}
+.jo-salary-row{display:flex;gap:.75rem;flex-wrap:wrap;padding-top:1rem;border-top:1px solid var(--border);}
+.jo-salary{display:flex;flex-direction:column;gap:.15rem;}
+.jo-salary span:first-child{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-lt);}
+.jo-salary span:last-child{font-size:.92rem;font-weight:700;color:var(--ink);}
+.jo-salary.target span:last-child{color:var(--teal);}
+
+/* WHY IT FITS */
+.why-fit-section{background:var(--peach);border-radius:14px;padding:1.25rem;margin-bottom:1.5rem;}
+.wfs-label{font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:.75rem;}
+.wfs-text{font-size:.86rem;color:var(--ink-mid);line-height:1.65;margin-bottom:.85rem;}
+.wfs-pills{display:flex;flex-wrap:wrap;gap:.4rem;}
+.wfs-pill{font-size:.75rem;font-weight:600;padding:.25rem .7rem;border-radius:50px;background:#fff;color:var(--ink-mid);border:1px solid var(--border);}
+.wfs-pill::before{content:"✓ ";}
+
+/* INCOME LADDER */
+.ladder-list{display:flex;flex-direction:column;gap:0;}
+.ladder-item{display:flex;gap:1rem;align-items:flex-start;position:relative;}
+.ladder-item::before{content:'';position:absolute;left:10px;top:22px;bottom:-20px;width:2px;background:var(--border);}
+.ladder-item:last-child::before{display:none;}
+.ladder-dot{width:22px;height:22px;border-radius:50%;border:2.5px solid var(--border);background:#fff;flex-shrink:0;margin-top:4px;z-index:1;}
+.ladder-dot.now{background:var(--red);border-color:var(--red);}
+.ladder-dot.future{background:#fff;border-color:var(--teal);}
+.ladder-body{flex:1;padding-bottom:1.5rem;}
+.ladder-stage{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-lt);}
+.ladder-role{font-size:.9rem;font-weight:700;color:var(--ink);margin:.1rem 0;}
+.ladder-income{font-size:.82rem;font-weight:700;color:var(--teal);}
+.ladder-tip{font-size:.76rem;color:var(--ink-mid);margin-top:.2rem;line-height:1.4;}
+
+/* PHASE CARDS */
+.phase-list{display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem;}
+.phase-card{background:#fff;border:1.5px solid var(--border);border-radius:16px;overflow:hidden;}
+.phase-card.open .phase-body{display:block;}
+.phase-header{display:flex;align-items:center;gap:.85rem;padding:1.1rem 1.25rem;cursor:pointer;user-select:none;}
+.phase-header:hover{background:rgba(0,0,0,.015);}
+.ph-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;color:#fff;flex-shrink:0;}
+.p1{background:var(--red);}
+.p2{background:var(--teal);}
+.p3{background:#4a8f5a;}
+.ph-info{flex:1;}
+.ph-title{font-size:.9rem;font-weight:700;color:var(--ink);}
+.ph-meta{font-size:.73rem;color:var(--ink-lt);margin-top:.1rem;}
+.ph-chevron{color:var(--ink-lt);transition:transform .2s;font-size:.75rem;}
+.phase-card.open .ph-chevron{transform:rotate(180deg);}
+.phase-body{display:none;padding:0 1.25rem 1.25rem;border-top:1px solid var(--border);}
+.phase-step-label{font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red);padding:1rem 0 .5rem;}
+
+/* TASKS */
+.task-list{display:flex;flex-direction:column;gap:.85rem;margin-bottom:1rem;}
+.task-item{display:flex;gap:.75rem;align-items:flex-start;}
+.task-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:.45rem;}
+.task-title{font-size:.84rem;font-weight:700;color:var(--ink);display:block;margin-bottom:.2rem;}
+.task-detail{font-size:.8rem;color:var(--ink-mid);line-height:1.55;display:block;}
+
+/* TIMELINE ROWS */
+.timeline-row{display:flex;gap:.5rem;margin-bottom:.3rem;font-size:.79rem;line-height:1.5;}
+.tl-label{font-weight:700;color:var(--red);white-space:nowrap;min-width:90px;}
+.tl-body{color:var(--ink-mid);}
+
+/* COURSES */
+.courses-section{margin-top:1rem;}
+.courses-label{font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:.75rem;}
+.course-item{display:flex;align-items:center;gap:.75rem;padding:.85rem;background:var(--cream);border:1px solid var(--border);border-radius:12px;text-decoration:none;margin-bottom:.5rem;transition:border-color .2s;}
+.course-item:hover{border-color:var(--teal);}
+.course-icon{font-size:1.25rem;flex-shrink:0;}
+.course-info{flex:1;}
+.course-name{font-size:.82rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:.4rem;}
+.course-badge{font-size:.6rem;font-weight:800;padding:.1rem .45rem;border-radius:50px;background:rgba(126,172,181,.15);color:var(--teal);letter-spacing:.04em;}
+.course-meta{font-size:.72rem;color:var(--ink-lt);margin-top:.1rem;display:block;}
+.course-arrow{color:var(--ink-lt);font-size:.8rem;}
+
+/* JOBSTREET LISTINGS */
+.jobs-section{margin-top:1rem;}
+.jobs-label{font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:.75rem;}
+.jobs-grid{display:flex;flex-direction:column;gap:.5rem;}
+.job-listing{display:flex;align-items:center;gap:.75rem;padding:.85rem;background:var(--cream);border:1px solid var(--border);border-radius:12px;text-decoration:none;transition:border-color .2s;}
+.job-listing:hover{border-color:var(--red);}
+.jl-logo{width:38px;height:38px;border-radius:8px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;overflow:hidden;}
+.jl-logo img{width:100%;height:100%;object-fit:cover;border-radius:7px;}
+.jl-info{flex:1;min-width:0;}
+.jl-title{font-size:.82rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.jl-company{font-size:.72rem;color:var(--ink-mid);margin-top:.1rem;}
+.jl-salary{font-size:.72rem;font-weight:600;color:var(--teal);white-space:nowrap;}
+.jl-arrow{color:var(--ink-lt);font-size:.78rem;}
+.mini-spin{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+.jobs-loading{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--ink-mid);padding:.5rem 0;}
+.jobs-note{font-size:.72rem;color:var(--ink-lt);margin-top:.5rem;line-height:1.5;}
+.jobstreet-cta{display:flex;align-items:center;gap:.5rem;background:#1a1a2e;color:#fff;padding:.8rem 1.1rem;border-radius:12px;text-decoration:none;font-size:.82rem;font-weight:700;margin-top:.75rem;transition:background .2s;}
+.jobstreet-cta:hover{background:#2a2a4e;}
+
+/* SKILLS UP CTA */
+.skills-up-cta{background:var(--ink);color:#fff;padding:1.5rem;border-radius:16px;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;}
+.suc-text{flex:1;}
+.suc-text p{font-size:.82rem;color:rgba(255,255,255,.7);margin-top:.25rem;}
+.suc-text strong{font-size:.95rem;color:#fff;}
+.suc-btn{background:var(--teal);color:#fff;padding:.65rem 1.2rem;border-radius:10px;text-decoration:none;font-size:.84rem;font-weight:700;white-space:nowrap;transition:background .2s;}
+.suc-btn:hover{background:#6a9aa3;}
+
+/* TIP BOX */
+.tip-box{background:rgba(126,172,181,.1);border-left:3px solid var(--teal);padding:.75rem 1rem;border-radius:0 8px 8px 0;font-size:.8rem;color:var(--ink-mid);line-height:1.55;margin-top:.75rem;}
+.tip-box strong{color:var(--teal);}
+
+/* MOTIVATION */
+.motivation-card{background:var(--ink);color:#fff;border-radius:16px;padding:1.5rem;margin-top:1.5rem;text-align:center;}
+.motivation-card p{font-family:'Playfair Display',serif;font-size:1.05rem;color:rgba(255,255,255,.85);font-style:italic;line-height:1.6;}
+
+/* ERROR */
+.error-wrap{max-width:460px;margin:4rem auto;text-align:center;padding:0 1.25rem;}
+.error-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:2.5rem 2rem;}
+.error-icon{font-size:2.5rem;margin-bottom:1rem;}
+.error-card h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--ink);margin-bottom:.5rem;}
+.error-card p{font-size:.88rem;color:var(--ink-mid);line-height:1.6;margin-bottom:1.25rem;}
+
+@media(max-width:600px){
+  .jo-top{flex-direction:column;}
+  .rh-pills{gap:.35rem;}
+  .skills-up-cta{flex-direction:column;text-align:center;}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- NAV -->
+<nav class="naik-nav">
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+  <div class="nav-ctas">
+    {% if session.get("user_id") %}
+      <span style="font-size:.85rem;color:var(--ink-mid);">👤 {{ session.get("user_name","") }}</span>
+      <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+  </div>
+</nav>
+
+<!-- HERO (populated by JS) -->
+<div class="roadmap-hero" id="roadmap-hero" style="display:none;">
+  <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <circle cx="800" cy="50" r="160" fill="none" stroke="#7EACB5" stroke-width="1"/>
+    <circle cx="100" cy="160" r="120" fill="none" stroke="#BF4646" stroke-width=".8"/>
+  </svg>
+  <div class="rh-inner">
+    <div class="rh-breadcrumb"><a href="{{ url_for('skills') }}">← Back to Skill Up</a></div>
+    <div class="rh-title" id="hero-title">Your Career Roadmap</div>
+    <div class="rh-subtitle" id="hero-subtitle"></div>
+    <div class="rh-pills" id="hero-pills"></div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-full" id="loading-state">
+  <div class="spinner"></div>
+  <p>Building your personalised roadmap…</p>
+</div>
+
+<!-- ERROR -->
+<div class="error-wrap" id="error-state" style="display:none;">
+  <div class="error-card">
+    <div class="error-icon">😕</div>
+    <h2>Couldn't load roadmap</h2>
+    <p id="error-msg">Something went wrong. Please try again.</p>
+    <a href="{{ url_for('skills') }}" class="btn btn-primary" style="width:100%;justify-content:center;">← Back to Skill Up</a>
+  </div>
+</div>
+
+<!-- ROADMAP CONTENT -->
+<div class="roadmap-wrap" id="roadmap-content" style="display:none;"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ═══════════════════════════════════════════════════════════
+//  NAIK — Roadmap View Page
+//  Loads a specific job's roadmap via /api/generate-roadmap
+//  Fetches live Jobstreet listings for the apply step
+// ═══════════════════════════════════════════════════════════
+
+const jobId = new URLSearchParams(location.search).get('job');
+const lang  = 'en';
+
+// ── INIT ────────────────────────────────────────────────────
+async function initRoadmap() {
+  if (!jobId) {
+    showError('No job ID provided. Please go back and select a job.');
+    return;
+  }
+
+  try {
+    const res  = await fetch('/api/generate-roadmap', {
+      method:  'POST',
+      headers: {'Content-Type': 'application/json'},
+      body:    JSON.stringify({ job_id: jobId, lang }),
+    });
+    const data = await res.json();
+
+    document.getElementById('loading-state').style.display = 'none';
+
+    if (!res.ok || data.error) { showError(data.error || 'Failed to load roadmap.'); return; }
+    if (!data.careerPaths?.length) { showError('No roadmap found for this job.'); return; }
+
+    renderRoadmap(data.careerPaths[0]);
+  } catch (err) {
+    showError('Connection error. Please check your internet and try again.');
+    console.error(err);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('error-msg').textContent = msg;
+  document.getElementById('error-state').style.display = 'block';
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function renderRoadmap(path) {
+  // Populate hero
+  document.getElementById('hero-title').textContent = `${path.emoji || '🎯'} ${path.targetJob}`;
+  document.getElementById('hero-subtitle').textContent = path.tagline || '';
+  const pillsEl = document.getElementById('hero-pills');
+  pillsEl.innerHTML = `
+    <span class="rh-pill green">Start: ${path.entrySalary}</span>
+    <span class="rh-pill red">Target: ${path.targetSalary}</span>
+    <span class="rh-pill">⏱ ${path.timeline}</span>
+    <span class="rh-pill">★ ${path.safetyRating}</span>
+  `;
+  document.getElementById('roadmap-hero').style.display = 'block';
+
+  const wrap = document.getElementById('roadmap-content');
+  wrap.style.display = 'block';
+
+  let html = '';
+
+  // ─ Skill Up CTA ─
+  html += `<div class="skills-up-cta">
+    <div class="suc-text">
+      <strong>💪 Skill Up tools are available</strong>
+      <p>Use our free AI mock interview, CV translator, and more to prepare for this role.</p>
+    </div>
+    <a href="/skills" class="suc-btn">Go to Skill Up →</a>
+  </div>`;
+
+  // ─ Job Overview ─
+  html += `<span class="sect-label">🎯 Your Target Role</span>
+  <div class="job-overview">
+    <div class="jo-top">
+      <div class="jo-emoji">${path.emoji || '💼'}</div>
+      <div class="jo-info">
+        <h2>${path.targetJob}</h2>
+        <p>${path.tagline || ''}</p>
+      </div>
+    </div>
+    <div class="jo-salary-row">
+      <div class="jo-salary">
+        <span>Entry salary</span>
+        <span>${path.entrySalary}</span>
+      </div>
+      <div style="color:var(--ink-lt);font-size:1.2rem;align-self:center;">→</div>
+      <div class="jo-salary target">
+        <span>Target salary</span>
+        <span>${path.targetSalary}</span>
+      </div>
+      <div class="jo-salary">
+        <span>Timeline</span>
+        <span>${path.timeline}</span>
+      </div>
+    </div>
+  </div>`;
+
+  // ─ Why it fits you ─
+  const whyTags = path.whyFitTags || [];
+  const whyText = path.whyFit || '';
+  if (whyText || whyTags.length) {
+    html += `<span class="sect-label">✨ Why It Fits You</span>
+    <div class="why-fit-section">
+      <div class="wfs-label">Personalised for your quiz results</div>
+      ${whyText ? `<div class="wfs-text">${whyText}</div>` : ''}
+      ${whyTags.length ? `<div class="wfs-pills">${whyTags.map(t=>`<span class="wfs-pill">${t}</span>`).join('')}</div>` : ''}
+    </div>`;
+  }
+
+  // ─ Income Ladder ─
+  const ladder = path.incomeLadder || [];
+  if (ladder.length) {
+    html += `<span class="sect-label">📈 Your Income Journey</span>
+    <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div class="ladder-list">`;
+    ladder.forEach((r, i) => {
+      const dotClass = i === 0 ? 'now' : 'future';
+      html += `<div class="ladder-item">
+        <div class="ladder-dot ${dotClass}"></div>
+        <div class="ladder-body">
+          <div class="ladder-stage">${r.stage || ''}</div>
+          <div class="ladder-role">${r.role || ''}</div>
+          <div class="ladder-income">${r.income || ''}</div>
+          ${r.tip ? `<div class="ladder-tip">💡 ${r.tip}</div>` : ''}
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ─ Steps / Phases ─
+  html += `<span class="sect-label">🗺 Your Step-by-Step Plan</span>
+  <div class="phase-list">`;
+
+  const stepLabels = ['STEP 1 — GET INCOME NOW', 'STEP 2 — BUILD YOUR SKILLS', 'STEP 3 — GROW YOUR LIFE'];
+  (path.phases || []).forEach((p, idx) => {
+    const isOpen = idx === 0;
+    html += `<div class="phase-card${isOpen ? ' open' : ''}" id="rv-phase-${idx}">
+      <div class="phase-header" onclick="document.getElementById('rv-phase-${idx}').classList.toggle('open')">
+        <div class="ph-num p${p.num || idx+1}">${p.num || idx+1}</div>
+        <div class="ph-info">
+          <div class="ph-title">${p.title || stepLabels[idx]}</div>
+          <div class="ph-meta">${p.duration || ''}</div>
+        </div>
+        <span class="ph-chevron">▼</span>
+      </div>
+      <div class="phase-body">
+        <div class="phase-step-label">${stepLabels[idx] || ''}</div>`;
+
+    // Tasks
+    if ((p.tasks || []).length) {
+      html += `<div class="task-list">`;
+      p.tasks.forEach(tk => {
+        const detail = tk.detail || '';
+        // Check for timeline format (Month X / Year X)
+        const hasTimeline = /Month \d|Year \d|After \d/.test(detail);
+        if (hasTimeline) {
+          const segs = detail.split(/(?=Month \d|After \d|Year \d)/).filter(s=>s.trim());
+          const rows = segs.length > 1 ? segs.map(seg => {
+            const ci = seg.indexOf(':');
+            if (ci > -1 && ci < 20) {
+              return `<div class="timeline-row"><span class="tl-label">${seg.slice(0,ci).trim()}</span><span class="tl-body">${seg.slice(ci+1).trim()}</span></div>`;
+            }
+            return `<div class="timeline-row"><span class="tl-body">${seg}</span></div>`;
+          }).join('') : '';
+          html += `<div class="task-item">
+            <div class="task-dot"></div>
+            <div style="flex:1">
+              <span class="task-title">${tk.title}</span>
+              ${rows.length ? `<div style="margin-top:.4rem">${rows}</div>` : `<span class="task-detail">${detail}</span>`}
+            </div>
+          </div>`;
+        } else {
+          html += `<div class="task-item">
+            <div class="task-dot"></div>
+            <div><span class="task-title">${tk.title}</span><span class="task-detail">${detail}</span></div>
+          </div>`;
+        }
+      });
+      html += `</div>`;
+    }
+
+    // Phase 1: Job listings from Jobstreet
+    if (idx === 0) {
+      const keywords = p.immediateJobKeywords || path.jobSearchKeywords || [];
+      html += `<div class="jobs-section">
+        <div class="jobs-label">🔎 Apply Now — Live Jobstreet Listings</div>
+        <div class="jobs-grid" id="jobs-grid-rv">
+          <div class="jobs-loading"><div class="mini-spin"></div>&nbsp; Loading live listings from Jobstreet…</div>
+        </div>
+        <p class="jobs-note">Listings are live from Jobstreet Malaysia. Click any to apply directly.</p>
+        <a href="https://www.jobstreet.com.my/jobs/${encodeURIComponent((keywords[0]||'general worker').replace(/\s+/g,'-').toLowerCase())}-jobs" target="_blank" rel="noopener" class="jobstreet-cta">
+          🔍 Search all ${keywords[0] || 'entry level'} jobs on Jobstreet →
+        </a>
+      </div>`;
+      // Trigger async fetch
+      setTimeout(() => fetchJobs(keywords), 200);
+    }
+
+    // Phase 2: Courses + Skills Up section reminder
+    if (idx === 1) {
+      const courses = p.courses || [];
+      if (courses.length) {
+        html += `<div class="courses-section">
+          <div class="courses-label">📚 Free Courses & Resources</div>`;
+        courses.forEach(c => {
+          html += `<a href="${c.url}" target="_blank" rel="noopener" class="course-item">
+            <span class="course-icon">${getCourseIcon(c.provider)}</span>
+            <div class="course-info">
+              <span class="course-name">${c.name}${c.free?'<span class="course-badge">FREE</span>':''}</span>
+              <span class="course-meta">${c.provider} · ${c.duration}</span>
+            </div>
+            <span class="course-arrow">↗</span>
+          </a>`;
+        });
+        html += `</div>`;
+      }
+      // Remind about Skill Up tools
+      html += `<div class="tip-box" style="margin-top:1rem;">
+        <strong>💡 Tip:</strong> Use our free tools in the 
+        <a href="/skills" style="color:var(--teal);font-weight:700;">Skill Up section</a> — 
+        AI Mock Interview, CV Translator, and more — to prepare while you're learning these skills.
+      </div>`;
+    }
+
+    // Phase 3: Financial literacy course
+    if (idx === 2 && p.course) {
+      html += `<div class="courses-section">
+        <div class="courses-label">📚 Free Financial Literacy Resource</div>
+        <a href="${p.course.url}" target="_blank" rel="noopener" class="course-item">
+          <span class="course-icon">${getCourseIcon(p.course.provider)}</span>
+          <div class="course-info">
+            <span class="course-name">${p.course.name}${p.course.free?'<span class="course-badge">FREE</span>':''}</span>
+            <span class="course-meta">${p.course.provider} · ${p.course.duration}</span>
+          </div>
+          <span class="course-arrow">↗</span>
+        </a>
+      </div>`;
+    }
+
+    if (p.tip) {
+      html += `<div class="tip-box"><strong>💡 Tip:</strong> ${p.tip}</div>`;
+    }
+
+    html += `</div></div>`;
+  });
+
+  html += `</div>`;
+
+  // Motivation
+  if (path.motivation) {
+    html += `<div class="motivation-card"><p>"${path.motivation}"</p></div>`;
+  }
+
+  wrap.innerHTML = html;
+}
+
+// ── JOBSTREET LIVE LISTINGS ──────────────────────────────────
+async function fetchJobs(keywords) {
+  const grid = document.getElementById('jobs-grid-rv');
+  if (!grid) return;
+
+  const kw  = (keywords[0] || 'general worker').trim();
+  const loc = 'Kuala Lumpur';
+  let listings = [];
+
+  try {
+    const apiUrl   = `https://www.jobstreet.com.my/api/chalice-search/v4/search?siteKey=MY-Main&sourcesystem=houston&where=${encodeURIComponent(loc)}&page=1&pageSize=5&locale=en-MY&solrRequestType=jobSearch&q=${encodeURIComponent(kw)}&sortMode=ListedDate`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+    const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+    if (res.ok) {
+      const data = await res.json();
+      const jobs = data.data || data.jobs || [];
+      if (jobs.length > 0) {
+        listings = jobs.slice(0,5).map(j => ({
+          title:   j.jobTitle || j.title || kw,
+          company: j.advertiser?.description || j.companyName || 'Company',
+          salary:  j.salary || j.salaryLabel || 'Salary not stated',
+          location:j.jobLocation?.label || j.suburb || loc,
+          type:    j.workType || 'Full-time',
+          url:     `https://www.jobstreet.com.my/job/${j.id}`,
+          logo:    j.advertiser?.logoUrl || null,
+          isLive:  true
+        }));
+      }
+    }
+  } catch(e) { console.log('Jobstreet API unavailable, using search links'); }
+
+  if (!listings.length) listings = buildFallbackListings(keywords, loc);
+  renderJobGrid(listings, grid);
+}
+
+function buildFallbackListings(keywords, loc) {
+  const locSlug = (loc || 'kuala-lumpur').toLowerCase().replace(/\s+/g,'-');
+  return (keywords.slice(0,4)).map(kw => ({
+    title:   kw.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()),
+    company: 'View all listings on Jobstreet',
+    salary:  'See Jobstreet',
+    location: loc,
+    url:     `https://www.jobstreet.com.my/jobs/${kw.toLowerCase().replace(/\s+/g,'-')}-jobs-in-${locSlug}`,
+    logo:    null,
+    isLive:  false
+  }));
+}
+
+function renderJobGrid(listings, grid) {
+  if (!listings.length) {
+    grid.innerHTML = `<p style="font-size:.8rem;color:var(--ink-lt);">No live listings found. Use the search link below.</p>`;
+    return;
+  }
+  grid.innerHTML = listings.map(j => `
+    <a href="${j.url}" target="_blank" rel="noopener" class="job-listing">
+      <div class="jl-logo">
+        ${j.logo ? `<img src="${j.logo}" alt="${j.company}" onerror="this.style.display='none'">` : '🏢'}
+      </div>
+      <div class="jl-info">
+        <div class="jl-title">${j.title}</div>
+        <div class="jl-company">${j.company} · ${j.location}</div>
+      </div>
+      <div class="jl-salary">${j.salary}</div>
+      <span class="jl-arrow">↗</span>
+    </a>
+  `).join('');
+}
+
+function getCourseIcon(provider) {
+  if (!provider) return '📚';
+  const p = provider.toLowerCase();
+  if (p.includes('youtube'))  return '▶️';
+  if (p.includes('google'))   return '🎯';
+  if (p.includes('coursera')) return '🎓';
+  if (p.includes('alison'))   return '📖';
+  if (p.includes('microsoft')) return '🟦';
+  return '📚';
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', initRoadmap);
+</script>
+{% endblock %}

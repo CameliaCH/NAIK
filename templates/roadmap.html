@@ -1,105 +1,538 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NAIK — Personalised Career Roadmap</title>
+{% extends "base.html" %}
+{% block title %}Career Quiz — NAIK{% endblock %}
+
+{% block head %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="static/roadmap.css">
-</head>
-<body>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+<style>
+:root{--red:#BF4646;--teal:#7EACB5;--ink:#1A1A2E;--ink-mid:#6B6B80;--ink-lt:#9B9BAE;--cream:#FAF8F5;--peach:#FFF0E6;--border:#E8E3DD;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);min-height:100vh;}
 
-<!-- ══ NAV ══ -->
+/* ── TOP PROGRESS BAR ── */
+.qpbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--border);z-index:300;}
+.qpbar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--red));transition:width .4s ease;}
+
+/* ── SIGN-IN GATE ── */
+.gate-wrap{max-width:480px;margin:5rem auto;padding:0 1.25rem;text-align:center;}
+.gate-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:2.5rem 2rem;}
+.gate-icon{font-size:2.5rem;margin-bottom:1rem;}
+.gate-card h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink);margin-bottom:.5rem;}
+.gate-card p{font-size:.9rem;color:var(--ink-mid);line-height:1.6;margin-bottom:1.5rem;}
+.gate-btns{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.55rem 1.25rem;border-radius:8px;font-size:.88rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
+.btn-primary{background:var(--red);color:#fff;}
+.btn-primary:hover{background:#a33b3b;}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--teal);}
+
+/* ── STEP LAYOUT ── */
+.step-wrap{display:none;max-width:640px;margin:0 auto;padding:2rem 1.25rem 5rem;}
+.step-wrap.active{display:block;}
+
+/* ── STEP HEADER ── */
+.step-header{text-align:center;margin-bottom:2rem;}
+.step-num{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.4rem;}
+.step-q{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,3vw,1.6rem);color:var(--ink);line-height:1.35;margin-bottom:.4rem;}
+.step-sub{font-size:.85rem;color:var(--ink-mid);}
+
+/* ── CARD SELECT ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1.5rem;}
+.cards-grid-2{grid-template-columns:1fr 1fr;}
+.cards-grid-edu{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+.sel-card{background:#fff;border:2px solid var(--border);border-radius:14px;padding:1rem;text-align:center;cursor:pointer;transition:all .18s;user-select:none;}
+.sel-card:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(0,0,0,.06);}
+.sel-card.selected{border-color:var(--red);background:rgba(191,70,70,.05);}
+.sel-card .card-emoji{font-size:1.75rem;margin-bottom:.4rem;}
+.sel-card .card-label{font-size:.8rem;font-weight:700;color:var(--ink);line-height:1.3;}
+.sel-card .card-sub{font-size:.7rem;color:var(--ink-lt);margin-top:.2rem;}
+
+/* ── CHIP SELECT (skills) ── */
+.chips-wrap{display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:1.25rem;}
+.chip{padding:.45rem 1rem;border:1.5px solid var(--border);border-radius:50px;font-size:.82rem;font-weight:600;cursor:pointer;background:#fff;color:var(--ink);transition:all .15s;user-select:none;}
+.chip:hover{border-color:var(--teal);}
+.chip.selected{border-color:var(--red);background:rgba(191,70,70,.06);color:var(--red);}
+.chips-hint{font-size:.78rem;color:var(--ink-lt);margin-bottom:.75rem;}
+
+/* ── SKIP ROW ── */
+.skip-row{text-align:center;margin-top:.25rem;}
+.skip-link{font-size:.78rem;color:var(--ink-lt);background:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:underline;}
+.skip-link:hover{color:var(--ink-mid);}
+
+/* ── SLIDER QUESTION ── */
+.slider-questions{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:1.5rem;}
+.sq-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.25rem 1.25rem 1rem;}
+.sq-card.answered{border-color:rgba(126,172,181,.5);}
+.sq-text{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:.9rem;line-height:1.4;}
+.sq-labels{display:flex;justify-content:space-between;margin-bottom:.2rem;}
+.sq-labels span{font-size:.58rem;font-weight:600;color:var(--ink-lt);text-align:center;width:20%;}
+.sq-labels span.al{color:var(--red);font-weight:700;}
+.sq-range{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:50px;background:#ddd;outline:none;cursor:pointer;}
+.sq-range.touched{background:linear-gradient(90deg,var(--teal) var(--fp,50%),#ddd var(--fp,50%));}
+.sq-range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#aaa;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15);cursor:pointer;}
+.sq-range.touched::-webkit-slider-thumb{background:var(--red);}
+.sq-range::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#aaa;border:3px solid #fff;cursor:pointer;}
+.sq-range.touched::-moz-range-thumb{background:var(--red);}
+.sq-badge{font-size:.72rem;font-weight:700;padding:.15rem .6rem;border-radius:50px;background:var(--peach);color:var(--ink);border:1px solid var(--border);display:inline-block;margin-top:.4rem;opacity:0;transition:opacity .2s;}
+.sq-badge.vis{opacity:1;}
+
+/* ── NAV BUTTONS ── */
+.step-nav{display:flex;gap:.75rem;margin-top:.5rem;}
+.btn-back-q{background:var(--peach);color:var(--ink);border:1.5px solid var(--border);padding:.7rem 1.4rem;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .2s;}
+.btn-back-q:hover{background:#f0e8de;}
+.btn-next{flex:1;background:var(--red);color:#fff;border:none;padding:.75rem 1.5rem;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .2s,transform .15s;}
+.btn-next:hover:not(:disabled){background:#a33b3b;transform:translateY(-1px);}
+.btn-next:disabled{background:#ccc;cursor:not-allowed;}
+
+/* ── STEP DOTS ── */
+.step-dots{display:flex;justify-content:center;gap:.45rem;margin:.75rem 0 .25rem;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;}
+.step-dot.done{background:var(--teal);}
+.step-dot.active{background:var(--red);width:22px;border-radius:4px;}
+
+/* ── SUBMITTING ── */
+.submitting-wrap{display:none;max-width:400px;margin:5rem auto;text-align:center;padding:0 1.25rem;}
+.submitting-wrap.active{display:block;}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.25rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.submitting-wrap p{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--ink);margin-bottom:.4rem;}
+.submitting-wrap small{font-size:.84rem;color:var(--ink-mid);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:#fff;padding:.6rem 1.4rem;border-radius:50px;font-size:.82rem;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:400;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── FLOW BANNER ── */
+.flow-banner{background:#fff;border-bottom:1px solid var(--border);padding:.7rem clamp(1rem,4vw,3rem);overflow-x:auto;}
+.flow-steps{display:flex;gap:0;align-items:center;white-space:nowrap;max-width:700px;margin:0 auto;}
+.flow-step{display:flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;color:var(--ink-lt);}
+.flow-step.done{color:var(--teal);}
+.flow-step.active{color:var(--red);font-weight:800;}
+.fs-num{width:20px;height:20px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;flex-shrink:0;}
+.flow-step.done .fs-num{background:var(--teal);border-color:var(--teal);color:#fff;}
+.flow-step.active .fs-num{background:var(--red);border-color:var(--red);color:#fff;}
+.fa{color:var(--border);margin:0 .3rem;font-size:.85rem;}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Top progress bar -->
+<div class="qpbar"><div class="qpbar-fill" id="qpbar-fill" style="width:0%"></div></div>
+
+<!-- NAV -->
 <nav class="naik-nav">
   <a href="{{ url_for('home') }}" class="nav-logo">
     <span class="wordmark">NAIK</span>
     <span class="tagline">Naikkan Taraf Hidup Anda</span>
   </a>
   <div class="nav-ctas">
-    <!--
-      GLOBAL LANG TOGGLE
-      ──────────────────
-      The class "lang-btn" is what roadmap.js queries with
-      document.querySelectorAll('.lang-btn') so it can update
-      ALL toggle buttons at once (including any injected into
-      the roadmap body). The id="lang-toggle" is kept for
-      backward compatibility only.
-    -->
-    <button class="lang-btn" id="lang-toggle" onclick="toggleLang()">BM</button>
-    <a href="{{ url_for('donate') }}" class="btn btn-primary" style="font-size:0.8rem;">Donate ♡</a>
-    <a href="{{ url_for('savedRoadmaps') }}" class="btn btn-outline" style="font-size:0.8rem;">📋 My Saves</a>
+    {% if session.get("user_id") %}
+      <span style="font-size:.85rem;color:var(--ink-mid);">👤 {{ session.get("user_name","") }}</span>
+      <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
   </div>
 </nav>
 
+<!-- FLOW BANNER -->
+<div class="flow-banner">
+  <div class="flow-steps">
+    <div class="flow-step done"><div class="fs-num">✓</div> Sign In</div>
+    <span class="fa">→</span>
+    <div class="flow-step active"><div class="fs-num">2</div> Career Quiz</div>
+    <span class="fa">→</span>
+    <div class="flow-step"><div class="fs-num">3</div> See Your Jobs</div>
+    <span class="fa">→</span>
+    <div class="flow-step"><div class="fs-num">4</div> Save Favourites</div>
+    <span class="fa">→</span>
+    <div class="flow-step"><div class="fs-num">5</div> Skill Up &amp; Apply</div>
+  </div>
+</div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 2: ONBOARDING QUIZ
-══════════════════════════════════════════ -->
-<div class="screen active" id="screen-onboarding">
-  <div class="onboard-header">
-    <div class="onboard-header-top">
-      <button class="btn-back-header" id="btn-back-header" onclick="goBack()" style="display:none">← <span data-en="Back" data-bm="Kembali"></span></button>
-      <span class="step-count" id="step-count">1 / 7</span>
+
+<!-- ══ SIGN-IN GATE ══ -->
+<div id="gate-section" style="display:{% if not session.get('user_id') %}block{% else %}none{% endif %}">
+  <div class="gate-wrap">
+    <div class="gate-card">
+      <div class="gate-icon">🔒</div>
+      <h2>Sign in to take the quiz</h2>
+      <p>Your answers are saved to your profile so NAIK can recommend the right jobs — and build you a personalised career roadmap.</p>
+      <div class="gate-btns">
+        <a href="{{ url_for('signIn') }}?next=/quiz" class="btn btn-primary">Sign In</a>
+        <a href="{{ url_for('signIn') }}#register" class="btn btn-outline">Create Account</a>
+      </div>
     </div>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:14%"></div></div>
-    <p class="step-hint" id="step-hint"></p>
-  </div>
-  <div class="onboard-body" id="onboard-body"></div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 3: GENERATING
-══════════════════════════════════════════ -->
-<div class="screen" id="screen-generating">
-  <div class="gen-inner">
-    <div class="gen-logo">NAIK</div>
-    <div class="gen-spinner"></div>
-    <p class="gen-msg" id="gen-msg"></p>
-    <p class="gen-sub" data-en="Searching real job listings from Jobstreet..." data-bm="Mencari senarai kerja sebenar dari Jobstreet..."></p>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 4: ROADMAP
-══════════════════════════════════════════ -->
-<div class="screen" id="screen-roadmap">
-  <div class="roadmap-header">
-    <div class="roadmap-header-meta">
-      <span class="section-label" id="rmap-section-title">Your Career Roadmap</span>
-      <button class="btn-restart" onclick="restartApp()">↺ <span data-en="Start Over" data-bm="Mulakan Semula"></span></button>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz-section" style="display:{% if session.get('user_id') %}block{% else %}none{% endif %}">
+
+  <div class="step-dots" id="step-dots"></div>
+
+  <!-- ─── STEP 1: Field of interest ─── -->
+  <div class="step-wrap active" id="step-1">
+    <div class="step-header">
+      <div class="step-num">Step 1 of 6</div>
+      <div class="step-q">What kind of work excites you most?</div>
+      <div class="step-sub">Pick the one that feels most like you</div>
     </div>
-    <h1 class="roadmap-title" id="rmap-title"></h1>
-    <div class="job-pill" id="rmap-job-pill"></div>
+    <div class="cards-grid" id="interest-cards">
+      <div class="sel-card" data-val="biz"><div class="card-emoji">💼</div><div class="card-label">Sales &amp; Business</div><div class="card-sub">Selling, admin, office</div></div>
+      <div class="sel-card" data-val="food"><div class="card-emoji">🍜</div><div class="card-label">Food &amp; Beverage</div><div class="card-sub">Kitchen, service, cafe</div></div>
+      <div class="sel-card" data-val="tech"><div class="card-emoji">💻</div><div class="card-label">Technology</div><div class="card-sub">IT, software, digital</div></div>
+      <div class="sel-card" data-val="beauty"><div class="card-emoji">💅</div><div class="card-label">Beauty &amp; Wellness</div><div class="card-sub">Salon, spa, grooming</div></div>
+      <div class="sel-card" data-val="trades"><div class="card-emoji">🔧</div><div class="card-label">Trades &amp; Technical</div><div class="card-sub">Repair, construction, skills</div></div>
+      <div class="sel-card" data-val="care"><div class="card-emoji">🏥</div><div class="card-label">Care &amp; Health</div><div class="card-sub">Nursing, childcare, elderly</div></div>
+      <div class="sel-card" data-val="creative"><div class="card-emoji">🎨</div><div class="card-label">Creative</div><div class="card-sub">Design, media, content</div></div>
+      <div class="sel-card" data-val="logistics"><div class="card-emoji">🚚</div><div class="card-label">Logistics &amp; Delivery</div><div class="card-sub">Driving, warehouse</div></div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-next" id="next-1" disabled onclick="goStep(2)">Next →</button>
+    </div>
   </div>
 
-  <!-- Income Mode Toggle -->
-  <div class="mode-banner" id="mode-banner"></div>
+  <!-- ─── STEP 2: Income goal ─── -->
+  <div class="step-wrap" id="step-2">
+    <div class="step-header">
+      <div class="step-num">Step 2 of 6</div>
+      <div class="step-q">What's your income goal right now?</div>
+      <div class="step-sub">Both are good — be honest with yourself</div>
+    </div>
+    <div class="cards-grid cards-grid-2" id="income-cards">
+      <div class="sel-card" data-val="immediate">
+        <div class="card-emoji">⚡</div>
+        <div class="card-label">Start earning now</div>
+        <div class="card-sub">I need income as soon as possible</div>
+      </div>
+      <div class="sel-card" data-val="upskill">
+        <div class="card-emoji">🎓</div>
+        <div class="card-label">Build skills first</div>
+        <div class="card-sub">I can invest 3–6 months to earn more later</div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back-q" onclick="goStep(1)">← Back</button>
+      <button class="btn-next" id="next-2" disabled onclick="goStep(3)">Next →</button>
+    </div>
+  </div>
 
-  <div class="roadmap-body" id="roadmap-body"></div>
+  <!-- ─── STEP 3: Education level ─── -->
+  <div class="step-wrap" id="step-3">
+    <div class="step-header">
+      <div class="step-num">Step 3 of 6</div>
+      <div class="step-q">What's your highest education level?</div>
+      <div class="step-sub">This helps us show jobs that are right for where you are now</div>
+    </div>
+    <div class="cards-grid cards-grid-edu" id="edu-cards">
+      <div class="sel-card" data-val="primary">
+        <div class="card-emoji">📚</div>
+        <div class="card-label">Primary school or below</div>
+      </div>
+      <div class="sel-card" data-val="secondary_incomplete">
+        <div class="card-emoji">🏫</div>
+        <div class="card-label">Secondary school (no SPM)</div>
+      </div>
+      <div class="sel-card" data-val="spm_incomplete">
+        <div class="card-emoji">📝</div>
+        <div class="card-label">SPM — some subjects passed</div>
+      </div>
+      <div class="sel-card" data-val="spm">
+        <div class="card-emoji">🎓</div>
+        <div class="card-label">SPM completed</div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back-q" onclick="goStep(2)">← Back</button>
+      <button class="btn-next" id="next-3" disabled onclick="goStep(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 4: Skills ─── -->
+  <div class="step-wrap" id="step-4">
+    <div class="step-header">
+      <div class="step-num">Step 4 of 6</div>
+      <div class="step-q">What can you already do?</div>
+      <div class="step-sub">Tap all that apply — or skip if none</div>
+    </div>
+    <div class="chips-wrap" id="skills-chips">
+      <div class="chip" data-val="customer_service">🗣️ Customer service</div>
+      <div class="chip" data-val="cooking">🍳 Cooking</div>
+      <div class="chip" data-val="driving">🚗 Driving licence</div>
+      <div class="chip" data-val="computer_basic">💻 Basic computer / phone</div>
+      <div class="chip" data-val="social_media">📱 Social media</div>
+      <div class="chip" data-val="sales">💰 Sales experience</div>
+      <div class="chip" data-val="caregiving">🤝 Caregiving</div>
+      <div class="chip" data-val="manual_labor">🔨 Physical / manual work</div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back-q" onclick="goStep(3)">← Back</button>
+      <button class="btn-next" id="next-4" onclick="goStep(5)">Next →</button>
+    </div>
+    <div class="skip-row">
+      <button class="skip-link" onclick="answers.skills=[];goStep(5)">I don't have any of these — skip →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 5: Work style sliders ─── -->
+  <div class="step-wrap" id="step-5">
+    <div class="step-header">
+      <div class="step-num">Step 5 of 6</div>
+      <div class="step-q">How do you like to work?</div>
+      <div class="step-sub">Move each slider to show how much you agree</div>
+    </div>
+    <div class="slider-questions" id="slider-q5"></div>
+    <div class="step-nav">
+      <button class="btn-back-q" onclick="goStep(4)">← Back</button>
+      <button class="btn-next" id="next-5" disabled onclick="goStep(6)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 6: Goals sliders ─── -->
+  <div class="step-wrap" id="step-6">
+    <div class="step-header">
+      <div class="step-num">Step 6 of 6</div>
+      <div class="step-q">What are your goals?</div>
+      <div class="step-sub">Last step — almost there!</div>
+    </div>
+    <div class="slider-questions" id="slider-q6"></div>
+    <div class="step-nav">
+      <button class="btn-back-q" onclick="goStep(5)">← Back</button>
+      <button class="btn-next" id="next-6" disabled onclick="submitQuiz()">See My Jobs →</button>
+    </div>
+  </div>
+
+</div><!-- #quiz-section -->
+
+
+<!-- ══ SUBMITTING ══ -->
+<div class="submitting-wrap" id="submitting-wrap">
+  <div class="spinner"></div>
+  <p>Finding your best jobs…</p>
+  <small>Matching your answers to opportunities across Malaysia.</small>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
+{% endblock %}
 
-<script src="static/roadmap.js"></script>
+{% block scripts %}
 <script>
-  /*
-    AUTO-LOAD FROM URL
-    ──────────────────
-    When the user visits /roadmap?load=<uuid> (e.g. from the
-    saved roadmaps page), we call loadSavedRoadmap() instead
-    of showing the quiz. This runs AFTER roadmap.js has loaded.
-  */
-  window.addEventListener('load', () => {
-    const params = new URLSearchParams(window.location.search);
-    const loadId = params.get('load');
-    if (loadId) {
-      showScreen('generating');
-      loadSavedRoadmap(loadId);
-    }
+// ════════════════════════════════════════════════════════
+//  NAIK Career Quiz — 6 steps
+//  Removed: q_digital, q_ambition
+//  Split: education (step 3) + skills (step 4) separate
+// ════════════════════════════════════════════════════════
+// If ?job=<id> in URL, skip quiz and load roadmap directly
+const jobParam = new URLSearchParams(location.search).get('job');
+if (jobParam) {
+  document.getElementById('quiz-section').style.display = 'none';
+  // call generate-roadmap with job_id
+  fetch('/api/generate-roadmap', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({job_id: jobParam, lang:'en'})})
+    .then(r => r.json()).then(data => { roadmapData = data; renderPathSelection(); showScreen('roadmap'); });
+}
+
+const TOTAL_STEPS = 6;
+let currentStep = 1;
+
+const answers = {
+  interest:    null,
+  income_mode: null,
+  education:   null,
+  skills:      [],
+  // Sliders
+  q_people:    null,
+  q_outdoor:   null,
+  q_creative:  null,
+  q_flexible:  null,
+  q_growth:    null,
+  q_leadership:null,
+};
+
+const SCALE_SHORT = ['Strongly Disagree','Disagree','Neutral','Agree','Strongly Agree'];
+
+// Step 5: work style (removed q_digital)
+const STEP5_SLIDERS = [
+  { id: 'q_people',   text: 'I enjoy working directly with customers or the public.' },
+  { id: 'q_outdoor',  text: 'I am comfortable working outdoors or travelling around for work.' },
+  { id: 'q_creative', text: 'I enjoy creative work — designing, making, writing, or content.' },
+  { id: 'q_flexible', text: 'I need flexible or part-time hours (e.g. family responsibilities).' },
+];
+
+// Step 6: goals (removed q_ambition)
+const STEP6_SLIDERS = [
+  { id: 'q_growth',    text: 'I am willing to learn a completely new skill if it leads to better pay.' },
+  { id: 'q_leadership',text: 'I would feel comfortable managing or leading a small team in the future.' },
+];
+
+
+// ════════════════════════════════════════════════════════
+//  BUILD SLIDERS
+// ════════════════════════════════════════════════════════
+function buildSliders(containerId, sliderDefs, stepNum) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+
+  sliderDefs.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'sq-card';
+    card.innerHTML = `
+      <div class="sq-text">${s.text}</div>
+      <div class="sq-labels" id="sql-${s.id}">
+        ${['Strongly<br>Disagree','Disagree','Neutral','Agree','Strongly<br>Agree']
+          .map((l,i)=>`<span data-i="${i}">${l}</span>`).join('')}
+      </div>
+      <input type="range" class="sq-range" id="sqr-${s.id}" min="0" max="4" value="2">
+      <div><span class="sq-badge" id="sqb-${s.id}">Neutral</span></div>
+    `;
+    c.appendChild(card);
+
+    const range = card.querySelector('.sq-range');
+    const badge = card.querySelector('.sq-badge');
+    const lbls  = card.querySelectorAll('.sq-labels span');
+
+    range.addEventListener('input', e => {
+      const v = parseInt(e.target.value);
+      answers[s.id] = v;
+      range.style.setProperty('--fp', (v/4*100)+'%');
+      range.classList.add('touched');
+      badge.textContent = SCALE_SHORT[v];
+      badge.classList.add('vis');
+      card.classList.add('answered');
+      lbls.forEach((l,i) => l.classList.toggle('al', i===v));
+      checkSliderStep(stepNum);
+    });
   });
+}
+
+function checkSliderStep(stepNum) {
+  const defs = stepNum === 5 ? STEP5_SLIDERS : STEP6_SLIDERS;
+  const allDone = defs.every(s => answers[s.id] !== null);
+  document.getElementById('next-' + stepNum).disabled = !allDone;
+}
+
+
+// ════════════════════════════════════════════════════════
+//  CARD & CHIP SETUP
+// ════════════════════════════════════════════════════════
+function setupCardSelect(containerId, answerKey, nextBtnId) {
+  document.querySelectorAll(`#${containerId} .sel-card`).forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll(`#${containerId} .sel-card`).forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      answers[answerKey] = card.dataset.val;
+      if (nextBtnId) document.getElementById(nextBtnId).disabled = false;
+    });
+  });
+}
+
+function setupChipSelect(containerId, answerKey) {
+  document.querySelectorAll(`#${containerId} .chip`).forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('selected');
+      answers[answerKey] = Array.from(
+        document.querySelectorAll(`#${containerId} .chip.selected`)
+      ).map(c => c.dataset.val);
+    });
+  });
+}
+
+
+// ════════════════════════════════════════════════════════
+//  STEP NAVIGATION
+// ════════════════════════════════════════════════════════
+function updateDots() {
+  const c = document.getElementById('step-dots');
+  c.innerHTML = '';
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i < currentStep ? ' done' : i === currentStep ? ' active' : '');
+    c.appendChild(d);
+  }
+  const pct = ((currentStep - 1) / TOTAL_STEPS) * 100;
+  document.getElementById('qpbar-fill').style.width = pct + '%';
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step-wrap').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+// ════════════════════════════════════════════════════════
+//  SUBMIT
+// ════════════════════════════════════════════════════════
+async function submitQuiz() {
+  document.getElementById('quiz-section').style.display = 'none';
+  document.getElementById('submitting-wrap').classList.add('active');
+  document.getElementById('qpbar-fill').style.width = '95%';
+
+  const profile = {
+    interest:     answers.interest    || 'biz',
+    income_mode:  answers.income_mode || 'immediate',
+    education:    answers.education   || 'spm',
+    skills:       answers.skills      || [],
+    q_people:     answers.q_people    ?? 2,
+    q_outdoor:    answers.q_outdoor   ?? 2,
+    q_creative:   answers.q_creative  ?? 2,
+    q_flexible:   answers.q_flexible  ?? 2,
+    q_growth:     answers.q_growth    ?? 2,
+    q_leadership: answers.q_leadership?? 2,
+  };
+
+  try {
+    const res  = await fetch('/api/quiz/save', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ profile, lang: 'en' }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Save failed');
+    window.location.href = '/recommendations';
+  } catch (err) {
+    console.error('Quiz save error:', err);
+    showToast('⚠️ Could not save — please try again');
+    document.getElementById('quiz-section').style.display = 'block';
+    document.getElementById('submitting-wrap').classList.remove('active');
+    goStep(6);
+  }
+}
+
+
+// ════════════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+
+// ════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  setupCardSelect('interest-cards', 'interest',    'next-1');
+  setupCardSelect('income-cards',   'income_mode', 'next-2');
+  setupCardSelect('edu-cards',      'education',   'next-3');
+  setupChipSelect('skills-chips',   'skills');
+
+  // Step 4 (skills) — next button always enabled (optional step)
+  document.getElementById('next-4').disabled = false;
+
+  buildSliders('slider-q5', STEP5_SLIDERS, 5);
+  buildSliders('slider-q6', STEP6_SLIDERS, 6);
+
+  updateDots();
+});
 </script>
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,434 @@
+{% extends "base.html" %}
+{% block title %}Your Job Recommendations — NAIK{% endblock %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+<style>
+:root{--red:#BF4646;--teal:#7EACB5;--ink:#1A1A2E;--ink-mid:#6B6B80;--ink-lt:#9B9BAE;--cream:#FAF8F5;--peach:#FFF0E6;--border:#E8E3DD;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
+
+/* ── FLOW BANNER ── */
+.flow-banner{background:#fff;border-bottom:1px solid var(--border);padding:.7rem clamp(1rem,4vw,3rem);overflow-x:auto;}
+.flow-steps{display:flex;gap:0;align-items:center;white-space:nowrap;max-width:700px;margin:0 auto;}
+.flow-step{display:flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;color:var(--ink-lt);}
+.flow-step.done{color:var(--teal);}
+.flow-step.active{color:var(--red);font-weight:800;}
+.fs-num{width:20px;height:20px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;flex-shrink:0;}
+.flow-step.done .fs-num{background:var(--teal);border-color:var(--teal);color:#fff;}
+.flow-step.active .fs-num{background:var(--red);border-color:var(--red);color:#fff;}
+.fa{color:var(--border);margin:0 .3rem;font-size:.85rem;}
+
+/* ── HERO ── */
+.rec-hero{background:var(--ink);padding:3rem clamp(1.5rem,5vw,4rem) 2.5rem;text-align:center;position:relative;overflow:hidden;}
+.rec-hero svg{position:absolute;inset:0;opacity:.06;pointer-events:none;width:100%;height:100%;}
+.rec-hero-content{position:relative;z-index:1;}
+.rec-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:.5rem;}
+.rec-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);color:#fff;margin-bottom:.4rem;}
+.rec-hero h1 em{color:var(--teal);font-style:normal;}
+.rec-hero p{color:rgba(255,255,255,.65);font-size:.9rem;max-width:500px;margin:0 auto;}
+
+/* ── LOADING ── */
+.loading-wrap{max-width:400px;margin:4rem auto;text-align:center;padding:0 1rem;}
+.spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-wrap p{color:var(--ink-mid);font-size:.88rem;}
+
+/* ── MAIN LAYOUT ── */
+.rec-wrap{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 3rem;}
+
+/* ── SECTION HEADER ── */
+.rec-section-head{text-align:center;margin-bottom:2rem;}
+.rec-section-head h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--ink);margin-bottom:.4rem;}
+.rec-section-head p{font-size:.88rem;color:var(--ink-mid);}
+
+/* ── 3-COLUMN GRID ── */
+.rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2rem;}
+@media(max-width:900px){.rec-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:580px){.rec-grid{grid-template-columns:1fr;}}
+
+/* ── JOB CARD ── */
+.rec-card{background:#fff;border:2px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,box-shadow .2s;position:relative;}
+.rec-card:hover{border-color:rgba(126,172,181,.6);box-shadow:0 8px 28px rgba(0,0,0,.08);}
+.rec-card.saved-card-state{border-color:var(--teal);}
+
+/* Option badge */
+.card-option-badge{position:absolute;top:1rem;right:1rem;font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .7rem;border-radius:50px;z-index:2;}
+.badge-a{background:#FFF0E6;color:var(--red);border:1.5px solid #f0c8a8;}
+.badge-b{background:#E6F4F6;color:var(--teal);border:1.5px solid #a8d8e0;}
+.badge-c{background:#F0F6F0;color:#4a8f5a;border:1.5px solid #a0c8a8;}
+
+.card-top{padding:1.25rem 1.25rem .75rem;display:flex;align-items:flex-start;gap:.85rem;}
+.card-emoji-wrap{width:48px;height:48px;border-radius:12px;background:var(--peach);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+.card-meta{flex:1;min-width:0;padding-right:3rem;}
+.card-option-label{font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:.2rem;}
+.card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);line-height:1.3;}
+
+/* Divider */
+.card-divider{border:none;border-top:1px solid var(--border);margin:0 1.25rem .85rem;}
+
+/* Salary */
+.card-salary-row{display:flex;gap:.5rem;padding:0 1.25rem .75rem;flex-wrap:wrap;}
+.salary-pill{display:flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:50px;font-size:.72rem;font-weight:700;}
+.sp-entry{background:rgba(126,172,181,.12);color:var(--teal);}
+.sp-target{background:rgba(191,70,70,.08);color:var(--red);}
+.sp-arrow{color:var(--ink-lt);font-size:.65rem;align-self:center;}
+.card-timeline{font-size:.7rem;color:var(--ink-lt);align-self:center;white-space:nowrap;}
+
+/* Safety badge */
+.card-safety-row{padding:0 1.25rem .75rem;}
+.safety-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:50px;background:#f0f6f0;color:#4a8f5a;}
+
+/* Description */
+.card-desc{padding:0 1.25rem .75rem;font-size:.82rem;color:var(--ink-mid);line-height:1.55;flex:1;}
+
+/* Why fit */
+.why-fit-box{margin:0 1.25rem .85rem;background:var(--peach);border-radius:12px;padding:.8rem 1rem;}
+.why-fit-label{font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:.5rem;}
+.why-fit-bullets{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.why-fit-bullets li{font-size:.8rem;color:var(--ink-mid);display:flex;align-items:flex-start;gap:.4rem;line-height:1.4;}
+.why-fit-bullets li::before{content:"•";color:var(--red);font-weight:800;flex-shrink:0;margin-top:.05rem;}
+
+/* Card actions */
+.card-actions{padding:.85rem 1.25rem 1.25rem;display:flex;flex-direction:column;gap:.5rem;margin-top:auto;}
+.btn-save-job{width:100%;background:var(--ink);color:#fff;border:none;padding:.7rem 1.2rem;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+.btn-save-job:hover:not(:disabled){background:#2d2d3d;}
+.btn-save-job.saved{background:var(--teal);}
+.btn-save-job:disabled{background:#ccc;cursor:not-allowed;}
+.btn-unsave{width:100%;background:transparent;color:var(--ink-mid);border:1.5px solid var(--border);padding:.55rem;border-radius:10px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s;display:none;text-align:center;}
+.btn-unsave:hover{border-color:#e08888;color:#c05050;}
+.btn-unsave.visible{display:block;}
+
+/* Roadmap hint */
+.roadmap-hint{display:none;background:rgba(126,172,181,.1);border:1.5px solid rgba(126,172,181,.3);border-radius:10px;padding:.6rem .9rem;margin-top:.4rem;font-size:.76rem;color:var(--ink-mid);line-height:1.5;}
+.roadmap-hint a{color:var(--teal);font-weight:700;text-decoration:none;}
+.roadmap-hint.visible{display:block;}
+
+/* ── BOTTOM ACTIONS ── */
+.bottom-actions{display:flex;flex-direction:column;gap:.75rem;margin-top:2rem;}
+.btn-explore-all{display:flex;align-items:center;justify-content:center;gap:.5rem;background:#fff;border:2px solid var(--border);border-radius:14px;padding:1rem 1.5rem;font-size:.95rem;font-weight:700;color:var(--ink);text-decoration:none;transition:all .2s;}
+.btn-explore-all:hover{border-color:var(--teal);background:rgba(126,172,181,.05);}
+.btn-goto-skill{display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--teal);color:#fff;border:none;border-radius:14px;padding:1rem 1.5rem;font-size:.95rem;font-weight:700;text-decoration:none;transition:background .2s;cursor:pointer;}
+.btn-goto-skill:hover{background:#6a9aa3;}
+.retake-link{text-align:center;font-size:.8rem;color:var(--ink-lt);margin-top:.25rem;}
+.retake-link a{color:var(--red);font-weight:600;text-decoration:none;}
+
+/* ── ERROR STATE ── */
+.error-wrap{max-width:480px;margin:4rem auto;text-align:center;padding:0 1.25rem;}
+.error-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:2.5rem 2rem;}
+.error-icon{font-size:2.5rem;margin-bottom:1rem;}
+.error-card h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--ink);margin-bottom:.6rem;}
+.error-card p{font-size:.88rem;color:var(--ink-mid);line-height:1.6;margin-bottom:1.5rem;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.55rem 1.25rem;border-radius:8px;font-size:.88rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
+.btn-primary{background:var(--red);color:#fff;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:#fff;padding:.6rem 1.4rem;border-radius:50px;font-size:.82rem;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:400;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- NAV -->
+<nav class="naik-nav">
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <span class="wordmark">NAIK</span>
+    <span class="tagline">Naikkan Taraf Hidup Anda</span>
+  </a>
+  <div class="nav-ctas">
+    {% if session.get("user_id") %}
+      <span style="font-size:.85rem;color:var(--ink-mid);">👤 {{ session.get("user_name","") }}</span>
+      <a href="{{ url_for('auth_logout') }}" class="btn btn-outline">Logout</a>
+    {% else %}
+      <a href="{{ url_for('signIn') }}" class="btn btn-outline">Sign In</a>
+    {% endif %}
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+  </div>
+</nav>
+
+<!-- FLOW BANNER -->
+<div class="flow-banner">
+  <div class="flow-steps">
+    <div class="flow-step done"><div class="fs-num">✓</div> Sign In</div>
+    <span class="fa">→</span>
+    <div class="flow-step done"><div class="fs-num">✓</div> Career Quiz</div>
+    <span class="fa">→</span>
+    <div class="flow-step active"><div class="fs-num">3</div> See Your Jobs</div>
+    <span class="fa">→</span>
+    <div class="flow-step"><div class="fs-num">4</div> Save &amp; Get Roadmap</div>
+    <span class="fa">→</span>
+    <div class="flow-step"><div class="fs-num">5</div> Skill Up &amp; Apply</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="rec-hero">
+  <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <circle cx="800" cy="50" r="160" fill="none" stroke="#7EACB5" stroke-width="1"/>
+    <circle cx="100" cy="160" r="120" fill="none" stroke="#BF4646" stroke-width=".8"/>
+    <circle cx="450" cy="100" r="240" fill="none" stroke="#EDDCC6" stroke-width="1.5"/>
+  </svg>
+  <div class="rec-hero-content">
+    <span class="rec-eyebrow">🎯 Personalised for You</span>
+    <h1>Choose Your <em>Career Path</em></h1>
+    <p>We found the best realistic options for you. Save the one that fits your situation — and get a step-by-step personalised roadmap.</p>
+  </div>
+</div>
+
+<!-- LOADING STATE -->
+<div class="loading-wrap" id="loading-wrap">
+  <div class="spinner"></div>
+  <p>Matching your profile to the best opportunities in Malaysia…</p>
+</div>
+
+<!-- ERROR STATE -->
+<div class="error-wrap" id="error-wrap" style="display:none;">
+  <div class="error-card">
+    <div class="error-icon">😕</div>
+    <h2 id="error-title">No quiz results found</h2>
+    <p id="error-msg">It looks like you haven't taken the career quiz yet. Take it now — it only takes 3 minutes.</p>
+    <a href="{{ url_for('quiz') }}" class="btn btn-primary" style="width:100%;justify-content:center;">Take the Career Quiz →</a>
+  </div>
+</div>
+
+<!-- RECOMMENDATIONS -->
+<div class="rec-wrap" id="rec-wrap" style="display:none;">
+  <div class="rec-section-head">
+    <h2>🎯 Choose Your Career Path</h2>
+    <p>We found the best realistic options for you. Pick the one that fits your situation best.</p>
+  </div>
+
+  <!-- Job cards injected here in 3-column grid -->
+  <div class="rec-grid" id="rec-cards"></div>
+
+  <!-- Bottom actions -->
+  <div class="bottom-actions">
+    <a href="{{ url_for('explore') }}" class="btn-explore-all">
+      🧭 Explore All Jobs — Browse hundreds more opportunities
+    </a>
+    <a href="{{ url_for('skills') }}" class="btn-goto-skill">
+      💪 Go to Skill Up — View roadmaps for your saved jobs
+    </a>
+    <div class="retake-link"><a href="{{ url_for('quiz') }}">↺ Retake the quiz with different answers</a></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ════════════════════════════════════════════════════════
+//  NAIK Recommendations Page — 3-column layout, bullet why-fit
+// ════════════════════════════════════════════════════════
+
+let savedJobIds = new Set();
+const OPTION_LABELS = ['A', 'B', 'C'];
+const OPTION_BADGE_CLASSES = ['badge-a', 'badge-b', 'badge-c'];
+
+async function loadRecommendations() {
+  try {
+    const res  = await fetch('/api/recommendations', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ lang: 'en' }),
+    });
+    const data = await res.json();
+
+    document.getElementById('loading-wrap').style.display = 'none';
+
+    if (!res.ok || data.error) {
+      showError(data.error || 'Something went wrong.');
+      return;
+    }
+
+    if (!data.jobs || !data.jobs.length) {
+      showError('No jobs found for your profile. Try retaking the quiz.');
+      return;
+    }
+
+    savedJobIds = new Set(data.savedJobIds || []);
+    renderRecs(data.jobs);
+    document.getElementById('rec-wrap').style.display = 'block';
+
+  } catch (err) {
+    document.getElementById('loading-wrap').style.display = 'none';
+    showError('Could not load recommendations. Please try again.');
+    console.error(err);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('error-msg').textContent  = msg;
+  document.getElementById('error-wrap').style.display = 'block';
+}
+
+function renderRecs(jobs) {
+  const container = document.getElementById('rec-cards');
+  container.innerHTML = '';
+
+  jobs.forEach((job, idx) => {
+    const isSaved = savedJobIds.has(job.id);
+    const optLabel = OPTION_LABELS[idx] || String(idx + 1);
+    const badgeClass = OPTION_BADGE_CLASSES[idx] || 'badge-a';
+
+    const card = document.createElement('div');
+    card.className = 'rec-card' + (isSaved ? ' saved-card-state' : '');
+    card.id = 'rec-' + job.id;
+
+    const bullets = buildWhyFitBullets(job);
+    const bulletsHtml = bullets.map(b => `<li>${b}</li>`).join('');
+
+    // Use duties as the card description (what the job actually requires you to do)
+    const descText = job.description || job.tagline || '';
+
+    card.innerHTML = `
+      <span class="card-option-badge ${badgeClass}">OPTION ${optLabel}</span>
+      <div class="card-top">
+        <div class="card-emoji-wrap">${job.emoji || '💼'}</div>
+        <div class="card-meta">
+          <div class="card-option-label">OPTION ${optLabel}</div>
+          <div class="card-title">${job.title || ''}</div>
+        </div>
+      </div>
+
+      <hr class="card-divider">
+
+      <div class="card-salary-row">
+        <span class="salary-pill sp-entry">Start: ${job.entrySalary || ''}</span>
+        <span class="sp-arrow">→</span>
+        <span class="salary-pill sp-target">Target: ${job.targetSalary || ''}</span>
+      </div>
+      <div class="card-safety-row">
+        <span class="card-timeline">⏱ ${job.timeline || ''}</span>
+        &nbsp;
+        <span class="safety-badge">★ ${job.safetyRating || 'Steady Growth'}</span>
+      </div>
+
+      <div class="card-desc">${descText}</div>
+
+      ${bullets.length ? `
+      <div class="why-fit-box">
+        <div class="why-fit-label">✨ Why it fits you</div>
+        <ul class="why-fit-bullets">${bulletsHtml}</ul>
+      </div>` : ''}
+
+      <div class="card-actions">
+        <button class="btn-save-job${isSaved ? ' saved' : ''}" id="save-btn-${job.id}"
+          onclick="toggleSaveJob('${job.id}', this)">
+          ${isSaved ? '✓ Saved' : '💾 Save job + get your roadmap'}
+        </button>
+        <button class="btn-unsave${isSaved ? ' visible' : ''}" id="unsave-btn-${job.id}"
+          onclick="unsaveJob('${job.id}')">
+          ✕ Remove from saved
+        </button>
+        <div class="roadmap-hint${isSaved ? ' visible' : ''}" id="hint-${job.id}">
+          🗺 <a href="/roadmap/view?job=${job.id}">View your personalised career roadmap →</a>
+          &nbsp;·&nbsp; <a href="{{ url_for('skills') }}">See all saved jobs</a>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function buildWhyFitBullets(job) {
+  const bullets = [];
+  const personalised = job.whyFitPersonalised || '';
+  if (personalised) {
+    const sentences = personalised
+      .replace(/\. Also, /g, '|||').replace(/\. Juga, /g, '|||')
+      .split('|||')
+      .map(s => s.replace(/^[^,]+, /, '').replace(/\.$/, '').trim())
+      .filter(s => s.length > 10);
+    sentences.forEach(s => bullets.push(s.charAt(0).toUpperCase() + s.slice(1)));
+  }
+  if (bullets.length < 3) {
+    (job.whyFitTags || []).forEach(t => { if (!bullets.includes(t)) bullets.push(t); });
+  }
+  return bullets.slice(0, 4);
+}
+
+async function toggleSaveJob(jobId, btn) {
+  if (savedJobIds.has(jobId)) {
+    await unsaveJob(jobId);
+    return;
+  }
+  btn.disabled = true;
+  try {
+    const res  = await fetch('/api/jobs/save', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ job_id: jobId }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Save failed');
+
+    savedJobIds.add(jobId);
+    btn.textContent = '✓ Saved';
+    btn.classList.add('saved');
+    btn.disabled = false;
+
+    const unsaveBtn = document.getElementById('unsave-btn-' + jobId);
+    if (unsaveBtn) unsaveBtn.classList.add('visible');
+
+    const hint = document.getElementById('hint-' + jobId);
+    if (hint) hint.classList.add('visible');
+
+    const card = document.getElementById('rec-' + jobId);
+    if (card) card.classList.add('saved-card-state');
+
+    showToast('✓ Saved! View your roadmap in Skill Up.');
+
+  } catch (err) {
+    console.error('Save job error:', err);
+    showToast('⚠️ Could not save — please try again');
+    btn.disabled = false;
+  }
+}
+
+async function unsaveJob(jobId) {
+  try {
+    const res  = await fetch('/api/jobs/unsave', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ job_id: jobId }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Unsave failed');
+
+    savedJobIds.delete(jobId);
+
+    const saveBtn = document.getElementById('save-btn-' + jobId);
+    if (saveBtn) { saveBtn.textContent = '💾 Save this job + get your roadmap'; saveBtn.classList.remove('saved'); saveBtn.disabled = false; }
+
+    const unsaveBtn = document.getElementById('unsave-btn-' + jobId);
+    if (unsaveBtn) unsaveBtn.classList.remove('visible');
+
+    const hint = document.getElementById('hint-' + jobId);
+    if (hint) hint.classList.remove('visible');
+
+    const card = document.getElementById('rec-' + jobId);
+    if (card) card.classList.remove('saved-card-state');
+
+    showToast('Removed from saved jobs.');
+  } catch (err) {
+    console.error('Unsave error:', err);
+    showToast('⚠️ Could not remove — please try again');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+window.addEventListener('DOMContentLoaded', loadRecommendations);
+</script>
+{% endblock %}

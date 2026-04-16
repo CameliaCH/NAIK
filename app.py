@@ -70,11 +70,28 @@ def refresh_session():
 # ══════════════════════════════════════════════════════════════
 #  PAGE ROUTES
 # ══════════════════════════════════════════════════════════════
+@app.route("/recommendations")
+def recommendations():
+    # Require login to see recommendations
+    if not session.get("user_id"):
+        return redirect(url_for('signIn') + '?next=/recommendations')
+    return render_template("recommendations.html")
+
 
 @app.route("/")
 @app.route("/home")
 def home():
     return render_template("NAIK.html")
+
+@app.route("/logout")
+def logout():
+    return render_template("logout.html")
+
+@app.route("/interview")
+def interview():
+    return render_template("interview.html")
+
+
 
 @app.route("/explore")
 def explore():
@@ -95,6 +112,12 @@ def quiz():
 @app.route("/saved")
 def savedRoadmaps():
     return render_template("saved_roadmaps.html")
+
+@app.route("/roadmap/view")
+def roadmap_view():
+    if not session.get("user_id"):
+        return redirect(url_for("signIn") + "?next=" + request.url)
+    return render_template("roadmap_view.html")
 
 @app.route("/jobs")
 def jobs():

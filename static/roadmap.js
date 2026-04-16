@@ -1003,6 +1003,15 @@ function restartApp() {
 
 // ── INIT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // In DOMContentLoaded, at the top:
+  const params = new URLSearchParams(window.location.search);
+  const jobId = params.get('job');
+  if (jobId) {
+    profile = { job_id: jobId }; // will be filled from DB in backend
+    showScreen('generating');
+    generateRoadmap(jobId);
+    return; // skip quiz
+  }
   // Restore language preference from other pages
   try {
     const saved = localStorage.getItem('naik_lang');
