@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+{% from '_nav.html' import naik_nav with context %}
+{% block title %}General Resources — NAIK{% endblock %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+<style>
+:root{--red:#BF4646;--teal:#7EACB5;--ink:#1A1A2E;--ink-mid:#6B6B80;--ink-lt:#9B9BAE;--cream:#FAF8F5;--peach:#FFF0E6;--border:#E8E3DD;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
+
+/* ── HERO ── */
+.res-hero{background:var(--ink);padding:2.5rem clamp(1.5rem,5vw,4rem) 2rem;text-align:center;}
+.res-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:.4rem;}
+.res-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;margin-bottom:.4rem;}
+.res-hero h1 em{color:var(--teal);font-style:normal;}
+.res-hero p{color:rgba(255,255,255,.65);font-size:.88rem;max-width:500px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:1rem;}
+.back-link:hover{color:#fff;}
+
+/* ── TABS ── */
+.resources-wrap{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem;}
+.res-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem;background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:.5rem;}
+.res-tab{flex:1;min-width:120px;padding:.55rem .75rem;border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;color:var(--ink-mid);cursor:pointer;border-radius:10px;transition:all .18s;white-space:nowrap;}
+.res-tab:hover{background:var(--cream);color:var(--ink);}
+.res-tab.active{background:var(--red);color:#fff;}
+.res-panel{display:none;}
+.res-panel.active{display:block;}
+
+/* ── WHATSAPP CARDS ── */
+.wa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+.wa-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;display:flex;flex-direction:column;gap:.5rem;}
+.wa-context{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);}
+.wa-body{font-size:.82rem;color:var(--ink);line-height:1.6;background:var(--cream);border-radius:8px;padding:.75rem;}
+.wa-note{font-size:.72rem;color:var(--ink-lt);font-style:italic;}
+.btn-copy-wa{align-self:flex-start;padding:.4rem .9rem;background:var(--ink);color:#fff;border:none;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .15s;}
+.btn-copy-wa:hover{background:#333;}
+
+/* ── CHECKLIST ── */
+.checklist-group{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+.checklist-group-title{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:.75rem;}
+.check-item{display:flex;align-items:center;gap:.75rem;padding:.55rem .5rem;border-radius:8px;cursor:pointer;transition:background .15s;user-select:none;}
+.check-item:hover{background:var(--cream);}
+.check-item.checked{background:rgba(126,172,181,.1);}
+.check-box{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .15s;}
+.check-item.checked .check-box{background:var(--teal);border-color:var(--teal);color:#fff;}
+.check-label{font-size:.84rem;color:var(--ink);}
+.check-item.checked .check-label{text-decoration:line-through;color:var(--ink-lt);}
+.checklist-reset{margin-top:.5rem;padding:.45rem 1rem;background:transparent;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;font-weight:700;color:var(--ink-mid);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.checklist-reset:hover{border-color:var(--red);color:var(--red);}
+
+/* ── RIGHTS CARDS ── */
+.rights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:1.25rem;}
+.rights-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;}
+.rights-icon{font-size:1.5rem;margin-bottom:.4rem;}
+.rights-title{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-lt);margin-bottom:.2rem;}
+.rights-value{font-size:1.05rem;font-weight:800;color:var(--ink);margin-bottom:.4rem;}
+.rights-detail{font-size:.78rem;color:var(--ink-mid);line-height:1.55;}
+.rights-tip{background:rgba(191,70,70,.07);border:1.5px solid rgba(191,70,70,.2);border-radius:12px;padding:1rem 1.1rem;font-size:.82rem;color:var(--ink);line-height:1.6;}
+.rights-tip a{color:var(--red);font-weight:700;}
+
+/* ── USEFUL LINKS ── */
+.links-section{margin-bottom:1.5rem;}
+.links-section-title{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lt);margin-bottom:.75rem;}
+.links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;}
+.link-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.75rem;text-decoration:none;transition:all .18s;}
+.link-card:hover{border-color:var(--teal);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.link-icon{font-size:1.3rem;flex-shrink:0;}
+.link-name{font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:.15rem;}
+.link-desc{font-size:.73rem;color:var(--ink-mid);line-height:1.45;margin-bottom:.3rem;}
+.link-badge{display:inline-block;font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:50px;}
+.badge-free{background:rgba(126,172,181,.15);color:var(--teal);}
+.badge-govt{background:rgba(26,26,46,.08);color:var(--ink-mid);}
+</style>
+{% endblock %}
+
+{% block content %}
+{{ naik_nav(active='skills') }}
+
+<!-- Hero -->
+<div class="res-hero">
+  <a href="{{ url_for('skills') }}" class="back-link">← Back to Skill Up</a>
+  <span class="res-eyebrow">📚 General Resources</span>
+  <h1>Everything you need to<br><em>apply with confidence</em></h1>
+  <p>Free templates, checklists, your rights as a worker, and trusted links — all in one place.</p>
+</div>
+
+<div class="resources-wrap">
+
+  <!-- Tab bar -->
+  <div class="res-tabs">
+    <button class="res-tab active" onclick="switchResTab('res-wa', this)">📱 WhatsApp Templates</button>
+    <button class="res-tab" onclick="switchResTab('res-checklist', this)">✅ Job-Hunt Checklist</button>
+    <button class="res-tab" onclick="switchResTab('res-rights', this)">⚖️ Your Rights</button>
+    <button class="res-tab" onclick="switchResTab('res-links', this)">🔗 Useful Links</button>
+  </div>
+
+  <!-- ── TAB 1: WhatsApp Templates ── -->
+  <div class="res-panel active" id="res-wa">
+    <div class="wa-grid">
+
+      <div class="wa-card">
+        <div class="wa-context">Following up after applying</div>
+        <div class="wa-body" id="wa-1">Hi [Company Name], I'm [Your Name]. I submitted my application for the [Position] role on [Date] and wanted to follow up on the status. I remain very interested in this opportunity. Thank you for your time.</div>
+        <div class="wa-note">Replace the [ ] brackets with your details before sending.</div>
+        <button class="btn-copy-wa" onclick="copyWA('wa-1', this)">📋 Copy</button>
+      </div>
+
+      <div class="wa-card">
+        <div class="wa-context">Asking about your interview outcome</div>
+        <div class="wa-body" id="wa-2">Hi [Name], thank you for interviewing me on [Date] for the [Position] role at [Company]. I enjoyed our conversation and remain very keen on joining the team. Could you kindly let me know if there are any updates? Thank you.</div>
+        <div class="wa-note">Send this 3–5 working days after your interview if you haven't heard back.</div>
+        <button class="btn-copy-wa" onclick="copyWA('wa-2', this)">📋 Copy</button>
+      </div>
+
+      <div class="wa-card">
+        <div class="wa-context">Accepting a job offer</div>
+        <div class="wa-body" id="wa-3">Hi [Name], thank you so much for offering me the [Job Title] position at [Company]. I am happy to accept and look forward to joining the team. Please let me know the next steps — I am ready to start on [Start Date]. Thank you again.</div>
+        <div class="wa-note">Confirm the start date and any documents needed before replying.</div>
+        <button class="btn-copy-wa" onclick="copyWA('wa-3', this)">📋 Copy</button>
+      </div>
+
+      <div class="wa-card">
+        <div class="wa-context">Politely declining an offer</div>
+        <div class="wa-body" id="wa-4">Hi [Name], thank you very much for offering me the [Position] role. After careful consideration, I have decided to pursue a different opportunity at this time. I truly appreciate the time you invested in me and hope we may have the chance to connect again in the future.</div>
+        <div class="wa-note">Always decline politely — Malaysia's job market is small and reputations matter.</div>
+        <button class="btn-copy-wa" onclick="copyWA('wa-4', this)">📋 Copy</button>
+      </div>
+
+      <div class="wa-card">
+        <div class="wa-context">Asking a previous employer for a reference</div>
+        <div class="wa-body" id="wa-5">Hi [Name], I hope you are doing well. I am currently applying for a new position and would be very grateful if you could serve as a reference for me. If you are comfortable, a potential employer may contact you to ask about my work during my time at [Company]. Please let me know if this is okay. Thank you very much.</div>
+        <div class="wa-note">Always ask permission before listing someone as a reference.</div>
+        <button class="btn-copy-wa" onclick="copyWA('wa-5', this)">📋 Copy</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── TAB 2: Job-Hunt Checklist ── -->
+  <div class="res-panel" id="res-checklist">
+
+    <div class="checklist-group">
+      <div class="checklist-group-title">Documents to prepare</div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">MyKad / IC (photocopy ready)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">SPM / diploma / degree certificate</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Updated CV (saved on your phone)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Passport-sized photo (digital)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Bank account number (for salary)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">EPF number (KWSP) — check via i-Akaun</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">SOCSO number (PERKESO)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Income tax number (if applicable)</div></div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-title">References</div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">At least 2 references identified</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Permission asked from each reference</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Reference phone numbers saved</div></div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-title">Before the interview</div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Researched the company online</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Practised 3 common interview questions</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Planned your outfit the night before</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Confirmed the location / Waze route</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Arrived 10–15 minutes early</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Brought printed copies of your CV</div></div>
+    </div>
+
+    <button class="checklist-reset" onclick="resetChecklist()">↺ Reset all</button>
+  </div>
+
+  <!-- ── TAB 3: Your Rights ── -->
+  <div class="res-panel" id="res-rights">
+    <div class="rights-grid">
+
+      <div class="rights-card">
+        <div class="rights-icon">💰</div>
+        <div class="rights-title">Minimum Wage</div>
+        <div class="rights-value">RM 1,700 / month</div>
+        <div class="rights-detail">As of February 2023 for all employers with 5 or more workers. RM 1,500/month for employers with fewer than 5 workers.</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">🕐</div>
+        <div class="rights-title">Working Hours</div>
+        <div class="rights-value">Max 48 hrs / week</div>
+        <div class="rights-detail">No more than 8 hours a day, 6 days a week. Overtime must be paid — 1.5× on weekdays, 2× on rest days, 3× on public holidays.</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">🌴</div>
+        <div class="rights-title">Annual Leave</div>
+        <div class="rights-value">8 – 16 days</div>
+        <div class="rights-detail">Less than 2 years: 8 days. 2–5 years: 12 days. More than 5 years: 16 days. Your employer cannot take this away.</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">🤒</div>
+        <div class="rights-title">Sick Leave</div>
+        <div class="rights-value">14 – 22 days</div>
+        <div class="rights-detail">Less than 2 years: 14 days. 2–5 years: 18 days. More than 5 years: 22 days. Hospitalisation adds up to 60 days on top.</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">🛡️</div>
+        <div class="rights-title">EPF & SOCSO</div>
+        <div class="rights-value">Mandatory contributions</div>
+        <div class="rights-detail">Your employer must contribute to EPF (KWSP) and SOCSO (PERKESO) on your behalf. If they don't, this is illegal. Check your EPF via i-Akaun app.</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">🤱</div>
+        <div class="rights-title">Maternity Leave</div>
+        <div class="rights-value">98 days (paid)</div>
+        <div class="rights-detail">For the first 5 children. You cannot be dismissed while on maternity leave. Breastfeeding breaks must be allowed for up to 2 years.</div>
+      </div>
+
+    </div>
+
+    <div class="rights-tip">
+      <strong>🚨 If your employer breaks these rules</strong> — contact the Department of Labour (JTKSM) free hotline: <a href="tel:1800885751">1800-88-5751</a> or lodge a complaint at <a href="https://e-aduan.jtksm.gov.my" target="_blank" rel="noopener">e-aduan.jtksm.gov.my</a>. Your complaint is confidential.
+    </div>
+  </div>
+
+  <!-- ── TAB 4: Useful Links ── -->
+  <div class="res-panel" id="res-links">
+
+    <div class="links-section">
+      <div class="links-section-title">🎓 Free Learning</div>
+      <div class="links-grid">
+        <a href="https://learndigital.withgoogle.com/digitalgarage" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🔵</div>
+          <div><div class="link-name">Google Digital Garage</div><div class="link-desc">Free digital marketing & career courses</div><span class="link-badge badge-free">Free</span></div>
+        </a>
+        <a href="https://www.myskills.gov.my" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🇲🇾</div>
+          <div><div class="link-name">MySkills Portal</div><div class="link-desc">Govt-recognised skills & certification courses</div><span class="link-badge badge-govt">Government</span></div>
+        </a>
+        <a href="https://www.mdec.my/digital-skills" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">💻</div>
+          <div><div class="link-name">MDEC Digital Skills</div><div class="link-desc">Tech skills training for Malaysians</div><span class="link-badge badge-free">Free</span></div>
+        </a>
+        <a href="https://www.coursera.org/courses?query=free" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">📖</div>
+          <div><div class="link-name">Coursera (Free Audit)</div><div class="link-desc">Audit thousands of university courses free</div><span class="link-badge badge-free">Free</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="links-section">
+      <div class="links-section-title">💼 Job Portals</div>
+      <div class="links-grid">
+        <a href="https://www.jobsmalaysia.gov.my" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🏛️</div>
+          <div><div class="link-name">JobsMalaysia</div><div class="link-desc">Official government job portal</div><span class="link-badge badge-govt">Government</span></div>
+        </a>
+        <a href="https://www.myfuturejobs.gov.my" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🌟</div>
+          <div><div class="link-name">MYFutureJobs</div><div class="link-desc">Govt portal for fresh grads & job seekers</div><span class="link-badge badge-govt">Government</span></div>
+        </a>
+        <a href="https://www.hiredly.com" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🚀</div>
+          <div><div class="link-name">Hiredly</div><div class="link-desc">Jobs with salary transparency</div><span class="link-badge badge-free">Free</span></div>
+        </a>
+        <a href="https://www.jobstreet.com.my" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🔍</div>
+          <div><div class="link-name">JobStreet</div><div class="link-desc">Malaysia's largest job board</div><span class="link-badge badge-free">Free</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="links-section">
+      <div class="links-section-title">🛡️ Financial Safety Net</div>
+      <div class="links-grid">
+        <a href="https://www.kwsp.gov.my" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">💛</div>
+          <div><div class="link-name">EPF / KWSP</div><div class="link-desc">Check your retirement savings via i-Akaun</div><span class="link-badge badge-govt">Government</span></div>
+        </a>
+        <a href="https://www.perkeso.gov.my" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🛡️</div>
+          <div><div class="link-name">SOCSO / PERKESO</div><div class="link-desc">Worker insurance & injury protection</div><span class="link-badge badge-govt">Government</span></div>
+        </a>
+        <a href="https://mysalam.com.my" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🤝</div>
+          <div><div class="link-name">MySalam</div><div class="link-desc">Free insurance for B40 — including gig workers</div><span class="link-badge badge-free">Free</span></div>
+        </a>
+        <a href="https://www.ptptn.gov.my" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">🎓</div>
+          <div><div class="link-name">PTPTN</div><div class="link-desc">Study loans & repayment assistance</div><span class="link-badge badge-govt">Government</span></div>
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /res-links -->
+
+</div><!-- /resources-wrap -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchResTab(tabId, btn) {
+  document.querySelectorAll('.res-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.res-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btn.classList.add('active');
+}
+
+function copyWA(elId, btn) {
+  const text = document.getElementById(elId).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2000);
+  });
+}
+
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  const box = item.querySelector('.check-box');
+  if (box) box.textContent = item.classList.contains('checked') ? '✅' : '☐';
+}
+
+function resetChecklist() {
+  document.querySelectorAll('.check-item').forEach(item => {
+    item.classList.remove('checked');
+    const box = item.querySelector('.check-box');
+    if (box) box.textContent = '☐';
+  });
+}
+</script>
+{% endblock %}

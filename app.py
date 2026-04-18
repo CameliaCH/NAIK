@@ -3,6 +3,9 @@ from passlib.hash import argon2
 from dotenv import load_dotenv
 from db import supabase
 import os
+import json
+from functools import lru_cache
+from urllib.parse import urlparse
 
 load_dotenv()
 
@@ -22,6 +25,7 @@ from roadmap_backend import roadmap_bp
 app.register_blueprint(roadmap_bp)
 
 from services.cv_translator_service import translate_to_cv
+from services.cv_builder_service import build_cv
 
 
 # ══════════════════════════════════════════════════════════════
@@ -52,6 +56,85 @@ def inject_user():
         current_headline  = session.get("headline"),
         current_avatar    = session.get("avatar_url"),
     )
+
+
+# ─── I18N ─────────────────────────────────────────────────────
+_TRANSLATIONS_DIR = os.path.join(os.path.dirname(__file__), 'translations')
+SUPPORTED_LANGS   = {'en', 'ms', 'zh'}
+
+@lru_cache(maxsize=3)
+def _load_translations(lang: str) -> dict:
+    path = os.path.join(_TRANSLATIONS_DIR, f'{lang}.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def _get_nested(d: dict, key: str):
+    parts = key.split('.')
+    node = d
+    for part in parts:
+        if not isinstance(node, dict):
+            return None
+        node = node.get(part)
+        if node is None:
+            return None
+    return node if isinstance(node, str) else None
+
+def _make_translator(lang: str):
+    translations = _load_translations(lang)
+    en_fallback  = _load_translations('en')
+    def t(key: str, fallback: str = '') -> str:
+        val = _get_nested(translations, key)
+        if val is None:
+            val = _get_nested(en_fallback, key)
+        return val if val is not None else fallback
+    return t
+
+# Keys exposed to JavaScript (only what .js files actually use)
+_JS_KEYS = [
+    'explore.saveJob', 'explore.savedJob', 'explore.applyNow',
+    'explore.toastSaved', 'explore.toastUnsaved',
+    'explore.toastSaveFailed', 'explore.toastUnsaveFailed',
+    'explore.noSavedJobs', 'explore.heartToSave',
+    'explore.signInToSave', 'explore.opportunitiesFound',
+    'explore.whyFitLabel', 'explore.whyFitLoading', 'explore.roadmapHint',
+    'skills.savedLoading', 'skills.savedViewRoadmap',
+    'skills.savedSignIn', 'skills.savedSignInLink',
+    'interview.statusStarting', 'interview.statusIdle',
+    'interview.statusRecording', 'interview.statusProcessing',
+    'interview.statusThinking', 'interview.statusSpeaking',
+    'interview.statusStopped', 'interview.micHintIdle',
+    'interview.micHintRecording', 'interview.tooShort', 'interview.micDenied',
+    'interview.you', 'interview.interviewer',
+]
+
+@app.context_processor
+def inject_i18n():
+    lang = session.get('lang', 'en')
+    if lang not in SUPPORTED_LANGS:
+        lang = 'en'
+    t = _make_translator(lang)
+    i18n_js = {k: t(k) for k in _JS_KEYS}
+    return dict(t=t, lang=lang, i18n_js=i18n_js)
+
+
+# ─── LANGUAGE SWITCHER ────────────────────────────────────────
+@app.route('/set-lang')
+def set_lang():
+    lang = request.args.get('lang', 'en')
+    if lang not in SUPPORTED_LANGS:
+        lang = 'en'
+    session['lang'] = lang
+    session.modified = True
+    referrer = request.referrer
+    if referrer:
+        ref_host = urlparse(referrer).netloc
+        req_host = urlparse(request.url).netloc
+        if ref_host == req_host:
+            return redirect(referrer)
+    return redirect(url_for('home'))
 
 
 # ── Auto-refresh session data once per request (keep it fresh) ─
@@ -101,6 +184,10 @@ def explore():
 def skills():
     return render_template("skills.html")
 
+@app.route("/resources")
+def resources():
+    return render_template("resources.html")
+
 @app.route("/know")
 def know():
     return render_template("know.html")
@@ -131,10 +218,6 @@ def CVexamples():
 def jobGuide():
     return render_template("jobGuide.html")
 
-@app.route("/donate")
-def donate():
-    return render_template("donate.html")
-
 @app.route("/signIn")
 def signIn():
     # Already logged in → redirect home
@@ -142,9 +225,9 @@ def signIn():
         return redirect(url_for("home"))
     return render_template("signIn.html")
 
-@app.route("/cv-translator")
-def cv_translator():
-    return render_template("cv_translator.html")
+@app.route("/cv-builder")
+def cv_builder_page():
+    return render_template("cv_builder.html")
 
 
 # ══════════════════════════════════════════════════════════════
@@ -314,8 +397,8 @@ def quiz_save():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-# ── CV translator ──────────────────────────────────────────────
-@app.route("/cv-translator/translate", methods=["POST"])
+# ── Professional Me ────────────────────────────────────────────
+@app.route("/cv-builder/translate", methods=["POST"])
 def cv_translate():
     data = request.get_json()
     if not data or "text" not in data:
@@ -323,6 +406,17 @@ def cv_translate():
     try:
         result = translate_to_cv(data["text"])
         return jsonify({"result": result})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/professional-me/build", methods=["POST"])
+def cv_build():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    try:
+        result = build_cv(data)
+        return jsonify({"cv": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

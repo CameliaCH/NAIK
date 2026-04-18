@@ -14,29 +14,45 @@ const PREFERRED_VOICES = {
 // ── UI STATE ──
 function setStatus(state, msg) {
   const statusText = document.getElementById('status-text');
-  const micBtn = document.getElementById('mic-btn');
+  const micBtn    = document.getElementById('mic-btn');
+  const micHint   = document.getElementById('mic-hint');
+  const dot       = document.getElementById('status-dot');
+
+  const i = window.i18n || {};
   const messages = {
-    'idle': '✅ Ready — click Speak to answer',
-    'recording': '🔴 Recording... click Stop when done',
-    'processing': '⏳ Transcribing your answer...',
-    'thinking': '🤔 AI is thinking...',
-    'speaking': '🔊 AI is speaking...',
-    'error': '❌ ' + (msg || 'Something went wrong'),
-    'starting': '👋 Starting your interview...',
+    'idle':       i['interview.statusIdle']       || 'Ready — tap the mic to answer',
+    'recording':  i['interview.statusRecording']  || 'Recording… tap to stop',
+    'processing': i['interview.statusProcessing'] || 'Transcribing your answer…',
+    'thinking':   i['interview.statusThinking']   || 'AI is thinking…',
+    'speaking':   i['interview.statusSpeaking']   || 'AI is speaking…',
+    'error':      (msg || 'Something went wrong'),
+    'starting':   i['interview.statusStarting']   || 'Starting your interview…',
   };
   if (statusText) statusText.textContent = messages[state] || state;
+
+  // Dot colour: red while recording/error, teal otherwise
+  if (dot) {
+    dot.style.background = (state === 'recording') ? 'var(--red)' :
+                           (state === 'error')     ? '#c00' : 'var(--teal)';
+    dot.classList.toggle('active', state !== 'idle');
+  }
+
   if (micBtn) {
+    const i = window.i18n || {};
     if (state === 'recording') {
-      micBtn.textContent = '⏹️ Stop';
+      micBtn.textContent = '⏹️';
       micBtn.classList.add('recording');
       micBtn.disabled = false;
+      if (micHint) micHint.textContent = i['interview.micHintRecording'] || 'Tap to stop';
     } else if (state === 'idle') {
-      micBtn.textContent = '🎙️ Speak';
+      micBtn.textContent = '🎙️';
       micBtn.classList.remove('recording');
       micBtn.disabled = false;
+      if (micHint) micHint.textContent = i['interview.micHintIdle'] || 'Click to speak';
     } else {
       micBtn.disabled = true;
       micBtn.classList.remove('recording');
+      if (micHint) micHint.textContent = '';
     }
   }
 }
@@ -46,7 +62,11 @@ function addToTranscript(role, text) {
   if (!log) return;
   const div = document.createElement('div');
   div.className = role === 'user' ? 'msg-user' : 'msg-ai';
-  div.textContent = (role === 'user' ? '🧑 You: ' : '🤖 Interviewer: ') + text;
+  const i = window.i18n || {};
+  const prefix = role === 'user'
+    ? (i['interview.you']         || '🧑 You: ')
+    : (i['interview.interviewer'] || '🤖 Interviewer: ');
+  div.textContent = prefix + text;
   log.appendChild(div);
   log.scrollTop = log.scrollHeight;
 }
@@ -71,7 +91,7 @@ async function startRecording() {
     mediaRecorder = new MediaRecorder(stream, { mimeType });
     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
     mediaRecorder.onstop = async () => {
-      stream.getTracks().forEach(t => t.stop());
+      stream.getTracks().forEach(tr => tr.stop());
       const blobType = mimeType.includes('mp4') ? 'audio/mp4' : 'audio/webm';
       const blob = new Blob(audioChunks, { type: blobType });
       await handleAudio(blob);
@@ -80,14 +100,16 @@ async function startRecording() {
     isRecording = true;
     setStatus('recording');
   } catch (err) {
-    setStatus('error', 'Microphone access denied. Please allow mic access.');
+    const i = window.i18n || {};
+    setStatus('error', i['interview.micDenied'] || 'Microphone access denied. Please allow mic access.');
   }
 }
 
 function stopRecording() {
   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
     if (audioChunks.length === 0) {
-      setStatus('error', 'Recording too short — hold the button a bit longer');
+      const i = window.i18n || {};
+      setStatus('error', i['interview.tooShort'] || 'Recording too short — hold the button a bit longer');
       mediaRecorder.stop();
       isRecording = false;
       return;
@@ -210,17 +232,48 @@ function speakResponse(text, lang) {
 }
 
 // ── INTERVIEW CONTROL ──
+async function beginInterview() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('interview-active').style.display = 'block';
+  document.getElementById('stop-btn').style.display = '';
+  document.getElementById('reset-btn').style.display = '';
+  await startInterview();
+}
+
+function stopInterview() {
+  window.speechSynthesis.cancel();
+  if (isRecording) stopRecording();
+  const micBtn = document.getElementById('mic-btn');
+  if (micBtn) micBtn.disabled = true;
+  setStatus('idle', '');
+  const _i = window.i18n || {};
+  document.getElementById('status-text').textContent = _i['interview.statusStopped'] || '⏹️ Interview stopped';
+  document.getElementById('interview-active').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+  document.getElementById('stop-btn').style.display = 'none';
+  document.getElementById('reset-btn').style.display = 'none';
+}
+
+const OPENING_PROMPT = {
+  'en': 'Please start the interview in English.',
+  'ms': 'Sila mulakan temuduga dalam Bahasa Melayu.',
+  'zh': '请用普通话开始面试。',
+};
+
 async function startInterview() {
   setStatus('starting');
   await fetch('/interview/reset', { method: 'POST' });
+  const lang = manualLanguage || 'en';
+  const openingText = OPENING_PROMPT[lang] || OPENING_PROMPT['en'];
   const res = await fetch('/interview/respond', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: 'Please start the interview in English.', language: 'en' })
+    body: JSON.stringify({ text: openingText, language: lang })
   });
   const data = await res.json();
+  if (data.error) { setStatus('error', data.error); return; }
   addToTranscript('ai', data.response);
-  speakResponse(data.response, 'en');
+  speakResponse(data.response, lang);
   getAvatarVideo(data.response);
 }
 
@@ -233,5 +286,3 @@ async function resetInterview() {
   if (placeholder) placeholder.style.display = 'flex';
   await startInterview();
 }
-
-window.addEventListener('DOMContentLoaded', startInterview);
