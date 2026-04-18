@@ -142,12 +142,10 @@ def set_lang():
 def refresh_session():
     uid = session.get("user_id")
     if uid:
-        # Only re-fetch if avatar or name might be stale
-        # (lightweight: runs on every request, single row lookup)
         try:
             load_session_from_db(uid)
         except Exception:
-            pass  # Don't break the page if DB is momentarily unavailable
+            pass
 
 
 # ══════════════════════════════════════════════════════════════
@@ -155,7 +153,6 @@ def refresh_session():
 # ══════════════════════════════════════════════════════════════
 @app.route("/recommendations")
 def recommendations():
-    # Require login to see recommendations
     if not session.get("user_id"):
         return redirect(url_for('signIn') + '?next=/recommendations')
     return render_template("recommendations.html")
@@ -173,8 +170,6 @@ def logout():
 @app.route("/interview")
 def interview():
     return render_template("interview.html")
-
-
 
 @app.route("/explore")
 def explore():
@@ -220,7 +215,6 @@ def jobGuide():
 
 @app.route("/signIn")
 def signIn():
-    # Already logged in → redirect home
     if session.get("user_id"):
         return redirect(url_for("home"))
     return render_template("signIn.html")
@@ -239,17 +233,14 @@ def profile():
     if not session.get("user_id"):
         return redirect(url_for("signIn"))
     import json
-    # Fetch full user row for the profile page
     res = supabase.table("users").select("*").eq("id", session["user_id"]).single().execute()
     user = res.data or {}
-    # Fetch quiz responses
     quiz_res = supabase.table("quiz_responses") \
         .select("*") \
         .eq("user_id", session["user_id"]) \
         .order("created_at", desc=True) \
         .execute()
     quiz_responses = quiz_res.data or []
-    # Pass job data so the profile page can show saved jobs
     from static.static_data import JOBS
     jobs_json = json.dumps(JOBS)
     return render_template("profile.html", user=user, quiz_responses=quiz_responses, jobs_json=jobs_json)
@@ -326,10 +317,6 @@ def profile_update():
 # ── Avatar upload ──────────────────────────────────────────────
 @app.route("/auth/profile/avatar", methods=["POST"])
 def profile_avatar():
-    """
-    Receives a file upload, stores it in Supabase Storage bucket 'avatars',
-    saves the public URL back to the users table.
-    """
     if not session.get("user_id"):
         return jsonify({"success": False, "error": "Not logged in"}), 401
 
@@ -346,16 +333,12 @@ def profile_avatar():
     file_bytes = file.read()
 
     try:
-        # Upsert into Supabase Storage bucket named "avatars"
         supabase.storage.from_("avatars").upload(
             path        = file_path,
             file        = file_bytes,
             file_options= {"content-type": file.content_type, "upsert": "true"},
         )
-        # Get public URL
         public_url = supabase.storage.from_("avatars").get_public_url(file_path)
-
-        # Save to DB
         supabase.table("users").update({"avatar_url": public_url}).eq("id", uid).execute()
         load_session_from_db(uid)
         return jsonify({"success": True, "avatar_url": public_url})
@@ -377,7 +360,10 @@ def auth_delete():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-# ── Save quiz responses ────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════
+#  QUIZ API
+# ══════════════════════════════════════════════════════════════
+
 @app.route("/api/quiz/save", methods=["POST"])
 def quiz_save():
     """Save quiz answers to DB for logged-in users."""
@@ -397,8 +383,325 @@ def quiz_save():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-# ── Professional Me ────────────────────────────────────────────
-@app.route("/cv-builder/translate", methods=["POST"])
+@app.route("/api/quiz/results", methods=["GET"])
+def quiz_results():
+    """
+    Returns the current user's quiz answers + their saved job IDs.
+    Called by explore.html on page load to restore saved state.
+    """
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"quiz": None, "savedJobIds": []}), 200
+
+    try:
+        # Quiz answers
+        qr = supabase.table("quiz_responses") \
+            .select("answers") \
+            .eq("user_id", uid) \
+            .order("created_at", desc=True) \
+            .limit(1) \
+            .execute()
+        quiz = qr.data[0]["answers"] if qr.data else None
+
+        # Saved job IDs
+        sj = supabase.table("saved_jobs") \
+            .select("job_id, saved_at") \
+            .eq("user_id", uid) \
+            .order("saved_at", desc=False) \
+            .execute()
+        saved_job_ids = [row["job_id"] for row in (sj.data or [])]
+
+        return jsonify({"quiz": quiz, "savedJobIds": saved_job_ids})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ══════════════════════════════════════════════════════════════
+#  JOBS API
+# ══════════════════════════════════════════════════════════════
+
+@app.route("/api/jobs/all", methods=["GET"])
+def jobs_all():
+    """Return all jobs from the DB (used by explore.html grid)."""
+    try:
+        res = supabase.table("jobs").select("*").execute()
+        return jsonify({"jobs": res.data or []})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/jobs/save", methods=["POST"])
+def jobs_save():
+    """Save a job for the current user."""
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"success": False, "error": "Not logged in"}), 401
+
+    data = request.json
+    job_id = data.get("job_id")
+    if not job_id:
+        return jsonify({"success": False, "error": "job_id required"}), 400
+
+    try:
+        # upsert so duplicate saves don't error
+        supabase.table("saved_jobs").upsert(
+            {"user_id": uid, "job_id": job_id},
+            on_conflict="user_id,job_id"
+        ).execute()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/jobs/unsave", methods=["POST"])
+def jobs_unsave():
+    """Remove a saved job for the current user."""
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"success": False, "error": "Not logged in"}), 401
+
+    data = request.json
+    job_id = data.get("job_id")
+    if not job_id:
+        return jsonify({"success": False, "error": "job_id required"}), 400
+
+    try:
+        supabase.table("saved_jobs") \
+            .delete() \
+            .eq("user_id", uid) \
+            .eq("job_id", job_id) \
+            .execute()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/jobs/saved", methods=["GET"])
+def jobs_saved():
+    """
+    Return full job objects for all jobs the current user has saved.
+    Used by skills.html and profile.html.
+    """
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"jobs": []}), 200
+
+    try:
+        sj = supabase.table("saved_jobs") \
+            .select("job_id, saved_at") \
+            .eq("user_id", uid) \
+            .order("saved_at", desc=False) \
+            .execute()
+
+        job_ids = [row["job_id"] for row in (sj.data or [])]
+        if not job_ids:
+            return jsonify({"jobs": []})
+
+        # Fetch each job — Supabase `in_` filter
+        jobs_res = supabase.table("jobs") \
+            .select("*") \
+            .in_("id", job_ids) \
+            .execute()
+
+        # Return in save-order
+        jobs_by_id = {str(j["id"]): j for j in (jobs_res.data or [])}
+        ordered = [jobs_by_id[str(jid)] for jid in job_ids if str(jid) in jobs_by_id]
+        return jsonify({"jobs": ordered})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/jobs/why-fit", methods=["POST"])
+def jobs_why_fit():
+    """
+    Generate a personalised 'why this job fits you' explanation.
+    Requires the user to have quiz results saved.
+    """
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"whyFitPersonalised": "", "whyFitTags": []}), 200
+
+    data = request.json or {}
+    job_id = data.get("job_id")
+    lang   = data.get("lang", "en")
+
+    try:
+        # Get quiz answers
+        qr = supabase.table("quiz_responses") \
+            .select("answers") \
+            .eq("user_id", uid) \
+            .order("created_at", desc=True) \
+            .limit(1) \
+            .execute()
+        if not qr.data:
+            return jsonify({"whyFitPersonalised": "", "whyFitTags": []})
+
+        quiz = qr.data[0]["answers"]
+
+        # Get job info
+        jr = supabase.table("jobs").select("*").eq("id", job_id).single().execute()
+        if not jr.data:
+            return jsonify({"whyFitPersonalised": "", "whyFitTags": []})
+
+        job = jr.data
+
+        # Build a simple rule-based "why fit" response
+        # (replace with an actual LLM call if you have one wired up)
+        tags = []
+        personalised = ""
+
+        # Check quiz flags
+        if quiz.get("q_people") is not None and int(quiz["q_people"]) >= 3:
+            if job.get("work_type") in ["full-time", "part-time"]:
+                tags.append("People-facing role")
+        if quiz.get("q_flexible") is not None and int(quiz["q_flexible"]) >= 3:
+            if job.get("work_type") in ["part-time", "freelance", "remote"]:
+                tags.append("Fits flexible schedule")
+        if quiz.get("q_creative") is not None and int(quiz["q_creative"]) >= 3:
+            cat = (job.get("category") or "").lower()
+            if any(k in cat for k in ["creative", "design", "digital", "media"]):
+                tags.append("Matches creative interest")
+        if job.get("location_type") == "remote":
+            tags.append("Work from home option")
+        if job.get("entry_salary_min") and job.get("entry_salary_min") <= 2000:
+            tags.append("Low barrier to entry")
+        if job.get("work_type") == "freelance":
+            tags.append("Set your own hours")
+
+        if tags:
+            personalised = f"Based on your answers, this role suits you because it offers {tags[0].lower()}."
+
+        return jsonify({"whyFitPersonalised": personalised, "whyFitTags": tags[:4]})
+
+    except Exception as e:
+        return jsonify({"whyFitPersonalised": "", "whyFitTags": [], "error": str(e)}), 200
+
+
+# ══════════════════════════════════════════════════════════════
+#  RECOMMENDATIONS API
+# ══════════════════════════════════════════════════════════════
+
+@app.route("/api/recommendations", methods=["POST"])
+def api_recommendations():
+    """
+    Return top 3 job recommendations based on the user's quiz profile.
+    Falls back to 3 general jobs if no quiz data exists.
+    """
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data = request.json or {}
+    lang = data.get("lang", "en")
+
+    try:
+        # Fetch quiz data
+        qr = supabase.table("quiz_responses") \
+            .select("answers") \
+            .eq("user_id", uid) \
+            .order("created_at", desc=True) \
+            .limit(1) \
+            .execute()
+
+        if not qr.data:
+            return jsonify({"error": "No quiz results found. Please take the career quiz first."}), 404
+
+        quiz = qr.data[0]["answers"]
+
+        # Fetch all jobs
+        jr = supabase.table("jobs").select("*").execute()
+        all_jobs = jr.data or []
+
+        if not all_jobs:
+            return jsonify({"error": "No jobs available"}), 404
+
+        # Score each job against quiz answers
+        def score_job(job):
+            score = 0
+            wt = job.get("work_type", "")
+            cat = (job.get("category") or "").lower()
+
+            # Flexibility preference
+            if quiz.get("q_flexible") is not None:
+                fl = int(quiz["q_flexible"])
+                if fl >= 3 and wt in ["part-time", "freelance", "remote"]:
+                    score += 3
+                elif fl <= 1 and wt == "full-time":
+                    score += 2
+
+            # People preference
+            if quiz.get("q_people") is not None:
+                pp = int(quiz["q_people"])
+                if pp >= 3 and any(k in cat for k in ["sales", "hospitality", "care", "service"]):
+                    score += 2
+
+            # Creative preference
+            if quiz.get("q_creative") is not None:
+                cr = int(quiz["q_creative"])
+                if cr >= 3 and any(k in cat for k in ["creative", "design", "digital", "media"]):
+                    score += 3
+
+            # Growth preference
+            if quiz.get("q_growth") is not None:
+                gr = int(quiz["q_growth"])
+                if gr >= 3:
+                    score += 1  # slight preference for growth jobs
+
+            # Outdoor preference
+            if quiz.get("q_outdoor") is not None:
+                od = int(quiz["q_outdoor"])
+                if od >= 3 and any(k in cat for k in ["logistics", "trade", "agri", "transport"]):
+                    score += 2
+
+            return score
+
+        scored = sorted(all_jobs, key=score_job, reverse=True)
+        top3   = scored[:3]
+
+        # Fetch saved job IDs for this user
+        sj = supabase.table("saved_jobs") \
+            .select("job_id") \
+            .eq("user_id", uid) \
+            .execute()
+        saved_ids = [row["job_id"] for row in (sj.data or [])]
+
+        # Shape the response to match what recommendations.html expects
+        result_jobs = []
+        for j in top3:
+            entry_min = j.get("entry_salary_min", 0) or 0
+            entry_max = j.get("entry_salary_max", 0) or 0
+            target_min = j.get("target_salary_min", 0) or 0
+            target_max = j.get("target_salary_max", 0) or 0
+
+            result_jobs.append({
+                "id":          j.get("id"),
+                "emoji":       j.get("emoji", "💼"),
+                "title":       j.get("title_en") or j.get("title_bm") or "Job",
+                "tagline":     j.get("tagline_en") or "",
+                "description": j.get("duties_en") or j.get("description_en") or "",
+                "entrySalary": f"RM {entry_min:,}–{entry_max:,}/mo" if entry_min else "See listing",
+                "targetSalary":f"RM {target_min:,}–{target_max:,}/mo" if target_min else "See listing",
+                "timeline":    j.get("timeline") or "3–6 months",
+                "safetyRating":j.get("safety_rating") or "Steady Growth",
+                "work_type":   j.get("work_type") or "full-time",
+                "location_type": j.get("location_type") or "",
+                "category":    j.get("category") or "",
+                # Why-fit tags (simple rule-based)
+                "whyFitTags":  [],
+                "whyFitPersonalised": "",
+            })
+
+        return jsonify({"jobs": result_jobs, "savedJobIds": saved_ids})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ══════════════════════════════════════════════════════════════
+#  CV TRANSLATOR
+# ══════════════════════════════════════════════════════════════
+
+@app.route("/cv-translator/translate", methods=["POST"])
 def cv_translate():
     data = request.get_json()
     if not data or "text" not in data:

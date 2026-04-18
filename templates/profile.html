@@ -13,88 +13,52 @@
     /* ═══════════════════════════════════════════
        PROFILE PAGE
     ═══════════════════════════════════════════ */
-    .profile-page {
-      min-height: 100vh;
-      background: var(--cream);
-    }
+    .profile-page { min-height: 100vh; background: var(--cream); }
 
     /* ── PROFILE HERO BANNER ─────────────────── */
     .profile-banner {
       background: var(--ink);
       padding: 2.5rem clamp(1.5rem,5vw,4rem) 0;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-    .profile-banner-bg {
-      position: absolute; inset: 0; opacity: 0.06; pointer-events: none;
-    }
+    .profile-banner-bg { position: absolute; inset: 0; opacity: 0.06; pointer-events: none; }
     .profile-banner-inner {
       position: relative; z-index: 1;
       display: flex; align-items: flex-end; gap: 2rem;
-      max-width: 960px; margin: 0 auto;
-      padding-bottom: 1.5rem;
+      max-width: 960px; margin: 0 auto; padding-bottom: 1.5rem;
     }
-
-    /* Avatar in banner */
-    .profile-banner-avatar-wrap {
-      position: relative;
-      flex-shrink: 0;
-    }
+    .profile-banner-avatar-wrap { position: relative; flex-shrink: 0; }
     .profile-banner-avatar {
-      width: 100px; height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid rgba(255,255,255,0.15);
-      display: block;
-      background: var(--peach);
+      width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+      border: 4px solid rgba(255,255,255,0.15); display: block; background: var(--peach);
     }
-
     .profile-banner-info { flex: 1; min-width: 0; }
     .profile-banner-name {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.4rem, 3vw, 2rem);
-      color: #fff;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
+      font-size: clamp(1.4rem, 3vw, 2rem); color: #fff; font-weight: 700; margin-bottom: 0.25rem;
     }
-    .profile-banner-headline {
-      font-size: 0.88rem;
-      color: rgba(255,255,255,0.55);
-      margin-bottom: 0.5rem;
-    }
-    .profile-banner-desc {
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.4);
-      max-width: 480px;
-      line-height: 1.55;
-    }
+    .profile-banner-headline { font-size: 0.88rem; color: rgba(255,255,255,0.55); margin-bottom: 0.5rem; }
+    .profile-banner-desc { font-size: 0.82rem; color: rgba(255,255,255,0.4); max-width: 480px; line-height: 1.55; }
 
     /* ── TABS ─────────────────────────────────── */
     .profile-tabs {
-      display: flex; gap: 0;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      max-width: 960px; margin: 0 auto;
-      position: relative; z-index: 1;
+      display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,0.08);
+      max-width: 960px; margin: 0 auto; position: relative; z-index: 1;
     }
     .ptab-btn {
-      padding: 0.85rem 1.75rem;
-      border: none; background: transparent;
+      padding: 0.85rem 1.75rem; border: none; background: transparent;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.88rem; font-weight: 600;
-      color: rgba(255,255,255,0.45);
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
+      font-size: 0.88rem; font-weight: 600; color: rgba(255,255,255,0.45);
+      cursor: pointer; border-bottom: 3px solid transparent;
       transition: color 0.2s, border-color 0.2s;
+      /* Ensure clicks register correctly */
+      position: relative; z-index: 2;
     }
     .ptab-btn:hover  { color: rgba(255,255,255,0.8); }
     .ptab-btn.active { color: #fff; border-bottom-color: var(--teal); }
 
     /* ── MAIN BODY ───────────────────────────── */
-    .profile-body {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 2.5rem clamp(1rem,4vw,2rem) 5rem;
-    }
+    .profile-body { max-width: 960px; margin: 0 auto; padding: 2.5rem clamp(1rem,4vw,2rem) 5rem; }
 
     /* ── TAB PANELS ──────────────────────────── */
     .ptab-panel { display: none; }
@@ -107,29 +71,22 @@
     }
     .dash-header h2 { font-size: 1.25rem; color: var(--ink); }
 
-    .saved-jobs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(260px,100%), 1fr));
-      gap: 1.25rem;
+    /* Saved jobs scroll strip (like skills.html) */
+    .saved-scroll-strip {
+      display: flex; gap: .75rem; overflow-x: auto; padding-bottom: .5rem; margin-bottom: 1.5rem;
     }
+    .saved-scroll-strip::-webkit-scrollbar { height: 4px; }
+    .saved-scroll-strip::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    /* Mini job card (simpler than explore card) */
+    /* Mini job card */
     .mini-job-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: pointer;
-      text-decoration: none;
-      display: block;
+      background: #fff; border: 1px solid var(--border); border-radius: 16px;
+      overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer; text-decoration: none; display: block; min-width: 190px; flex-shrink: 0;
     }
     .mini-job-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(28,23,19,0.1); }
     .mjc-thumb {
-      height: 110px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
+      height: 110px; background-size: cover; background-position: center; position: relative;
     }
     .mjc-badge {
       position: absolute; top: 8px; left: 8px;
@@ -138,11 +95,12 @@
       background: rgba(255,255,255,0.92); color: var(--ink-mid);
     }
     .mjc-body { padding: 0.9rem 1rem; }
+    .mjc-emoji { font-size: 1.4rem; margin-bottom: 0.25rem; }
     .mjc-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.2rem; }
     .mjc-salary { font-size: 0.75rem; font-weight: 700; color: var(--teal); }
+    .mjc-roadmap { font-size: 0.72rem; font-weight: 700; color: var(--red); margin-top: 0.35rem; }
 
     .dash-empty {
-      grid-column: 1/-1;
       text-align: center; padding: 3.5rem 1rem;
       background: var(--peach); border-radius: 16px; border: 1px dashed var(--border);
     }
@@ -150,57 +108,47 @@
     .dash-empty h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
     .dash-empty p  { font-size: 0.85rem; color: var(--ink-lt); margin-bottom: 1.5rem; }
 
+    /* Loading row */
+    .dash-loading {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .85rem; color: var(--ink-mid); padding: 1rem 0;
+    }
+    .mini-spin {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border); border-top-color: var(--teal);
+      border-radius: 50%; animation: mspin .7s linear infinite; flex-shrink: 0;
+    }
+    @keyframes mspin { to { transform: rotate(360deg); } }
+
     /* ── EDIT PROFILE FORM ───────────────────── */
     .edit-section {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 2rem;
-      margin-bottom: 1.5rem;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 20px; padding: 2rem; margin-bottom: 1.5rem;
     }
     .edit-section-title {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--red);
-      margin-bottom: 1.25rem;
+      text-transform: uppercase; color: var(--red); margin-bottom: 1.25rem;
     }
-
-    /* Avatar upload — the big element */
     .avatar-upload-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.25rem;
-      padding: 2rem;
+      display: flex; flex-direction: column; align-items: center; gap: 1.25rem; padding: 2rem;
     }
     .avatar-preview-ring {
-      position: relative;
-      width: 140px; height: 140px;
-      border-radius: 50%;
-      cursor: pointer;
+      position: relative; width: 140px; height: 140px; border-radius: 50%; cursor: pointer;
     }
     .avatar-preview-img {
-      width: 140px; height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--teal);
-      display: block;
-      transition: filter 0.2s;
+      width: 140px; height: 140px; border-radius: 50%; object-fit: cover;
+      border: 4px solid var(--teal); display: block; transition: filter 0.2s;
     }
     .avatar-preview-ring:hover .avatar-preview-img { filter: brightness(0.7); }
     .avatar-overlay {
-      position: absolute; inset: 0;
-      border-radius: 50%;
+      position: absolute; inset: 0; border-radius: 50%;
       background: rgba(28,23,19,0.45);
       display: flex; align-items: center; justify-content: center;
-      opacity: 0; transition: opacity 0.2s;
-      color: #fff; font-size: 1.6rem;
-      pointer-events: none;
+      opacity: 0; transition: opacity 0.2s; color: #fff; font-size: 1.6rem; pointer-events: none;
     }
     .avatar-preview-ring:hover .avatar-overlay { opacity: 1; }
     #avatar-file-input { display: none; }
-    .avatar-upload-hint {
-      font-size: 0.78rem; color: var(--ink-lt); text-align: center; line-height: 1.5;
-    }
+    .avatar-upload-hint { font-size: 0.78rem; color: var(--ink-lt); text-align: center; line-height: 1.5; }
     .avatar-upload-btn {
       font-size: 0.82rem; font-weight: 700; padding: 0.5rem 1.25rem;
       border-radius: 8px; background: var(--teal); color: #fff; border: none;
@@ -208,12 +156,7 @@
     }
     .avatar-upload-btn:hover { background: #6a9aa4; }
 
-    /* Form grid */
-    .edit-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
+    .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     @media(max-width:560px) { .edit-grid { grid-template-columns: 1fr; } }
     .edit-grid.full { grid-template-columns: 1fr; }
 
@@ -222,46 +165,25 @@
       font-size: 0.75rem; font-weight: 700; color: var(--ink-mid);
       letter-spacing: 0.02em; text-transform: uppercase;
     }
-    .ef-group input,
-    .ef-group select,
-    .ef-group textarea {
-      padding: 0.6rem 0.9rem;
-      border: 1.5px solid var(--border);
-      border-radius: 9px;
-      background: var(--cream);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.9rem;
-      color: var(--ink);
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      appearance: none;
+    .ef-group input, .ef-group select, .ef-group textarea {
+      padding: 0.6rem 0.9rem; border: 1.5px solid var(--border); border-radius: 9px;
+      background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem; color: var(--ink); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s; appearance: none;
     }
-    .ef-group input:focus,
-    .ef-group select:focus,
-    .ef-group textarea:focus {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(126,172,181,0.15);
+    .ef-group input:focus, .ef-group select:focus, .ef-group textarea:focus {
+      border-color: var(--teal); box-shadow: 0 0 0 3px rgba(126,172,181,0.15);
     }
     .ef-group textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     .ef-group select {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a6e66' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.85rem center;
-      padding-right: 2.25rem;
+      background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.25rem; cursor: pointer;
     }
+    .save-row { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem; }
 
-    .save-row {
-      display: flex; justify-content: flex-end; gap: 0.75rem;
-      margin-top: 1.25rem;
-    }
-
-    /* Danger zone */
     .danger-zone {
-      background: #fdf0f0;
-      border: 1px solid #f5c0c0;
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-top: 2rem;
+      background: #fdf0f0; border: 1px solid #f5c0c0; border-radius: 16px;
+      padding: 1.5rem; margin-top: 2rem;
     }
     .danger-zone h3 { font-size: 1rem; color: var(--red); margin-bottom: 0.5rem; }
     .danger-zone p  { font-size: 0.83rem; color: var(--ink-lt); margin-bottom: 1rem; }
@@ -269,33 +191,22 @@
 
     /* ── QUIZ RESPONSES ──────────────────────── */
     .quiz-response-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
+      background: #fff; border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.5rem; margin-bottom: 1rem;
     }
-    .qrc-meta {
-      font-size: 0.72rem; color: var(--ink-lt); font-weight: 500;
-      margin-bottom: 1rem; letter-spacing: 0.03em;
-    }
+    .qrc-meta { font-size: 0.72rem; color: var(--ink-lt); font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.03em; }
     .qrc-row {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 0.45rem 0; border-bottom: 1px solid var(--border);
-      font-size: 0.83rem;
+      padding: 0.45rem 0; border-bottom: 1px solid var(--border); font-size: 0.83rem;
     }
     .qrc-row:last-child { border-bottom: none; }
     .qrc-q { color: var(--ink-mid); max-width: 70%; }
     .qrc-a {
       font-weight: 700; color: var(--ink);
       background: var(--peach); border: 1px solid var(--border);
-      padding: 0.1rem 0.55rem; border-radius: 50px;
-      font-size: 0.72rem;
+      padding: 0.1rem 0.55rem; border-radius: 50px; font-size: 0.72rem;
     }
-    .quiz-empty {
-      text-align: center; padding: 3rem 1rem;
-      background: var(--peach); border-radius: 16px;
-    }
+    .quiz-empty { text-align: center; padding: 3rem 1rem; background: var(--peach); border-radius: 16px; }
     .quiz-empty .emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
 
     /* ── TOAST ───────────────────────────────── */
@@ -316,11 +227,94 @@
       width: 140px; height: 4px; border-radius: 4px;
       background: var(--border); overflow: hidden; display: none;
     }
-    .avatar-progress-fill {
-      height: 100%; background: var(--teal);
-      width: 0%; transition: width 0.3s;
-      border-radius: 4px;
+    .avatar-progress-fill { height: 100%; background: var(--teal); width: 0%; transition: width 0.3s; border-radius: 4px; }
+
+    /* ══════════════════════════════════════════
+       NAV AVATAR — DYNAMIC ISLAND ANIMATION
+       Replaces the speech-bubble dropdown with a
+       pill that smoothly expands to reveal links.
+    ══════════════════════════════════════════ */
+    .nav-avatar-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
+
+    /* The "pill" that is always visible */
+    .nav-island {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--ink);
+      border-radius: 50px;
+      padding: 3px;
+      cursor: pointer;
+      transition:
+        padding 0.35s cubic-bezier(.34,1.2,.64,1),
+        gap      0.35s cubic-bezier(.34,1.2,.64,1),
+        box-shadow 0.25s ease;
+      box-shadow: 0 2px 10px rgba(28,23,19,0.18);
+      overflow: hidden;
+      max-width: 40px;         /* collapsed: just the avatar circle */
+    }
+
+    .nav-island:hover,
+    .nav-avatar-wrap.open .nav-island {
+      padding: 4px 14px 4px 4px;
+      gap: 10px;
+      max-width: 260px;        /* expanded width */
+      box-shadow: 0 6px 24px rgba(28,23,19,0.28);
+    }
+
+    .nav-island-img {
+      width: 32px; height: 32px;
+      border-radius: 50%; object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.2);
+      display: block; flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+    .nav-island:hover .nav-island-img,
+    .nav-avatar-wrap.open .nav-island-img {
+      border-color: var(--teal);
+    }
+
+    /* The links inside the island — hidden until expanded */
+    .nav-island-links {
+      display: flex;
+      gap: 2px;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      transition: opacity 0.2s 0.05s;
+      align-items: center;
+    }
+    .nav-island:hover .nav-island-links,
+    .nav-avatar-wrap.open .nav-island-links {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .nav-island-link {
+      font-size: 0.78rem; font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      padding: 0.35rem 0.65rem;
+      border-radius: 50px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-island-link:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .nav-island-link.signout { color: #ff9f9f; }
+    .nav-island-link.signout:hover { background: rgba(191,70,70,0.25); color: #ffb8b8; }
+
+    /* Separator dot */
+    .nav-island-sep {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); flex-shrink: 0;
+    }
+
+    /* Hide the old nav-profile-card styles when island is active */
+    .nav-profile-card { display: none !important; }
+    .nav-avatar-btn   { display: none !important; }
   </style>
 {% endblock %}
 
@@ -331,7 +325,7 @@
 
   <!-- ════════════════════════════════════════
        PROFILE BANNER
-       ════════════════════════════════════════ -->
+  ════════════════════════════════════════ -->
   <div class="profile-banner">
     <svg class="profile-banner-bg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <circle cx="1100" cy="40"  r="200" fill="none" stroke="#7EACB5" stroke-width="1"/>
@@ -358,48 +352,52 @@
     </div>
 
     <!-- Tabs sit on the dark banner -->
-    <div class="profile-tabs" role="tablist">
-      <button class="ptab-btn active" data-tab="dashboard"  role="tab" aria-selected="true">📋 Dashboard</button>
-      <button class="ptab-btn"        data-tab="edit"       role="tab" aria-selected="false">✏️ Edit Profile</button>
-      <button class="ptab-btn"        data-tab="quiz"       role="tab" aria-selected="false">🧭 Quiz Results</button>
+    <div class="profile-tabs" id="profile-tabs" role="tablist">
+      <button class="ptab-btn active" data-tab="dashboard" role="tab" aria-selected="true">📋 Dashboard</button>
+      <button class="ptab-btn"        data-tab="edit"      role="tab" aria-selected="false">⚙️ Settings<!--previously '✏️ edit profile'--></button>
+      <button class="ptab-btn"        data-tab="quiz"      role="tab" aria-selected="false">🧭 Quiz Results</button>
     </div>
   </div>
 
   <!-- ════════════════════════════════════════
        BODY
-       ════════════════════════════════════════ -->
+  ════════════════════════════════════════ -->
   <div class="profile-body">
 
-    <!-- ────────────────────────────────────
-         TAB: DASHBOARD
-         ──────────────────────────────────── -->
+    <!-- ── TAB: DASHBOARD ── -->
     <div class="ptab-panel active" id="panel-dashboard">
       <div class="dash-header">
         <h2>Saved Jobs</h2>
         <a href="{{ url_for('explore') }}" class="btn btn-teal">🔍 Find More Jobs</a>
       </div>
 
-      <div class="saved-jobs-grid" id="saved-jobs-grid">
-        <!-- Filled by JS from localStorage -->
-        <div class="dash-empty" id="dash-empty">
-          <div class="emoji">🤍</div>
-          <h3>No saved jobs yet</h3>
-          <p>Heart any job in Explore to save it here.</p>
-          <a href="{{ url_for('explore') }}" class="btn btn-primary">🔍 Find Jobs</a>
-        </div>
+      <div id="dash-loading" class="dash-loading">
+        <div class="mini-spin"></div>
+        <span>Loading your saved jobs…</span>
+      </div>
+
+      <!-- Horizontal scroll strip of saved job chips -->
+      <div class="saved-scroll-strip" id="saved-scroll-strip" style="display:none;"></div>
+
+      <!-- Empty state (shown if no saved jobs) -->
+      <div class="dash-empty" id="dash-empty" style="display:none;">
+        <div class="emoji">🤍</div>
+        <h3>No saved jobs yet</h3>
+        <p>Heart any job in Explore to save it here.</p>
+        <a href="{{ url_for('explore') }}" class="btn btn-primary">🔍 Find Jobs</a>
       </div>
     </div>
 
-    <!-- ────────────────────────────────────
-         TAB: EDIT PROFILE
-         ──────────────────────────────────── -->
+    <!-- ── TAB: EDIT PROFILE ── -->
     <div class="ptab-panel" id="panel-edit">
 
       <!-- Avatar upload -->
       <div class="edit-section">
         <div class="edit-section-title">Profile Picture</div>
         <div class="avatar-upload-area">
-          <div class="avatar-preview-ring" id="avatar-ring" onclick="document.getElementById('avatar-file-input').click()" title="Click to change photo">
+          <div class="avatar-preview-ring" id="avatar-ring"
+               onclick="document.getElementById('avatar-file-input').click()"
+               title="Click to change photo">
             <img
               src="{{ user.get('avatar_url') or url_for('static', filename='images/default-avatar.svg') }}"
               alt="Your avatar"
@@ -409,7 +407,9 @@
             >
             <div class="avatar-overlay">📷</div>
           </div>
-          <div class="avatar-progress" id="avatar-progress"><div class="avatar-progress-fill" id="avatar-progress-fill"></div></div>
+          <div class="avatar-progress" id="avatar-progress">
+            <div class="avatar-progress-fill" id="avatar-progress-fill"></div>
+          </div>
           <input type="file" id="avatar-file-input" accept="image/jpeg,image/png,image/webp,image/gif">
           <div class="avatar-upload-hint">Click the photo to change it.<br>JPG, PNG or WebP — max 5 MB.</div>
           <button class="avatar-upload-btn" id="avatar-upload-btn" style="display:none;">Upload Photo</button>
@@ -482,9 +482,7 @@
       </div>
     </div>
 
-    <!-- ────────────────────────────────────
-         TAB: QUIZ RESULTS
-         ──────────────────────────────────── -->
+    <!-- ── TAB: QUIZ RESULTS ── -->
     <div class="ptab-panel" id="panel-quiz">
       {% if quiz_responses %}
         {% for resp in quiz_responses %}
@@ -535,29 +533,37 @@
 
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='naik.js') }}"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════
    PROFILE PAGE JS
 ═══════════════════════════════════════════════════════════ */
 
 /* ── TAB SWITCHING ──────────────────────────────────────── */
-document.querySelectorAll('.ptab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.ptab-btn').forEach(b => {
-      b.classList.remove('active');
-      b.setAttribute('aria-selected', 'false');
-    });
-    document.querySelectorAll('.ptab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    btn.setAttribute('aria-selected', 'true');
-    document.getElementById(`panel-${btn.dataset.tab}`).classList.add('active');
+// Using event delegation on the container so it's rock-solid
+document.getElementById('profile-tabs').addEventListener('click', function(e) {
+  const btn = e.target.closest('.ptab-btn');
+  if (!btn) return;
+
+  // Update button states
+  document.querySelectorAll('.ptab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
   });
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+
+  // Show / hide panels
+  document.querySelectorAll('.ptab-panel').forEach(p => p.classList.remove('active'));
+  const panelId = 'panel-' + btn.dataset.tab;
+  const panel   = document.getElementById(panelId);
+  if (panel) panel.classList.add('active');
 });
 
-// Support deep-linking via hash (e.g. /profile#edit)
-if (window.location.hash === '#edit') {
-  document.querySelector('[data-tab="edit"]').click();
+// Deep-link support (e.g. /profile#edit)
+if (window.location.hash) {
+  const target = window.location.hash.replace('#', '');
+  const btn    = document.querySelector(`[data-tab="${target}"]`);
+  if (btn) btn.click();
 }
 
 /* ── TOAST ──────────────────────────────────────────────── */
@@ -599,10 +605,9 @@ function postUpdate(payload, successMsg) {
   .then(res => {
     if (res.success) {
       showToast(successMsg);
-      // Update banner live
-      const n = (payload.name || '') + ' ' + (payload.surname || '');
-      if (n.trim() && document.querySelector('.profile-banner-name'))
-        document.querySelector('.profile-banner-name').textContent = n.trim();
+      const n = ((payload.name || '') + ' ' + (payload.surname || '')).trim();
+      if (n && document.querySelector('.profile-banner-name'))
+        document.querySelector('.profile-banner-name').textContent = n;
       if (payload.headline && document.querySelector('.profile-banner-headline'))
         document.querySelector('.profile-banner-headline').textContent = payload.headline;
     } else {
@@ -619,13 +624,9 @@ document.getElementById('avatar-file-input').addEventListener('change', function
   const file = this.files[0];
   if (!file) return;
   if (file.size > 5 * 1024 * 1024) { showToast('❌ File too large (max 5 MB)'); return; }
-
   pendingFile = file;
-  // Preview locally
   const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('avatar-preview').src = e.target.result;
-  };
+  reader.onload = e => { document.getElementById('avatar-preview').src = e.target.result; };
   reader.readAsDataURL(file);
   document.getElementById('avatar-upload-btn').style.display = 'inline-block';
 });
@@ -636,21 +637,19 @@ document.getElementById('avatar-upload-btn').addEventListener('click', async () 
   const fill = document.getElementById('avatar-progress-fill');
   bar.style.display = 'block';
   fill.style.width  = '30%';
-
   const formData = new FormData();
   formData.append('avatar', pendingFile);
-
   try {
     fill.style.width = '60%';
     const res  = await fetch('/auth/profile/avatar', { method: 'POST', body: formData });
     const data = await res.json();
     fill.style.width = '100%';
     setTimeout(() => { bar.style.display = 'none'; fill.style.width = '0%'; }, 600);
-
     if (data.success) {
-      // Update banner avatar too
       document.getElementById('banner-avatar').src = data.avatar_url;
-      document.getElementById('nav-avatar-img') && (document.getElementById('nav-avatar-img').src = data.avatar_url);
+      // Update island avatar if present
+      const islandImg = document.querySelector('.nav-island-img');
+      if (islandImg) islandImg.src = data.avatar_url;
       document.getElementById('avatar-upload-btn').style.display = 'none';
       pendingFile = null;
       showToast('✅ Photo updated!');
@@ -674,41 +673,86 @@ function confirmDelete() {
     });
 }
 
-/* ── LOAD SAVED JOBS FROM LOCALSTORAGE ──────────────────── */
-const JOBS = {{ jobs_json | safe }};
+/* ── LOAD SAVED JOBS FROM API ───────────────────────────── */
+async function loadSavedJobs() {
+  const loadingEl = document.getElementById('dash-loading');
+  const stripEl   = document.getElementById('saved-scroll-strip');
+  const emptyEl   = document.getElementById('dash-empty');
 
-function loadSavedJobs() {
-  const savedIds = new Set(JSON.parse(localStorage.getItem('naik_saved') || '[]'));
-  const savedOrder = JSON.parse(localStorage.getItem('naik_saved_order') || '[]');
-  const grid = document.getElementById('saved-jobs-grid');
-  const empty = document.getElementById('dash-empty');
+  try {
+    const res  = await fetch('/api/jobs/saved');
+    const data = await res.json();
+    loadingEl.style.display = 'none';
 
-  if (savedIds.size === 0) { empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
+    if (!data.jobs || !data.jobs.length) {
+      emptyEl.style.display = 'block';
+      return;
+    }
 
-  const ordered = savedOrder.filter(id => savedIds.has(id));
-  const remaining = [...savedIds].filter(id => !savedOrder.includes(id));
-  const allIds = [...ordered, ...remaining];
+    stripEl.style.display = 'flex';
 
-  allIds.forEach(id => {
-    const job = JOBS.find(j => j.id === id);
-    if (!job) return;
-    const a = document.createElement('a');
-    a.href = '/explore';
-    a.className = 'mini-job-card';
-    a.innerHTML = `
-      <div class="mjc-thumb" style="background-image:url('${job.thumb}')">
-        <span class="mjc-badge">${job.type.replace('-',' ')}</span>
-      </div>
-      <div class="mjc-body">
-        <div class="mjc-name">${job.name}</div>
-        <div class="mjc-salary">${job.salaryLabel}</div>
-      </div>
-    `;
-    grid.insertBefore(a, empty);
-  });
+    data.jobs.forEach(job => {
+      if (!job) return;
+
+      // Build salary label
+      const mn = job.entry_salary_min;
+      const mx = job.entry_salary_max;
+      const salary = mn && mx ? `RM ${mn.toLocaleString()}–${mx.toLocaleString()}/mo` :
+                     mn ? `From RM ${mn.toLocaleString()}/mo` : '';
+
+      // Choose a thumbnail URL using the same keyword logic as explore
+      const imgUrl = jobThumbUrl(job);
+
+      const chip = document.createElement('a');
+      chip.href      = `/roadmap/view?job=${job.id}`;
+      chip.className = 'mini-job-card';
+      chip.innerHTML = `
+        <div class="mjc-thumb" style="background-image:url('${imgUrl}')">
+          <span class="mjc-badge">${(job.work_type || 'job').replace('-',' ')}</span>
+        </div>
+        <div class="mjc-body">
+          <div class="mjc-emoji">${job.emoji || '💼'}</div>
+          <div class="mjc-name">${job.title_en || 'Saved Job'}</div>
+          <div class="mjc-salary">${salary}</div>
+          <div class="mjc-roadmap">🗺 View Roadmap →</div>
+        </div>
+      `;
+      stripEl.appendChild(chip);
+    });
+
+  } catch (err) {
+    loadingEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    console.error('Error loading saved jobs:', err);
+  }
 }
 
-loadSavedJobs();
+/* Minimal image URL helper (mirrors explore.html logic) */
+function jobThumbUrl(job) {
+  if (job.image_url) return job.image_url;
+  const search = [job.title_en||'', job.tagline_en||'', job.duties_en||''].join(' ').toLowerCase();
+  const map = [
+    { keys: ['barista','coffee','café','cafe'], photo: '1495474472287-4d71bcdd2085' },
+    { keys: ['baker','pastry','kuih','cake'],   photo: '1556217477-d325251ece38' },
+    { keys: ['grab','driver','e-hailing'],      photo: '1449965408869-eaa3f722e40d' },
+    { keys: ['warehouse','logistics','picker'],  photo: '1553413077-190dd305871c' },
+    { keys: ['retail','cashier','mall'],         photo: '1441986300917-64674bd600d8' },
+    { keys: ['admin','clerk','receptionist'],    photo: '1497032628192-86f99bcd76bc' },
+    { keys: ['customer service','helpdesk'],     photo: '1521737604893-d14cc237f11d' },
+    { keys: ['tutor','teacher','educator'],      photo: '1509062522246-3755977927d7' },
+    { keys: ['nurse','hospital','clinical'],     photo: '1584308666744-24d5c474f2ae' },
+    { keys: ['graphic design','designer'],       photo: '1561070791-2526d30994b5' },
+    { keys: ['social media','content creator'],  photo: '1611162617213-7d7a39e9b1d7' },
+    { keys: ['delivery rider','food delivery'],  photo: '1592861956120-e524fc739696' },
+  ];
+  for (const entry of map) {
+    if (entry.keys.some(k => search.includes(k)))
+      return `https://images.unsplash.com/photo-${entry.photo}?w=400&q=70&fit=crop`;
+  }
+  return `https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&q=70&fit=crop`;
+}
+
+/* ── INIT ────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', loadSavedJobs);
 </script>
 {% endblock %}

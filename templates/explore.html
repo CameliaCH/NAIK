@@ -35,6 +35,7 @@
     .signin-nudge h3 { font-family:'Playfair Display',serif; font-size: 1.2rem; color: var(--ink); margin-bottom: .4rem; }
     .signin-nudge p { font-size: .84rem; color: var(--ink-mid); line-height: 1.55; margin-bottom: 1.25rem; }
     .signin-nudge-btns { display: flex; flex-direction: column; gap: .6rem; }
+
     /* ── WHY FIT BOX (modal) ── */
     .modal-why-fit {
       margin: 1.25rem 0 0;
@@ -43,184 +44,93 @@
       padding: .9rem 1.1rem;
     }
     .modal-why-fit-label {
-      font-size: .65rem;
-      font-weight: 800;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--red, #BF4646);
-      margin-bottom: .5rem;
+      font-size: .65rem; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--red, #BF4646); margin-bottom: .5rem;
     }
     .modal-why-fit-bullets {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: .3rem;
-      margin: 0;
-      padding: 0;
+      list-style: none; display: flex; flex-direction: column;
+      gap: .3rem; margin: 0; padding: 0;
     }
     .modal-why-fit-bullets li {
-      font-size: .82rem;
-      color: var(--ink-mid, #6B6B80);
-      display: flex;
-      align-items: flex-start;
-      gap: .4rem;
-      line-height: 1.45;
+      font-size: .82rem; color: var(--ink-mid, #6B6B80);
+      display: flex; align-items: flex-start; gap: .4rem; line-height: 1.45;
     }
     .modal-why-fit-bullets li::before {
-      content: "•";
-      color: var(--red, #BF4646);
-      font-weight: 800;
-      flex-shrink: 0;
-      margin-top: .05rem;
+      content: "•"; color: var(--red, #BF4646); font-weight: 800;
+      flex-shrink: 0; margin-top: .05rem;
     }
     .modal-why-fit-loading {
-      font-size: .8rem;
-      color: var(--ink-lt, #9B9BAE);
-      display: flex;
-      align-items: center;
-      gap: .5rem;
+      font-size: .8rem; color: var(--ink-lt, #9B9BAE);
+      display: flex; align-items: center; gap: .5rem;
     }
     .mini-spin {
-      width: 14px;
-      height: 14px;
+      width: 14px; height: 14px;
       border: 2px solid var(--border, #E8E3DD);
       border-top-color: var(--teal, #7EACB5);
       border-radius: 50%;
-      animation: mspin .7s linear infinite;
-      flex-shrink: 0;
+      animation: mspin .7s linear infinite; flex-shrink: 0;
     }
     @keyframes mspin { to { transform: rotate(360deg); } }
 
     /* ── MODAL SALARY ROW ── */
-    .modal-salary-row {
-      display: flex;
-      gap: .6rem;
-      flex-wrap: wrap;
-      margin-top: .55rem;
-    }
+    .modal-salary-row { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: .55rem; }
     .modal-salary-pill {
-      display: inline-flex;
-      align-items: center;
-      padding: .25rem .75rem;
-      border-radius: 50px;
-      font-size: .73rem;
-      font-weight: 700;
+      display: inline-flex; align-items: center; padding: .25rem .75rem;
+      border-radius: 50px; font-size: .73rem; font-weight: 700;
     }
     .msp-entry  { background: rgba(126,172,181,.18); color: #7EACB5; }
     .msp-target { background: rgba(191,70,70,.10);   color: #BF4646; }
 
     /* ── MODAL WORK BADGES ── */
-    .modal-work-badges {
-      display: flex;
-      gap: .4rem;
-      flex-wrap: wrap;
-      margin-top: .45rem;
-    }
+    .modal-work-badges { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .45rem; }
     .modal-work-badge {
-      font-size: .68rem;
-      font-weight: 700;
-      padding: .2rem .6rem;
-      border-radius: 50px;
-      background: rgba(126,172,181,.12);
-      color: #7EACB5;
-      text-transform: capitalize;
+      font-size: .68rem; font-weight: 700; padding: .2rem .6rem; border-radius: 50px;
+      background: rgba(126,172,181,.12); color: #7EACB5; text-transform: capitalize;
     }
 
     /* ── MODAL HERO (emoji style) ── */
-    .modal-hero.emoji-hero {
-      background: var(--peach, #FFF0E6) !important;
-      min-height: 140px;
-    }
-    .modal-hero-emoji {
-      font-size: 3rem;
-      margin-bottom: .5rem;
-      display: block;
-    }
+    .modal-hero.emoji-hero { background: var(--peach, #FFF0E6) !important; min-height: 140px; }
+    .modal-hero-emoji { font-size: 3rem; margin-bottom: .5rem; display: block; }
 
     /* ── ROADMAP HINT ── */
-    .modal-roadmap-hint {
-      display: none;
-      font-size: .8rem;
-      color: var(--ink-mid, #6B6B80);
-      text-align: center;
-      margin-top: .4rem;
-    }
-    .modal-roadmap-hint a {
-      color: #BF4646;
-      font-weight: 700;
-      text-decoration: none;
-    }
+    .modal-roadmap-hint { display: none; font-size: .8rem; color: var(--ink-mid, #6B6B80); text-align: center; margin-top: .4rem; }
+    .modal-roadmap-hint a { color: #BF4646; font-weight: 700; text-decoration: none; }
     .modal-roadmap-hint a:hover { text-decoration: underline; }
     .modal-roadmap-hint.visible { display: block; }
 
-    /* ══════════════════════════════════════════
-       STOCK-PHOTO JOB CARDS
-       ══════════════════════════════════════════ */
-
-    /* Always-on zoom on hover like a stock image site */
-    .job-card:hover .job-thumb {
-      transform: scale(1.07) !important;
-      opacity: 1 !important;
-    }
-
-    /* Richer cinematic gradient */
+    /* ── STOCK-PHOTO JOB CARDS ── */
+    .job-card:hover .job-thumb { transform: scale(1.07) !important; opacity: 1 !important; }
     .job-gradient {
-      background: linear-gradient(
-        to top,
-        rgba(0,0,0,0.88) 0%,
-        rgba(0,0,0,0.45) 45%,
-        rgba(0,0,0,0.08) 75%,
-        transparent 100%
-      ) !important;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.08) 75%, transparent 100%) !important;
     }
-    /* Keep gradient AND info visible on hover */
     .job-card:hover .job-gradient { opacity: 1 !important; }
     .job-card:hover .job-info     { opacity: 1 !important; transform: none !important; }
-
-    /* Slide-up hover panel instead of full fade */
     .job-desc {
-      inset: auto 0 0 0 !important;
-      height: auto !important;
-      justify-content: flex-start !important;
-      padding: 1.25rem 1.35rem 1.4rem !important;
+      inset: auto 0 0 0 !important; height: auto !important;
+      justify-content: flex-start !important; padding: 1.25rem 1.35rem 1.4rem !important;
       background: rgba(8,8,8,0.78) !important;
       backdrop-filter: blur(14px) saturate(1.5);
       -webkit-backdrop-filter: blur(14px) saturate(1.5);
       border-top: 1px solid rgba(255,255,255,0.07);
       border-radius: 0 0 24px 24px;
-      transform: translateY(100%);
-      opacity: 1 !important;
+      transform: translateY(100%); opacity: 1 !important;
       transition: transform 0.36s cubic-bezier(.34,1.1,.64,1) !important;
     }
-    .job-card:hover .job-desc {
-      transform: translateY(0) !important;
-      opacity: 1 !important;
-    }
+    .job-card:hover .job-desc { transform: translateY(0) !important; opacity: 1 !important; }
     .desc-text {
-      display: -webkit-box !important;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      display: -webkit-box !important; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
     }
 
     /* ── LOADING STATE ── */
     .grid-loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 5rem 2rem;
-      color: var(--ink-lt, #9B9BAE);
-      gap: 1rem;
-      grid-column: 1 / -1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 5rem 2rem; color: var(--ink-lt, #9B9BAE); gap: 1rem; grid-column: 1 / -1;
     }
     .grid-loading .spin-lg {
-      width: 40px;
-      height: 40px;
-      border: 3px solid var(--border, #E8E3DD);
-      border-top-color: var(--teal, #7EACB5);
-      border-radius: 50%;
-      animation: mspin .8s linear infinite;
+      width: 40px; height: 40px;
+      border: 3px solid var(--border, #E8E3DD); border-top-color: var(--teal, #7EACB5);
+      border-radius: 50%; animation: mspin .8s linear infinite;
     }
     .grid-loading p { font-size: .88rem; }
   </style>
@@ -304,6 +214,7 @@
     </div>
     <div class="job-grid" id="saved-grid"></div>
   </div>
+
   <!-- SIGN-IN NUDGE -->
   <div class="signin-nudge-overlay" id="signin-nudge-overlay">
     <div class="signin-nudge">
@@ -385,661 +296,533 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  /* ── nudge close ── */
   document.getElementById('signin-nudge-close').addEventListener('click', () => {
-  document.getElementById('signin-nudge-overlay').classList.remove('open');
-});
-document.getElementById('signin-nudge-overlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('signin-nudge-overlay'))
     document.getElementById('signin-nudge-overlay').classList.remove('open');
-});
-// ════════════════════════════════════════════════════════════════
-//  NAIK — Explore Page (Supabase-powered)
-//
-//  • Jobs loaded from /api/jobs/all (Supabase DB rows)
-//  • Save/unsave via /api/jobs/save & /api/jobs/unsave (DB-backed)
-//  • "Why it fits you" shown in modal if user has done the quiz
-//  • Modal fields: emoji, title, salary (entry+target), work type,
-//    location type, duties, requirements, perks
-//  • Removed: open positions, job growth, time to hire
-// ════════════════════════════════════════════════════════════════
-
-/* ─── STATE ─────────────────────────────────────────────────── */
-let ALL_JOBS    = [];
-let savedIds    = new Set();
-let savedOrder  = [];
-let quizResults = null;      // null = quiz not done yet
-let isLoggedIn  = {{ 'true' if session.get('user_id') else 'false' }};
-
-let activeFilter = 'all';
-let activeSort   = 'default';
-let rankingMode  = false;
-let currentJob   = null;
-let dragSrcId    = null;
-
-/* ─── INIT ──────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', async () => {
-  const tasks = [fetchAllJobs()];
-  if (isLoggedIn) tasks.push(fetchQuizAndSaved());
-  await Promise.allSettled(tasks);
-  updateBadge();
-  renderExplore();
-});
-
-/* ─── DATA FETCHERS ─────────────────────────────────────────── */
-async function fetchAllJobs() {
-  try {
-    const res  = await fetch('/api/jobs/all');
-    const data = await res.json();
-    if (data.jobs && data.jobs.length) ALL_JOBS = data.jobs;
-  } catch (err) {
-    console.error('Failed to load jobs:', err);
-  }
-}
-
-async function fetchQuizAndSaved() {
-  try {
-    const res  = await fetch('/api/quiz/results');
-    const data = await res.json();
-    if (data.quiz)       quizResults = data.quiz;
-    if (data.savedJobIds && data.savedJobIds.length) {
-      savedIds   = new Set(data.savedJobIds);
-      savedOrder = [...data.savedJobIds];
-    }
-  } catch (err) {
-    console.error('Failed to load quiz/saved:', err);
-  }
-}
-
-/* ─── HELPERS ───────────────────────────────────────────────── */
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-function updateBadge() {
-  document.getElementById('saved-badge').textContent = savedIds.size;
-}
-
-function salaryBracket(job) {
-  const min = job.entry_salary_min || 0;
-  const max = job.entry_salary_max || 0;
-  if (max > 0 && max < 2000)  return 'salary-low';
-  if (min >= 4000)             return 'salary-high';
-  return 'salary-mid';
-}
-
-function salaryLabel(job) {
-  const mn = job.entry_salary_min;
-  const mx = job.entry_salary_max;
-  if (mn && mx) return `RM ${mn.toLocaleString()} – ${mx.toLocaleString()} / mo`;
-  if (mn)       return `From RM ${mn.toLocaleString()} / mo`;
-  if (mx)       return `Up to RM ${mx.toLocaleString()} / mo`;
-  return '';
-}
-
-function jobSearchUrl(job) {
-  const kw = (job.jobstreet_keywords || [])[0] || job.title_en || '';
-  return `https://www.jobstreet.com.my/jobs/${encodeURIComponent(kw.replace(/ /g, '-'))}`;
-}
-
-function syncHeartButtons(jobId, isSaved) {
-  document.querySelectorAll(`.heart-btn[data-id="${jobId}"]`).forEach(b => {
-    b.classList.toggle('saved', isSaved);
   });
-}
-
-/* ─── STOCK IMAGE MAP ────────────────────────────────────────── */
-// Maps job title/tag keywords → curated Unsplash photo IDs
-const JOB_IMAGE_MAP = [
-  // Food & Hospitality
-  { keys: ['barista','coffee','café','cafe','kopitiam'],                             photo: '1495474472287-4d71bcdd2085' },
-  { keys: ['baker','bakery','pastry','kuih','cake','roti'],                          photo: '1556217477-d325251ece38' },
-  { keys: ['chef','cook','kitchen','restaurant','culinary','catering'],              photo: '1577219491135-ce391730fb2c' },
-  { keys: ['waiter','waitress','server','f&b','food service','dining'],              photo: '1414235077428-338989a2e8c0' },
-  { keys: ['delivery rider','food delivery','dispatch rider','runner'],              photo: '1592861956120-e524fc739696' },
-  { keys: ['hawker','stall','gerai','mamak'],                                        photo: '1504674900247-0877df9cc836' },
-
-  // Transport & Logistics
-  { keys: ['grab','driver','e-hailing','taxi','chauffeur','ride'],                   photo: '1449965408869-eaa3f722e40d' },
-  { keys: ['warehouse','logistics','fulfillment','picker','packer','storekeeper'],   photo: '1553413077-190dd305871c' },
-  { keys: ['lorry','truck','transport','courier','despatch','supply chain'],          photo: '1601584672516-b726f02e02e9' },
-  { keys: ['postman','postal','pos malaysia','delivery'],                            photo: '1586528116311-ad8dd3c8310d' },
-
-  // Retail & Sales
-  { keys: ['retail','sales associate','cashier','mall','shopkeeper','kedai'],        photo: '1441986300917-64674bd600d8' },
-  { keys: ['promoter','brand ambassador','sales rep','sales executive','salesman'],  photo: '1560250097-0b93528c311a' },
-  { keys: ['real estate','property agent','property','housing','developer'],         photo: '1560518883-ce09059eeffa' },
-  { keys: ['insurance','financial planner','unit trust','finance agent','takaful'],  photo: '1454165804606-c3d57bc86b40' },
-  { keys: ['optical','optometrist','glasses','dispensing','lens'],                   photo: '1573812461382-6ae9d0474de9' },
-
-  // Office & Admin
-  { keys: ['admin','clerk','receptionist','front desk','data entry','administration'], photo: '1497032628192-86f99bcd76bc' },
-  { keys: ['customer service','call centre','helpdesk','support','operator'],        photo: '1521737604893-d14cc237f11d' },
-  { keys: ['accountant','accounting','payroll','bookkeeper','audit','finance'],       photo: '1554224155-6726b3ff858f' },
-  { keys: ['hr','human resource','recruitment','hiring','talent'],                    photo: '1573496359142-b8d87734a5a2' },
-  { keys: ['secretary','pa','personal assistant','office manager','coordinator'],    photo: '1520607162513-77705c0f0d4a' },
-  { keys: ['legal','lawyer','paralegal','court','advocate'],                         photo: '1589829545856-d10d557cf95f' },
-
-  // Tech & Digital
-  { keys: ['software','developer','programmer','coding','engineer','it support'],    photo: '1555066931-4365d14bab8c' },
-  { keys: ['social media','content creator','digital marketing','influencer'],       photo: '1611162617213-7d7a39e9b1d7' },
-  { keys: ['graphic design','designer','creative','illustrator','ui ux','motion'],   photo: '1561070791-2526d30994b5' },
-  { keys: ['data','analyst','data science','database','excel','bi'],                 photo: '1551288049-bebda4e38f71' },
-  { keys: ['video','editor','videographer','youtube','film','production'],            photo: '1492691527719-9d1e07e534b4' },
-  { keys: ['photographer','photography','photo','studio'],                           photo: '1516035069371-29a1b244cc32' },
-  { keys: ['copywriter','writer','content','blog','seo','journalist'],               photo: '1455390582262-044cdead277a' },
-  { keys: ['cybersecurity','cyber','network','system admin','infrastructure'],        photo: '1550751827-4bd374173b32' },
-
-  // Education
-  { keys: ['teacher','tutor','lecturer','educator','teaching','instructor','cikgu'], photo: '1509062522246-3755977927d7' },
-  { keys: ['kindergarten','preschool','childcare','nursery','tadika','taska'],       photo: '1503454537195-1dcabb73ffb9' },
-  { keys: ['trainer','corporate training','facilitator','coach','mentor'],           photo: '1552664730-d307ca884978' },
-
-  // Healthcare
-  { keys: ['nurse','nursing','hospital','ward','clinical'],                          photo: '1584308666744-24d5c474f2ae' },
-  { keys: ['healthcare aide','care assistant','caregiver','elder care','home care'], photo: '1576091160550-2173dba999ef' },
-  { keys: ['pharmacy','pharmacist','dispensary','dispensing'],                       photo: '1471864190281-a93a3070b6de' },
-  { keys: ['doctor','physician','gp','general practitioner','specialist'],           photo: '1559757148-5c350d0d3c56' },
-  { keys: ['dental','dentist','oral','teeth'],                                       photo: '1588776814546-1ffbb172f82a' },
-  { keys: ['paramedic','ambulance','emergency','medic'],                             photo: '1504439468489-c8920d796a29' },
-  { keys: ['radiographer','radiologist','x-ray','lab','pathology'],                  photo: '1530026186672-2cd00ffc50fe' },
-
-  // Beauty & Wellness
-  { keys: ['hairdresser','hair stylist','barber','salon','hair','colourist'],        photo: '1560066984-138dadb4c035' },
-  { keys: ['beautician','makeup','nail','spa','aesthetic','beauty','lash'],          photo: '1487412912498-0447578fcca8' },
-  { keys: ['fitness','personal trainer','gym','instructor','yoga','pilates'],        photo: '1517836357463-d25dfeac3438' },
-  { keys: ['massage','therapist','wellness','reflexology','physiotherapy'],          photo: '1544161515-4ab6ce6db874' },
-
-  // Construction & Trades
-  { keys: ['electrician','electrical','wiring','technician','electrical engineer'],  photo: '1621905251189-08b45d6a269e' },
-  { keys: ['plumber','plumbing','pipe','pipefitter'],                               photo: '1504307651254-35680f356dfd' },
-  { keys: ['carpenter','carpentry','furniture','woodwork','joinery'],               photo: '1530124566582-a618bc2615dc' },
-  { keys: ['construction','builder','contractor','site','scaffolding','foreman'],    photo: '1504307651254-35680f356dfd' },
-  { keys: ['air cond','aircon','hvac','air conditioning','refrigeration'],           photo: '1585771724684-38269d6639fd' },
-  { keys: ['welder','welding','fabrication','metal','ironwork'],                     photo: '1504328345606-18bbc8c9d7d1' },
-  { keys: ['painter','painting','coating','interior','decorator'],                  photo: '1589939705384-5185137a7f0f' },
-  { keys: ['mechanic','auto','vehicle','workshop','automotive','car service'],       photo: '1530046339160-ce3e530c7d2f' },
-
-  // Cleaning & Facilities
-  { keys: ['cleaner','cleaning','housekeeper','janitor','housekeeping','sanitation'], photo: '1581578731548-c64695cc6952' },
-  { keys: ['security','guard','patrol','safety officer','bouncer'],                 photo: '1508615039623-a25605d2b022' },
-
-  // Agriculture & Outdoor
-  { keys: ['farmer','farming','agriculture','plantation','paddy','sawit'],          photo: '1500937386664-56d1dfef3854' },
-  { keys: ['fisherman','fishing','aquaculture','seafood'],                          photo: '1468476775582-d44f0e3c1b3a' },
-  { keys: ['landscape','gardener','horticulture','nursery','taman'],               photo: '1416879595882-3373a0480b5b' },
-
-  // Entrepreneurship
-  { keys: ['business','entrepreneur','startup','owner','sme','founder'],            photo: '1556761175-5973dc0f32e7' },
-  { keys: ['freelance','self-employed','independent','gig','remote work'],          photo: '1521737711867-e3b97375f902' },
-  { keys: ['ecommerce','online seller','shopee','lazada','dropship','tiktok shop'], photo: '1556742049-0cfed4f6a45d' },
-];
-
-// Fallback photos by Supabase `category` field
-const FALLBACK_BY_CATEGORY = {
-  'food':        '1577219491135-ce391730fb2c',
-  'tech':        '1555066931-4365d14bab8c',
-  'digital':     '1611162617213-7d7a39e9b1d7',
-  'creative':    '1561070791-2526d30994b5',
-  'care':        '1584308666744-24d5c474f2ae',
-  'trade':       '1621905251189-08b45d6a269e',
-  'office':      '1497032628192-86f99bcd76bc',
-  'sales':       '1441986300917-64674bd600d8',
-  'education':   '1509062522246-3755977927d7',
-  'transport':   '1449965408869-eaa3f722e40d',
-  'hospitality': '1414235077428-338989a2e8c0',
-  'beauty':      '1487412912498-0447578fcca8',
-  'health':      '1584308666744-24d5c474f2ae',
-  'finance':     '1554224155-6726b3ff858f',
-  'agri':        '1500937386664-56d1dfef3854',
-};
-
-// Fallback photos by work type
-const FALLBACK_BY_TYPE = {
-  'full-time':  '1521737604893-d14cc237f11d',
-  'part-time':  '1441986300917-64674bd600d8',
-  'remote':     '1521737711867-e3b97375f902',
-  'freelance':  '1556761175-5973dc0f32e7',
-};
-const FALLBACK_DEFAULT = '1521737604893-d14cc237f11d';
-
-function unsplashUrl(photoId) {
-  return `https://images.unsplash.com/photo-${photoId}?w=600&q=80&fit=crop&crop=faces,center`;
-}
-
-function jobPhotoUrl(job) {
-  // 1. Custom image stored in DB (image_url column)
-  if (job.image_url) return job.image_url;
-
-  // 2. Keyword match on title + tagline + tags + duties
-  const title   = (job.title_en   || job.title_bm   || '').toLowerCase();
-  const tagline = (job.tagline_en  || '').toLowerCase();
-  const tags    = (job.tags_en    || job.jobstreet_keywords || []).join(' ').toLowerCase();
-  const duties  = (job.duties_en  || '').toLowerCase();
-  const search  = `${title} ${tagline} ${tags} ${duties}`;
-
-  for (const entry of JOB_IMAGE_MAP) {
-    if (entry.keys.some(k => search.includes(k))) {
-      return unsplashUrl(entry.photo);
-    }
-  }
-
-  // 3. Fallback by Supabase category field
-  const catPhoto = FALLBACK_BY_CATEGORY[(job.category || '').toLowerCase()];
-  if (catPhoto) return unsplashUrl(catPhoto);
-
-  // 4. Fallback by work type, then generic
-  const typePhoto = FALLBACK_BY_TYPE[job.work_type] || FALLBACK_DEFAULT;
-  return unsplashUrl(typePhoto);
-}
-
-/* ─── CARD BUILDER ──────────────────────────────────────────── */
-function buildCard(job, inSaved = false) {
-  const isSaved  = savedIds.has(job.id);
-  const card     = document.createElement('div');
-  card.className = 'job-card';
-  card.dataset.id   = job.id;
-  card.dataset.type = job.work_type || 'full-time';
-  card.dataset.salaryBracket = salaryBracket(job);
-  card.dataset.salaryMin     = job.entry_salary_min || 0;
-  card.dataset.name          = job.title_en || '';
-  card.draggable = false;
-
-  const workType = (job.work_type || 'full-time').replace('-', ' ');
-  const salary   = salaryLabel(job);
-  const descText = job.tagline_en || '';
-  const imgUrl   = jobPhotoUrl(job);
-
-  card.innerHTML = `
-    <div class="job-thumb" style="background-image:url('${imgUrl}');background-size:cover;background-position:center;"></div>
-    <div class="job-gradient"></div>
-    <span class="job-type-badge ${job.work_type || 'full-time'}">${workType}</span>
-    <div class="rank-number">—</div>
-    <button class="heart-btn${isSaved ? ' saved' : ''}" aria-label="Save job" data-id="${job.id}">
-      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-    </button>
-    <div class="job-info">
-      <div class="job-name">${job.title_en || ''}</div>
-      <div class="job-salary">${salary}</div>
-    </div>
-    <div class="job-desc">
-      <span class="desc-label">${workType}</span>
-      <div class="desc-title">${job.title_en || ''}</div>
-      <div class="desc-salary">${salary}</div>
-      <div class="desc-text">${descText}</div>
-      <span class="desc-cta">View Details →</span>
-    </div>
-  `;
-
-  card.querySelector('.heart-btn').addEventListener('click', e => {
-    e.stopPropagation();
-    toggleSave(job.id, card.querySelector('.heart-btn'));
+  document.getElementById('signin-nudge-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('signin-nudge-overlay'))
+      document.getElementById('signin-nudge-overlay').classList.remove('open');
   });
 
-  card.addEventListener('click', () => {
-    if (rankingMode) return;
-    openModal(job);
-  });
+  // ════════════════════════════════════════════════════════════════
+  //  NAIK — Explore Page  (Supabase-backed, persistent saved jobs)
+  //
+  //  KEY FIX: On DOMContentLoaded we call fetchQuizAndSaved() which
+  //  hits /api/quiz/results — this returns the user's saved job IDs
+  //  from Supabase so the Saved tab is restored on every page load.
+  // ════════════════════════════════════════════════════════════════
 
-  return card;
-}
+  /* ─── STATE ─── */
+  let ALL_JOBS    = [];
+  let savedIds    = new Set();   // Set of job UUIDs (strings)
+  let savedOrder  = [];          // ordered array of job UUIDs
+  let quizResults = null;
+  let isLoggedIn  = {{ 'true' if session.get('user_id') else 'false' }};
 
-/* ─── SAVE / UNSAVE (DB-backed) ─────────────────────────────── */
-async function toggleSave(jobId, heartBtn) {
-  if (!isLoggedIn) {
-    document.getElementById('signin-nudge-overlay').classList.add('open');
-    return;
-  }
-  // ... rest of function unchanged
+  let activeFilter = 'all';
+  let activeSort   = 'default';
+  let rankingMode  = false;
+  let currentJob   = null;
+  let dragSrcId    = null;
 
-
-  if (savedIds.has(jobId)) {
-    // Optimistic unsave
-    savedIds.delete(jobId);
-    savedOrder = savedOrder.filter(x => x !== jobId);
-    syncHeartButtons(jobId, false);
+  /* ─── INIT ─── */
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Always fetch jobs; conditionally fetch saved state
+    const tasks = [fetchAllJobs()];
+    if (isLoggedIn) tasks.push(fetchQuizAndSaved());
+    await Promise.allSettled(tasks);
     updateBadge();
-    if (currentJob && currentJob.id === jobId) updateModalSaveBtn();
-    if (document.getElementById('tab-saved').style.display !== 'none') renderSaved();
+    renderExplore();
+  });
 
+  /* ─── DATA FETCHERS ─── */
+  async function fetchAllJobs() {
     try {
-      await fetch('/api/jobs/unsave', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({job_id: jobId}),
-      });
-      showToast(window.i18n['explore.toastUnsaved'] || 'Removed from saved');
-      // Hide roadmap hint if modal is open for this job
-      if (currentJob && currentJob.id === jobId) {
-        document.getElementById('modal-roadmap-hint').classList.remove('visible');
-      }
-    } catch (err) {
-      // Rollback
-      savedIds.add(jobId);
-      savedOrder.push(jobId);
-      syncHeartButtons(jobId, true);
-      updateBadge();
-      if (currentJob && currentJob.id === jobId) updateModalSaveBtn();
-      showToast(window.i18n['explore.toastUnsaveFailed'] || '⚠️ Could not remove — try again');
-    }
-  } else {
-    // Optimistic save
-    savedIds.add(jobId);
-    savedOrder.push(jobId);
-    syncHeartButtons(jobId, true);
-    updateBadge();
-    if (currentJob && currentJob.id === jobId) updateModalSaveBtn();
-
-    try {
-      const res  = await fetch('/api/jobs/save', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({job_id: jobId}),
-      });
+      const res  = await fetch('/api/jobs/all');
       const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error || 'Save failed');
-      showToast(window.i18n['explore.toastSaved'] || '💾 Job saved!');
-      // Show roadmap hint if modal is open
-      if (currentJob && currentJob.id === jobId) {
-        const hint = document.getElementById('modal-roadmap-hint');
-        document.getElementById('modal-roadmap-link').href = `/roadmap/view?job=${jobId}`;
-        hint.classList.add('visible');
+      if (data.jobs && data.jobs.length) ALL_JOBS = data.jobs;
+    } catch (err) {
+      console.error('Failed to load jobs:', err);
+    }
+  }
+
+  async function fetchQuizAndSaved() {
+    try {
+      const res  = await fetch('/api/quiz/results');
+      const data = await res.json();
+      if (data.quiz) quizResults = data.quiz;
+      if (data.savedJobIds && data.savedJobIds.length) {
+        // savedJobIds are UUIDs from Supabase saved_jobs table
+        savedIds   = new Set(data.savedJobIds.map(String));
+        savedOrder = data.savedJobIds.map(String);
       }
     } catch (err) {
-      // Rollback
+      console.error('Failed to load quiz/saved:', err);
+    }
+  }
+
+  /* ─── HELPERS ─── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function updateBadge() {
+    document.getElementById('saved-badge').textContent = savedIds.size;
+  }
+
+  function salaryBracket(job) {
+    const min = job.entry_salary_min || 0;
+    const max = job.entry_salary_max || 0;
+    if (max > 0 && max < 2000)  return 'salary-low';
+    if (min >= 4000)             return 'salary-high';
+    return 'salary-mid';
+  }
+
+  function salaryLabel(job) {
+    const mn = job.entry_salary_min;
+    const mx = job.entry_salary_max;
+    if (mn && mx) return `RM ${mn.toLocaleString()} – ${mx.toLocaleString()} / mo`;
+    if (mn)       return `From RM ${mn.toLocaleString()} / mo`;
+    if (mx)       return `Up to RM ${mx.toLocaleString()} / mo`;
+    return '';
+  }
+
+  function jobSearchUrl(job) {
+    const kw = (job.jobstreet_keywords || [])[0] || job.title_en || '';
+    return `https://www.jobstreet.com.my/jobs/${encodeURIComponent(kw.replace(/ /g, '-'))}`;
+  }
+
+  function syncHeartButtons(jobId, isSaved) {
+    document.querySelectorAll(`.heart-btn[data-id="${jobId}"]`).forEach(b => {
+      b.classList.toggle('saved', isSaved);
+    });
+  }
+
+  /* ─── STOCK IMAGE MAP ─── */
+  const JOB_IMAGE_MAP = [
+    { keys: ['barista','coffee','café','cafe','kopitiam'],                             photo: '1495474472287-4d71bcdd2085' },
+    { keys: ['baker','bakery','pastry','kuih','cake','roti'],                          photo: '1556217477-d325251ece38' },
+    { keys: ['chef','cook','kitchen','restaurant','culinary','catering'],              photo: '1577219491135-ce391730fb2c' },
+    { keys: ['waiter','waitress','server','f&b','food service','dining'],              photo: '1414235077428-338989a2e8c0' },
+    { keys: ['delivery rider','food delivery','dispatch rider','runner'],              photo: '1592861956120-e524fc739696' },
+    { keys: ['grab','driver','e-hailing','taxi','chauffeur','ride'],                   photo: '1449965408869-eaa3f722e40d' },
+    { keys: ['warehouse','logistics','fulfillment','picker','packer','storekeeper'],   photo: '1553413077-190dd305871c' },
+    { keys: ['retail','sales associate','cashier','mall','shopkeeper','kedai'],        photo: '1441986300917-64674bd600d8' },
+    { keys: ['admin','clerk','receptionist','front desk','data entry'],               photo: '1497032628192-86f99bcd76bc' },
+    { keys: ['customer service','call centre','helpdesk','support','operator'],        photo: '1521737604893-d14cc237f11d' },
+    { keys: ['teacher','tutor','lecturer','educator','teaching','instructor','cikgu'], photo: '1509062522246-3755977927d7' },
+    { keys: ['nurse','nursing','hospital','ward','clinical'],                          photo: '1584308666744-24d5c474f2ae' },
+    { keys: ['graphic design','designer','creative','illustrator','ui ux','motion'],   photo: '1561070791-2526d30994b5' },
+    { keys: ['social media','content creator','digital marketing','influencer'],       photo: '1611162617213-7d7a39e9b1d7' },
+    { keys: ['software','developer','programmer','coding','engineer','it support'],    photo: '1555066931-4365d14bab8c' },
+    { keys: ['hairdresser','hair stylist','barber','salon','hair','colourist'],        photo: '1560066984-138dadb4c035' },
+    { keys: ['beautician','makeup','nail','spa','aesthetic','beauty','lash'],          photo: '1487412912498-0447578fcca8' },
+    { keys: ['fitness','personal trainer','gym','instructor','yoga','pilates'],        photo: '1517836357463-d25dfeac3438' },
+  ];
+
+  const FALLBACK_BY_CATEGORY = {
+    'food':'1577219491135-ce391730fb2c','tech':'1555066931-4365d14bab8c',
+    'digital':'1611162617213-7d7a39e9b1d7','creative':'1561070791-2526d30994b5',
+    'care':'1584308666744-24d5c474f2ae','trade':'1621905251189-08b45d6a269e',
+    'office':'1497032628192-86f99bcd76bc','sales':'1441986300917-64674bd600d8',
+    'education':'1509062522246-3755977927d7','transport':'1449965408869-eaa3f722e40d',
+    'hospitality':'1414235077428-338989a2e8c0','beauty':'1487412912498-0447578fcca8',
+    'health':'1584308666744-24d5c474f2ae','finance':'1554224155-6726b3ff858f',
+  };
+  const FALLBACK_BY_TYPE = {
+    'full-time':'1521737604893-d14cc237f11d','part-time':'1441986300917-64674bd600d8',
+    'remote':'1521737711867-e3b97375f902','freelance':'1556761175-5973dc0f32e7',
+  };
+  const FALLBACK_DEFAULT = '1521737604893-d14cc237f11d';
+
+  function unsplashUrl(photoId) {
+    return `https://images.unsplash.com/photo-${photoId}?w=600&q=80&fit=crop&crop=faces,center`;
+  }
+
+  function jobPhotoUrl(job) {
+    if (job.image_url) return job.image_url;
+    const search = [job.title_en||'', job.tagline_en||'',
+      (job.tags_en||job.jobstreet_keywords||[]).join(' '),
+      job.duties_en||''].join(' ').toLowerCase();
+    for (const entry of JOB_IMAGE_MAP) {
+      if (entry.keys.some(k => search.includes(k))) return unsplashUrl(entry.photo);
+    }
+    const catPhoto = FALLBACK_BY_CATEGORY[(job.category||'').toLowerCase()];
+    if (catPhoto) return unsplashUrl(catPhoto);
+    return unsplashUrl(FALLBACK_BY_TYPE[job.work_type] || FALLBACK_DEFAULT);
+  }
+
+  /* ─── CARD BUILDER ─── */
+  function buildCard(job) {
+    const jobIdStr = String(job.id);
+    const isSaved  = savedIds.has(jobIdStr);
+    const card     = document.createElement('div');
+    card.className = 'job-card';
+    card.dataset.id   = jobIdStr;
+    card.dataset.type = job.work_type || 'full-time';
+    card.dataset.salaryBracket = salaryBracket(job);
+    card.dataset.salaryMin     = job.entry_salary_min || 0;
+    card.dataset.name          = job.title_en || '';
+    card.draggable = false;
+
+    const workType = (job.work_type || 'full-time').replace('-', ' ');
+    const salary   = salaryLabel(job);
+    const descText = job.tagline_en || '';
+    const imgUrl   = jobPhotoUrl(job);
+
+    card.innerHTML = `
+      <div class="job-thumb" style="background-image:url('${imgUrl}');background-size:cover;background-position:center;"></div>
+      <div class="job-gradient"></div>
+      <span class="job-type-badge ${job.work_type || 'full-time'}">${workType}</span>
+      <div class="rank-number">—</div>
+      <button class="heart-btn${isSaved ? ' saved' : ''}" aria-label="Save job" data-id="${jobIdStr}">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+      <div class="job-info">
+        <div class="job-name">${job.title_en || ''}</div>
+        <div class="job-salary">${salary}</div>
+      </div>
+      <div class="job-desc">
+        <span class="desc-label">${workType}</span>
+        <div class="desc-title">${job.title_en || ''}</div>
+        <div class="desc-salary">${salary}</div>
+        <div class="desc-text">${descText}</div>
+        <span class="desc-cta">View Details →</span>
+      </div>
+    `;
+
+    card.querySelector('.heart-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      toggleSave(jobIdStr, card.querySelector('.heart-btn'));
+    });
+
+    card.addEventListener('click', () => {
+      if (rankingMode) return;
+      openModal(job);
+    });
+
+    return card;
+  }
+
+  /* ─── SAVE / UNSAVE (DB-backed, optimistic UI) ─── */
+  async function toggleSave(jobId, heartBtn) {
+    if (!isLoggedIn) {
+      document.getElementById('signin-nudge-overlay').classList.add('open');
+      return;
+    }
+
+    if (savedIds.has(jobId)) {
+      /* ── UNSAVE ── */
       savedIds.delete(jobId);
       savedOrder = savedOrder.filter(x => x !== jobId);
       syncHeartButtons(jobId, false);
       updateBadge();
-      if (currentJob && currentJob.id === jobId) updateModalSaveBtn();
-      showToast(window.i18n['explore.toastSaveFailed'] || '⚠️ Could not save — try again');
+      if (currentJob && String(currentJob.id) === jobId) updateModalSaveBtn();
+      if (document.getElementById('tab-saved').style.display !== 'none') renderSaved();
+
+      try {
+        await fetch('/api/jobs/unsave', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({job_id: jobId}),
+        });
+        showToast('Removed from saved');
+        if (currentJob && String(currentJob.id) === jobId)
+          document.getElementById('modal-roadmap-hint').classList.remove('visible');
+      } catch {
+        // Rollback
+        savedIds.add(jobId);
+        savedOrder.push(jobId);
+        syncHeartButtons(jobId, true);
+        updateBadge();
+        if (currentJob && String(currentJob.id) === jobId) updateModalSaveBtn();
+        showToast('⚠️ Could not remove — try again');
+      }
+    } else {
+      /* ── SAVE ── */
+      savedIds.add(jobId);
+      savedOrder.push(jobId);
+      syncHeartButtons(jobId, true);
+      updateBadge();
+      if (currentJob && String(currentJob.id) === jobId) updateModalSaveBtn();
+
+      try {
+        const res  = await fetch('/api/jobs/save', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({job_id: jobId}),
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || 'Save failed');
+        showToast('💾 Job saved!');
+        if (currentJob && String(currentJob.id) === jobId) {
+          const hint = document.getElementById('modal-roadmap-hint');
+          document.getElementById('modal-roadmap-link').href = `/roadmap/view?job=${jobId}`;
+          hint.classList.add('visible');
+        }
+      } catch {
+        // Rollback
+        savedIds.delete(jobId);
+        savedOrder = savedOrder.filter(x => x !== jobId);
+        syncHeartButtons(jobId, false);
+        updateBadge();
+        if (currentJob && String(currentJob.id) === jobId) updateModalSaveBtn();
+        showToast('⚠️ Could not save — try again');
+      }
     }
   }
-}
 
-/* ─── MODAL ─────────────────────────────────────────────────── */
-async function openModal(job) {
-  currentJob = job;
+  /* ─── MODAL ─── */
+  async function openModal(job) {
+    currentJob = job;
+    const jobIdStr = String(job.id);
 
-  // Hero
-  const hero = document.getElementById('modal-hero');
-  hero.style.backgroundImage = '';
-  document.getElementById('modal-emoji').textContent = job.emoji || '💼';
-  document.getElementById('modal-title').textContent = job.title_en || '';
+    document.getElementById('modal-hero').style.backgroundImage = '';
+    document.getElementById('modal-emoji').textContent = job.emoji || '💼';
+    document.getElementById('modal-title').textContent = job.title_en || '';
 
-  // Salary
-  const salaryRow = document.getElementById('modal-salary-row');
-  salaryRow.innerHTML = '';
-  if (job.entry_salary_min || job.entry_salary_max) {
-    const mn = (job.entry_salary_min || 0).toLocaleString();
-    const mx = (job.entry_salary_max || 0).toLocaleString();
-    salaryRow.innerHTML += `<span class="modal-salary-pill msp-entry">Start: RM${mn}–${mx}/mo</span>`;
-  }
-  if (job.target_salary_min || job.target_salary_max) {
-    const mn = (job.target_salary_min || 0).toLocaleString();
-    const mx = (job.target_salary_max || 0).toLocaleString();
-    salaryRow.innerHTML += `<span class="modal-salary-pill msp-target">Target: RM${mn}–${mx}/mo</span>`;
-  }
+    const salaryRow = document.getElementById('modal-salary-row');
+    salaryRow.innerHTML = '';
+    if (job.entry_salary_min || job.entry_salary_max) {
+      const mn = (job.entry_salary_min || 0).toLocaleString();
+      const mx = (job.entry_salary_max || 0).toLocaleString();
+      salaryRow.innerHTML += `<span class="modal-salary-pill msp-entry">Start: RM${mn}–${mx}/mo</span>`;
+    }
+    if (job.target_salary_min || job.target_salary_max) {
+      const mn = (job.target_salary_min || 0).toLocaleString();
+      const mx = (job.target_salary_max || 0).toLocaleString();
+      salaryRow.innerHTML += `<span class="modal-salary-pill msp-target">Target: RM${mn}–${mx}/mo</span>`;
+    }
 
-  // Work type badges
-  const workBadges = document.getElementById('modal-work-badges');
-  workBadges.innerHTML = '';
-  if (job.work_type)    workBadges.innerHTML += `<span class="modal-work-badge">${job.work_type.replace('-', ' ')}</span>`;
-  if (job.location_type) workBadges.innerHTML += `<span class="modal-work-badge">${job.location_type}</span>`;
+    const workBadges = document.getElementById('modal-work-badges');
+    workBadges.innerHTML = '';
+    if (job.work_type)     workBadges.innerHTML += `<span class="modal-work-badge">${job.work_type.replace('-',' ')}</span>`;
+    if (job.location_type) workBadges.innerHTML += `<span class="modal-work-badge">${job.location_type}</span>`;
 
-  // Duties
-  document.getElementById('modal-duties').textContent =
-    job.duties_en || job.description_en || '—';
+    document.getElementById('modal-duties').textContent = job.duties_en || job.description_en || '—';
 
-  // Requirements
-  const reqs = Array.isArray(job.requirements_en) ? job.requirements_en : [];
-  document.getElementById('modal-reqs').innerHTML = reqs.length
-    ? reqs.map(r => `<span class="modal-pill">${r}</span>`).join('')
-    : '<span style="color:var(--ink-lt);font-size:.82rem;">Not specified</span>';
+    const reqs = Array.isArray(job.requirements_en) ? job.requirements_en : [];
+    document.getElementById('modal-reqs').innerHTML = reqs.length
+      ? reqs.map(r => `<span class="modal-pill">${r}</span>`).join('')
+      : '<span style="color:var(--ink-lt);font-size:.82rem;">Not specified</span>';
 
-  // Perks
-  const perks = Array.isArray(job.perks_en) ? job.perks_en : [];
-  document.getElementById('modal-perks').innerHTML = perks.length
-    ? perks.map(p => `<span class="modal-pill" style="background:rgba(126,172,181,.12);border-color:#7EACB5">${p}</span>`).join('')
-    : '<span style="color:var(--ink-lt);font-size:.82rem;">Not specified</span>';
+    const perks = Array.isArray(job.perks_en) ? job.perks_en : [];
+    document.getElementById('modal-perks').innerHTML = perks.length
+      ? perks.map(p => `<span class="modal-pill" style="background:rgba(126,172,181,.12);border-color:#7EACB5">${p}</span>`).join('')
+      : '<span style="color:var(--ink-lt);font-size:.82rem;">Not specified</span>';
 
-  // Apply link
-  document.getElementById('modal-apply').href = jobSearchUrl(job);
+    document.getElementById('modal-apply').href = jobSearchUrl(job);
+    updateModalSaveBtn();
 
-  // Save btn
-  updateModalSaveBtn();
+    const hint = document.getElementById('modal-roadmap-hint');
+    const link = document.getElementById('modal-roadmap-link');
+    if (savedIds.has(jobIdStr)) {
+      link.href = `/roadmap/view?job=${jobIdStr}`;
+      hint.classList.add('visible');
+    } else {
+      hint.classList.remove('visible');
+    }
 
-  // Roadmap hint
-  const hint = document.getElementById('modal-roadmap-hint');
-  const link = document.getElementById('modal-roadmap-link');
-  if (savedIds.has(job.id)) {
-    link.href = `/roadmap/view?job=${job.id}`;
-    hint.classList.add('visible');
-  } else {
-    hint.classList.remove('visible');
-  }
-
-  // Why it fits you (only for logged-in users who have done quiz)
-  const whyWrap  = document.getElementById('modal-why-fit-wrap');
-  const whyInner = document.getElementById('modal-why-fit-inner');
-
-  if (isLoggedIn && quizResults) {
-    whyWrap.style.display = 'block';
-    whyInner.innerHTML = `
-      <div class="modal-why-fit-loading">
-        <div class="mini-spin"></div>
-        <span>${window.i18n['explore.whyFitLoading'] || 'Personalising for you…'}</span>
-      </div>`;
-
-    try {
-      const res  = await fetch('/api/jobs/why-fit', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({job_id: job.id, lang: 'en'}),
-      });
-      const data = await res.json();
-      const bullets = buildWhyFitBullets(data);
-      if (bullets.length) {
-        whyInner.innerHTML = `<ul class="modal-why-fit-bullets">
-          ${bullets.map(b => `<li>${b}</li>`).join('')}
-        </ul>`;
-      } else {
+    // "Why it fits you"
+    const whyWrap  = document.getElementById('modal-why-fit-wrap');
+    const whyInner = document.getElementById('modal-why-fit-inner');
+    if (isLoggedIn && quizResults) {
+      whyWrap.style.display = 'block';
+      whyInner.innerHTML = `<div class="modal-why-fit-loading"><div class="mini-spin"></div><span>Personalising for you…</span></div>`;
+      try {
+        const res  = await fetch('/api/jobs/why-fit', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({job_id: jobIdStr, lang: 'en'}),
+        });
+        const data = await res.json();
+        const bullets = buildWhyFitBullets(data);
+        if (bullets.length) {
+          whyInner.innerHTML = `<ul class="modal-why-fit-bullets">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`;
+        } else {
+          whyWrap.style.display = 'none';
+        }
+      } catch {
         whyWrap.style.display = 'none';
       }
-    } catch (err) {
+    } else {
       whyWrap.style.display = 'none';
     }
-  } else {
-    whyWrap.style.display = 'none';
+
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
 
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function buildWhyFitBullets(data) {
-  const bullets = [];
-  const personalised = data.whyFitPersonalised || '';
-  if (personalised) {
-    personalised
-      .replace(/\. Also, /g, '|||')
-      .replace(/\. Juga, /g, '|||')
-      .split('|||')
-      .map(s => s.replace(/^[^,]+, /, '').replace(/\.$/, '').trim())
-      .filter(s => s.length > 10)
-      .forEach(s => bullets.push(s.charAt(0).toUpperCase() + s.slice(1)));
+  function buildWhyFitBullets(data) {
+    const bullets = [];
+    const personalised = data.whyFitPersonalised || '';
+    if (personalised) {
+      personalised.replace(/\. Also, /g, '|||').replace(/\. Juga, /g, '|||')
+        .split('|||')
+        .map(s => s.replace(/^[^,]+, /, '').replace(/\.$/, '').trim())
+        .filter(s => s.length > 10)
+        .forEach(s => bullets.push(s.charAt(0).toUpperCase() + s.slice(1)));
+    }
+    if (bullets.length < 3) {
+      (data.whyFitTags || []).forEach(t => { if (!bullets.includes(t)) bullets.push(t); });
+    }
+    return bullets.slice(0, 4);
   }
-  if (bullets.length < 3) {
-    (data.whyFitTags || []).forEach(t => {
-      if (!bullets.includes(t)) bullets.push(t);
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function updateModalSaveBtn() {
+    if (!currentJob) return;
+    const saved = savedIds.has(String(currentJob.id));
+    document.getElementById('modal-save-btn').textContent = saved ? '💛 Saved' : '🤍 Save Job';
+  }
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+  document.getElementById('modal-save-btn').addEventListener('click', async () => {
+    if (!currentJob) return;
+    await toggleSave(String(currentJob.id), null);
+  });
+
+  /* ─── GRIDS ─── */
+  function filteredJobs() {
+    let jobs = [...ALL_JOBS];
+    if (activeFilter !== 'all') {
+      if (['full-time', 'part-time', 'freelance'].includes(activeFilter)) {
+        jobs = jobs.filter(j => (j.work_type || '') === activeFilter);
+      } else if (activeFilter === 'remote') {
+        jobs = jobs.filter(j => j.work_type === 'remote' || j.location_type === 'remote');
+      } else {
+        jobs = jobs.filter(j => salaryBracket(j) === activeFilter);
+      }
+    }
+    if      (activeSort === 'salary-asc')  jobs.sort((a,b) => (a.entry_salary_min||0) - (b.entry_salary_min||0));
+    else if (activeSort === 'salary-desc') jobs.sort((a,b) => (b.entry_salary_min||0) - (a.entry_salary_min||0));
+    else if (activeSort === 'name-asc')    jobs.sort((a,b) => (a.title_en||'').localeCompare(b.title_en||''));
+    return jobs;
+  }
+
+  function renderExplore() {
+    const grid = document.getElementById('explore-grid');
+    grid.innerHTML = '';
+    const jobs = filteredJobs();
+    document.getElementById('results-num').textContent = jobs.length;
+    if (!jobs.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--ink-lt);">
+        <div style="font-size:2rem;margin-bottom:.5rem;">🔍</div>
+        <h3 style="color:var(--ink);margin-bottom:.3rem;">No jobs match this filter</h3>
+        <p>Try a different filter or sort option.</p>
+      </div>`;
+      return;
+    }
+    jobs.forEach(j => grid.appendChild(buildCard(j)));
+  }
+
+  function renderSaved() {
+    const grid = document.getElementById('saved-grid');
+    grid.innerHTML = '';
+
+    const ordered = savedOrder.filter(id => savedIds.has(id));
+    const newIds  = [...savedIds].filter(id => !savedOrder.includes(id));
+    savedOrder    = [...ordered, ...newIds];
+
+    const jobs = savedOrder
+      .map(id => ALL_JOBS.find(j => String(j.id) === id))
+      .filter(Boolean);
+
+    if (!jobs.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--ink-lt);">
+        <div style="font-size:2rem;margin-bottom:.5rem;">🤍</div>
+        <h3 style="color:var(--ink);margin-bottom:.3rem;">No saved jobs yet</h3>
+        <p>Heart any job in Explore to save it here.</p>
+      </div>`;
+      return;
+    }
+
+    jobs.forEach((j, i) => {
+      const card    = buildCard(j);
+      const rankNum = card.querySelector('.rank-number');
+      rankNum.textContent = i + 1;
+      if (rankingMode) { card.draggable = true; attachDragEvents(card); }
+      grid.appendChild(card);
+    });
+    if (rankingMode) grid.classList.add('ranking-mode');
+    else             grid.classList.remove('ranking-mode');
+  }
+
+  /* ─── DRAG-TO-RANK ─── */
+  function attachDragEvents(card) {
+    card.addEventListener('dragstart', e => {
+      dragSrcId = card.dataset.id;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      document.querySelectorAll('.job-card').forEach(c => c.classList.remove('drag-over'));
+    });
+    card.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      document.querySelectorAll('.job-card').forEach(c => c.classList.remove('drag-over'));
+      card.classList.add('drag-over');
+    });
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      const destId = card.dataset.id;
+      if (dragSrcId === destId) return;
+      const srcIdx  = savedOrder.indexOf(dragSrcId);
+      const destIdx = savedOrder.indexOf(destId);
+      savedOrder.splice(srcIdx, 1);
+      savedOrder.splice(destIdx, 0, dragSrcId);
+      renderSaved();
+      showToast('✓ Order saved');
     });
   }
-  return bullets.slice(0, 4);
-}
 
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function updateModalSaveBtn() {
-  if (!currentJob) return;
-  const btn   = document.getElementById('modal-save-btn');
-  const saved = savedIds.has(currentJob.id);
-  btn.textContent = saved
-    ? (window.i18n['explore.savedJob'] || '💛 Saved')
-    : (window.i18n['explore.saveJob']  || '🤍 Save Job');
-}
-
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-overlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal-overlay')) closeModal();
-});
-document.getElementById('modal-save-btn').addEventListener('click', async () => {
-  if (!currentJob) return;
-  const heartBtn = document.querySelector(`.heart-btn[data-id="${currentJob.id}"]`)
-                   || { classList: { add(){}, remove(){} } };
-  await toggleSave(currentJob.id, heartBtn);
-});
-
-/* ─── GRIDS ─────────────────────────────────────────────────── */
-function filteredJobs() {
-  let jobs = [...ALL_JOBS];
-
-  if (activeFilter !== 'all') {
-    if (['full-time', 'part-time', 'freelance'].includes(activeFilter)) {
-      jobs = jobs.filter(j => (j.work_type || '') === activeFilter);
-    } else if (activeFilter === 'remote') {
-      jobs = jobs.filter(j => j.work_type === 'remote' || j.location_type === 'remote');
-    } else {
-      jobs = jobs.filter(j => salaryBracket(j) === activeFilter);
-    }
-  }
-
-  if      (activeSort === 'salary-asc')  jobs.sort((a,b) => (a.entry_salary_min||0) - (b.entry_salary_min||0));
-  else if (activeSort === 'salary-desc') jobs.sort((a,b) => (b.entry_salary_min||0) - (a.entry_salary_min||0));
-  else if (activeSort === 'name-asc')    jobs.sort((a,b) => (a.title_en||'').localeCompare(b.title_en||''));
-
-  return jobs;
-}
-
-function renderExplore() {
-  const grid = document.getElementById('explore-grid');
-  grid.innerHTML = '';
-  const jobs = filteredJobs();
-  document.getElementById('results-num').textContent = jobs.length;
-
-  if (!jobs.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--ink-lt);">
-      <div style="font-size:2rem;margin-bottom:.5rem;">🔍</div>
-      <h3 style="color:var(--ink);margin-bottom:.3rem;">No jobs match this filter</h3>
-      <p>Try a different filter or sort option.</p>
-    </div>`;
-    return;
-  }
-  jobs.forEach(j => grid.appendChild(buildCard(j, false)));
-}
-
-function renderSaved() {
-  const grid = document.getElementById('saved-grid');
-  grid.innerHTML = '';
-
-  // Maintain order
-  const ordered  = savedOrder.filter(id => savedIds.has(id));
-  const newIds   = [...savedIds].filter(id => !savedOrder.includes(id));
-  savedOrder     = [...ordered, ...newIds];
-
-  const jobs = savedOrder.map(id => ALL_JOBS.find(j => j.id === id)).filter(Boolean);
-
-  if (!jobs.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--ink-lt);">
-      <div style="font-size:2rem;margin-bottom:.5rem;">🤍</div>
-      <h3 style="color:var(--ink);margin-bottom:.3rem;">${window.i18n['explore.noSavedJobs'] || 'No saved jobs yet'}</h3>
-      <p>${window.i18n['explore.heartToSave'] || 'Heart any job in Explore to save it here.'}</p>
-    </div>`;
-    return;
-  }
-
-  jobs.forEach((j, i) => {
-    const card    = buildCard(j, true);
-    const rankNum = card.querySelector('.rank-number');
-    rankNum.textContent = i + 1;
-    if (rankingMode) {
-      card.draggable = true;
-      attachDragEvents(card);
-    }
-    grid.appendChild(card);
+  /* ─── TABS ─── */
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      document.getElementById('tab-explore').style.display = tab === 'explore' ? '' : 'none';
+      document.getElementById('tab-saved').style.display   = tab === 'saved'   ? '' : 'none';
+      if (tab === 'saved') renderSaved();
+    });
   });
-  if (rankingMode) grid.classList.add('ranking-mode');
-  else             grid.classList.remove('ranking-mode');
-}
 
-/* ─── DRAG-TO-RANK ──────────────────────────────────────────── */
-function attachDragEvents(card) {
-  card.addEventListener('dragstart', e => {
-    dragSrcId = card.dataset.id;
-    card.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
+  /* ─── FILTERS ─── */
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeFilter = chip.dataset.filter;
+      renderExplore();
+    });
   });
-  card.addEventListener('dragend', () => {
-    card.classList.remove('dragging');
-    document.querySelectorAll('.job-card').forEach(c => c.classList.remove('drag-over'));
-  });
-  card.addEventListener('dragover', e => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    document.querySelectorAll('.job-card').forEach(c => c.classList.remove('drag-over'));
-    card.classList.add('drag-over');
-  });
-  card.addEventListener('drop', e => {
-    e.preventDefault();
-    const destId = card.dataset.id;
-    if (dragSrcId === destId) return;
-    const srcIdx  = savedOrder.indexOf(dragSrcId);
-    const destIdx = savedOrder.indexOf(destId);
-    savedOrder.splice(srcIdx, 1);
-    savedOrder.splice(destIdx, 0, dragSrcId);
-    renderSaved();
-    showToast('✓ Order saved');
-  });
-}
-
-/* ─── TABS ──────────────────────────────────────────────────── */
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const tab = btn.dataset.tab;
-    document.getElementById('tab-explore').style.display = tab === 'explore' ? '' : 'none';
-    document.getElementById('tab-saved').style.display   = tab === 'saved'   ? '' : 'none';
-    if (tab === 'saved') renderSaved();
-  });
-});
-
-/* ─── FILTERS ───────────────────────────────────────────────── */
-document.querySelectorAll('.filter-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    activeFilter = chip.dataset.filter;
+  document.getElementById('sort-select').addEventListener('change', e => {
+    activeSort = e.target.value;
     renderExplore();
   });
-});
-document.getElementById('sort-select').addEventListener('change', e => {
-  activeSort = e.target.value;
-  renderExplore();
-});
 
-/* ─── RANKING MODE ──────────────────────────────────────────── */
-document.getElementById('rank-toggle').addEventListener('click', () => {
-  rankingMode = !rankingMode;
-  document.getElementById('rank-toggle').classList.toggle('active', rankingMode);
-  document.getElementById('rank-hint').classList.toggle('hidden', !rankingMode);
-  renderSaved();
-});
+  /* ─── RANKING MODE ─── */
+  document.getElementById('rank-toggle').addEventListener('click', () => {
+    rankingMode = !rankingMode;
+    document.getElementById('rank-toggle').classList.toggle('active', rankingMode);
+    document.getElementById('rank-hint').classList.toggle('hidden', !rankingMode);
+    renderSaved();
+  });
 </script>
 
 {% endblock %}
