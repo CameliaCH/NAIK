@@ -22,7 +22,7 @@
   --ink:     #1c1713;
   --ink-mid: #4a4039;
   --ink-lt:  #7a6e66;
-  --card-bg: #FFFAF4;
+  --card-bg: #f1dddd;
   --border:  #e8d9c8;
 }
 /*:root {
@@ -76,7 +76,7 @@
   --red-dk:  #c84c4c;
   --teal:    #7EACB5;
   --teal-lt: #5a8f9a;
-  --peach:   #2a2218;
+  --peach:   #4c1e23;
   --cream:   #1a1612;
   --rose:    #c45e78;
   --rose-lt: #2a1820;
@@ -239,7 +239,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 .nav-logo .wordmark {
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem; font-weight: 700;
-  color: var(--ink); letter-spacing: -0.02em;
+  color: var(--red); letter-spacing: -0.02em;
 }
 .nav-logo .tagline {
   font-size: 0.62rem; font-weight: 500; color: var(--ink-lt);
@@ -313,7 +313,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
   border-right: 1px solid var(--border); line-height: 1;
 }
 .lang-btn:last-child { border-right: none; }
-.lang-btn:hover, .lang-btn.lang-active { background: var(--ink); color: #fff; }
+.lang-btn:hover, .lang-btn.lang-active { background: var(--red); color: #fff; }
 
 /* Mobile language row inside drawer */
 .mobile-lang-row {
@@ -617,7 +617,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 
 /* ── FOR HER SECTION ─────────────────────────────────────── */
 .for-her {
-  background: var(--peach);
+  background: var(--rose-lt);
   border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
 }
 .for-her-inner {
@@ -676,28 +676,28 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 /* ── TESTIMONIALS ────────────────────────────────────────── */
 .testimonials { background: var(--bg-dark); padding: clamp(3rem,7vw,6rem) clamp(1.5rem,5vw,4rem); }
 .testimonials .section-label { color: var(--red); }
-.testimonials .section-header h2 { color: #fff; }
+.testimonials .section-header h2 { color: var(--ink); }
 .testimonials-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.25rem; max-width: 1000px; margin: 0 auto;
 }
 .testimonial-card {
-  background: var(--bg-dark-2);
-  border: 1px solid var(--border-dk);
+  background: var(--cream);
+  border: 1px solid var(--border);
   border-radius: 16px; padding: 1.75rem;
 }
 .testimonial-card .quote {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.95rem; line-height: 1.7;
-  color: rgba(255,255,255,0.75); margin-bottom: 1.5rem;
+  color: var(--ink); margin-bottom: 1.5rem;
 }
 .testimonial-card .quote::before {
   content: '"'; color: var(--red); font-size: 1.8rem;
   line-height: 0; vertical-align: -0.35em; margin-right: 0.1em;
 }
-.tester-name { font-weight: 700; font-size: 0.88rem; color: #fff; }
-.tester-role { font-size: 0.76rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem; }
+.tester-name { font-weight: 700; font-size: 0.88rem; color: var(--ink); }
+.tester-role { font-size: 0.76rem; color: var(--ink-lt); margin-top: 0.2rem; }
 
 /* ── TEAM ────────────────────────────────────────────────── */
 .team-grid {
@@ -716,7 +716,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
   width: 56px; height: 56px; border-radius: 50%;
   margin: 0 auto 0.9rem;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 800; color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--cream);
 }
 .av-red  { background: var(--red); }
 .av-teal { background: var(--ink); }
