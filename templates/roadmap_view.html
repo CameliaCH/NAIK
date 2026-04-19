@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from '_nav.html' import naik_nav %}
+{% from '_nav.html' import naik_nav with context %}
 {% block title %}Your Career Roadmap — NAIK{% endblock %}
 
 {% block head %}
@@ -268,7 +268,7 @@ function renderRoadmap(path) {
   html += `<div class="skills-up-cta">
     <div class="suc-text">
       <strong>💪 Skill Up tools are available</strong>
-      <p>Use our free AI mock interview, CV translator, and more to prepare for this role.</p>
+      <p>Use our free AI mock interview, CV builder, and more to prepare for this role.</p>
     </div>
     <a href="/skills" class="suc-btn">Go to Skill Up →</a>
   </div>`;
@@ -424,7 +424,7 @@ function renderRoadmap(path) {
       html += `<div class="tip-box" style="margin-top:1rem;">
         <strong>💡 Tip:</strong> Use our free tools in the 
         <a href="/skills" style="color:var(--teal);font-weight:700;">Skill Up section</a> — 
-        AI Mock Interview, CV Translator, and more — to prepare while you're learning these skills.
+        AI Mock Interview, CV Builder, and more — to prepare while you're learning these skills.
       </div>`;
     }
 

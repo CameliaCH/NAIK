@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from '_nav.html' import naik_nav %}
+{% from '_nav.html' import naik_nav with context %}
 {% block title %}Your Job Recommendations — NAIK{% endblock %}
 
 {% block head %}
@@ -133,7 +133,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 {% endblock %}
 
 {% block content %}
-{{ naik_nav(active='skills') }}
+{{ naik_nav(active='') }}
 
 <!-- FLOW BANNER -->
 <div class="flow-banner">

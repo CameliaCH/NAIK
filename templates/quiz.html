@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from '_nav.html' import naik_nav %}
+{% from '_nav.html' import naik_nav with context %}
 {% block title %}Career Quiz — NAIK{% endblock %}
 
 {% block head %}
@@ -366,7 +366,7 @@
   <div class="quiz-progress-fill" id="progress-fill"></div>
 </div>
 
-{{ naik_nav(active='explore') }}
+{{ naik_nav(active='') }}
 
 <div class="quiz-page">
 

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from '_nav.html' import naik_nav %}
+{% from '_nav.html' import naik_nav with context %}
 
 {% block title %}NAIK — Naikkan Taraf Hidup Anda{% endblock %}
 
@@ -155,13 +155,13 @@
     <rect x="200" y="80" width="25" height="25" fill="none" stroke="#BF4646" stroke-width="0.6" transform="rotate(45 212 92)"/>
   </svg>
   <div class="page-header-content">
-    <span class="page-label">💼 Career Exploration</span>
-    <h1>Find Your <em>Next Step</em></h1>
+    <span class="page-label">{{ t('explore.pageLabel') }}</span>
+    <h1>{{ t('explore.pageHeading') | safe }}</h1>
     <p>Browse hundreds of real opportunities across Malaysia — filtered for your life, not just your qualifications.</p>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" data-tab="explore">🧭 Explore Jobs</button>
-    <button class="tab-btn" data-tab="saved">🤍 Saved <span class="badge" id="saved-badge">0</span></button>
+    <button class="tab-btn active" data-tab="explore">{{ t('explore.tabExplore') }}</button>
+    <button class="tab-btn" data-tab="saved">{{ t('explore.tabSaved') }} <span class="badge" id="saved-badge">0</span></button>
   </div>
 </div>
 
@@ -173,24 +173,24 @@
     <div class="toolbar">
       <span class="toolbar-label">Filter</span>
       <div class="filter-chips">
-        <button class="filter-chip active" data-filter="all">All Jobs</button>
-        <button class="filter-chip" data-filter="full-time">Full-time</button>
-        <button class="filter-chip" data-filter="part-time">Part-time</button>
-        <button class="filter-chip" data-filter="remote">Remote / WFH</button>
-        <button class="filter-chip" data-filter="freelance">Freelance</button>
+        <button class="filter-chip active" data-filter="all">{{ t('explore.filterAll') }}</button>
+        <button class="filter-chip" data-filter="full-time">{{ t('explore.filterFullTime') }}</button>
+        <button class="filter-chip" data-filter="part-time">{{ t('explore.filterPartTime') }}</button>
+        <button class="filter-chip" data-filter="remote">{{ t('explore.filterRemote') }}</button>
+        <button class="filter-chip" data-filter="freelance">{{ t('explore.filterFreelance') }}</button>
         <button class="filter-chip" data-filter="salary-low">RM &lt; 2,000</button>
         <button class="filter-chip" data-filter="salary-mid">RM 2,000–4,000</button>
         <button class="filter-chip" data-filter="salary-high">RM 4,000+</button>
       </div>
       <select class="sort-select" id="sort-select">
-        <option value="default">Sort: Recommended</option>
-        <option value="salary-asc">Salary: Low to High</option>
-        <option value="salary-desc">Salary: High to Low</option>
-        <option value="name-asc">Name: A–Z</option>
+        <option value="default">{{ t('explore.sortRecommended') }}</option>
+        <option value="salary-asc">{{ t('explore.sortSalaryAsc') }}</option>
+        <option value="salary-desc">{{ t('explore.sortSalaryDesc') }}</option>
+        <option value="name-asc">{{ t('explore.sortNameAsc') }}</option>
       </select>
     </div>
     <div class="results-bar">
-      <span class="results-count"><strong id="results-num">0</strong> opportunities found</span>
+      <span class="results-count"><strong id="results-num">0</strong> {{ t('explore.opportunitiesFound') }}</span>
     </div>
     <div class="job-grid" id="explore-grid">
       <div class="grid-loading">
@@ -251,11 +251,11 @@
       <!-- WHY IT FITS YOU -->
       <div id="modal-why-fit-wrap" style="display:none;">
         <div class="modal-why-fit">
-          <div class="modal-why-fit-label">✨ Why it fits you</div>
+          <div class="modal-why-fit-label">✨ {{ t('explore.whyFitLabel') }}</div>
           <div id="modal-why-fit-inner">
             <div class="modal-why-fit-loading">
               <div class="mini-spin"></div>
-              <span>Personalising for you…</span>
+              <span>{{ t('explore.whyFitLoading') }}</span>
             </div>
           </div>
         </div>
@@ -263,26 +263,26 @@
 
       <!-- JOB DUTIES -->
       <div class="modal-section" style="margin-top:1.25rem;">
-        <div class="modal-section-title">Job Duties</div>
+        <div class="modal-section-title">{{ t('explore.duties') }}</div>
         <p id="modal-duties" style="font-size:.88rem;color:var(--ink-mid);line-height:1.6;"></p>
       </div>
 
       <!-- REQUIREMENTS -->
       <div class="modal-section">
-        <div class="modal-section-title">Requirements</div>
+        <div class="modal-section-title">{{ t('explore.requirements') }}</div>
         <div class="modal-pills" id="modal-reqs"></div>
       </div>
 
       <!-- PERKS & BENEFITS -->
       <div class="modal-section">
-        <div class="modal-section-title">Perks &amp; Benefits</div>
+        <div class="modal-section-title">{{ t('explore.perks') }}</div>
         <div class="modal-pills" id="modal-perks"></div>
       </div>
 
       <!-- ACTIONS -->
       <div class="modal-actions">
-        <a href="#" class="btn btn-primary" id="modal-apply" target="_blank" rel="noopener">Apply Now →</a>
-        <button class="btn btn-outline" id="modal-save-btn">🤍 Save Job</button>
+        <a href="#" class="btn btn-primary" id="modal-apply" target="_blank" rel="noopener">{{ t('explore.applyBtn') }}</a>
+        <button class="btn btn-outline" id="modal-save-btn">{{ t('explore.saveJob') }}</button>
       </div>
       <div class="modal-roadmap-hint" id="modal-roadmap-hint">
         🗺 <a id="modal-roadmap-link" href="#">View your career roadmap →</a>

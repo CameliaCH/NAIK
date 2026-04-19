@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from '_nav.html' import naik_nav %}
+{% from '_nav.html' import naik_nav with context %}
 {% block title %}Career Quiz — NAIK{% endblock %}
 
 {% block head %}
@@ -122,7 +122,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);min-heig
 <!-- Top progress bar -->
 <div class="qpbar"><div class="qpbar-fill" id="qpbar-fill" style="width:0%"></div></div>
 
-{{ naik_nav(active='explore') }}
+{{ naik_nav(active='skills') }}
 
 <!-- FLOW BANNER -->
 <div class="flow-banner">
