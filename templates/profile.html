@@ -322,7 +322,7 @@
 {{ naik_nav(active='') }}
 
 <div class="profile-page">
-
+  
   <!-- ════════════════════════════════════════
        PROFILE BANNER
   ════════════════════════════════════════ -->
@@ -370,14 +370,13 @@
         <h2>Saved Jobs</h2>
         <a href="{{ url_for('explore') }}" class="btn btn-teal">🔍 Find More Jobs</a>
       </div>
-
       <div id="dash-loading" class="dash-loading">
         <div class="mini-spin"></div>
         <span>Loading your saved jobs…</span>
       </div>
 
-      <!-- Horizontal scroll strip of saved job chips -->
-      <div class="saved-scroll-strip" id="saved-scroll-strip" style="display:none;"></div>
+      <!-- Horizontal scroll strip of saved job chips-->
+      <div class="saved-scroll-strip" id="saved-scroll-strip" style="display:none;"></div> 
 
       <!-- Empty state (shown if no saved jobs) -->
       <div class="dash-empty" id="dash-empty" style="display:none;">

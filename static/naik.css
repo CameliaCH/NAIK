@@ -15,6 +15,21 @@
 :root {
   --red:     #BF4646;
   --red-dk:  #9b3838;
+  --teal:    #b73939;
+  --teal-lt: #b8d8dd;
+  --peach:   white;
+  --cream:   white;
+  --rose:    #D4738A;
+  --rose-lt: #f7e4e9;
+  --ink:     #1c1713;
+  --ink-mid: #4a4039;
+  --ink-lt:  #7a6e66;
+  --card-bg: #FFFAF4;
+  --border:  #e8d9c8;
+}
+/*:root {
+  --red:     #BF4646;
+  --red-dk:  #9b3838;
   --teal:    #7EACB5;
   --teal-lt: #b8d8dd;
   --peach:   #EDDCC6;
@@ -26,6 +41,62 @@
   --ink-lt:  #7a6e66;
   --card-bg: #FFFAF4;
   --border:  #e8d9c8;
+}
+
+  /* ══════════════════════════════════════════════════════════
+   DARK MODE
+   Toggle by adding data-theme="dark" to <html>
+   Tweak these values to adjust the dark colour scheme.
+   ══════════════════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+  --red:     #e06060;
+  --red-dk:  #c84c4c;
+  --teal:    #7EACB5;
+  --teal-lt: #5a8f9a;
+  --peach:   #2a2218;
+  --cream:   #1a1612;
+  --rose:    #c45e78;
+  --rose-lt: #2a1820;
+  --ink:     #f0ece6;
+  --ink-mid: #b8afa6;
+  --ink-lt:  #7a7068;
+  --card-bg: #221e1a;
+  --border:  #3a322a;
+}
+
+[data-theme="dark"] body {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+[data-theme="dark"] .naik-nav {
+  background: rgba(26, 22, 18, 0.95);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .hero {
+  background: var(--cream);
+}
+
+[data-theme="dark"] .stats-bar {
+  background: #0e0c0a;
+}
+
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .step,
+[data-theme="dark"] .testimonial-card,
+[data-theme="dark"] .team-card {
+  background: var(--card-bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] footer {
+  background: #0e0c0a;
+}
+
+[data-theme="dark"] .mobile-nav {
+  background: var(--cream);
 }
 
 /* ── RESET & BASE ────────────────────────────────────────── */
@@ -83,15 +154,58 @@ section { padding: clamp(3rem,7vw,6rem) clamp(1.5rem,5vw,4rem); }
 .btn-rose:hover   { background: #c0627a; }
 .btn-lg { padding: 0.8rem 2rem; font-size: 1rem; border-radius: 10px; }
 
+/* ── DARK MODE TOGGLE BUTTON ─────────────────────────────── */
+.dark-toggle {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  color: var(--ink-mid);
+  display: flex;
+  align-items: center;
+  transition: border-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+.dark-toggle:hover {
+  border-color: var(--teal);
+  color: var(--ink);
+}
+
 /* ── NAVIGATION ──────────────────────────────────────────── */
-.naik-nav {
+/*.naik-nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(255,244,234,0.95);
+  background: var(--cream);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   padding: 0 clamp(1rem,4vw,3rem);
   display: flex; align-items: center; justify-content: space-between;
   gap: 1.5rem; height: 64px;
+}*/
+.naik-nav {
+  position: sticky; top: 0; z-index: 100;
+  
+  /* 1. Start transparent at the top of the page */
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  
+  /* The blur can stay on the base; it only affects what's behind it */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  
+  padding: 0 clamp(1rem,4vw,3rem);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; height: 64px;
+  
+  /* 2. Add a smooth transition duration */
+  transition: background 0.3s ease, border-bottom-color 0.3s ease;
+}
+
+/* 3. The state when scrolled */
+.naik-nav.scrolled {
+  /* 85% opacity of --cream so the blur effect shows through beautifully */
+  background: color-mix(in srgb, var(--cream) 85%, transparent);
+  border-bottom-color: var(--border);
 }
 
 .nav-logo {
@@ -166,7 +280,7 @@ section { padding: clamp(3rem,7vw,6rem) clamp(1.5rem,5vw,4rem); }
   position: relative; overflow: hidden;
   padding: clamp(4rem,10vw,8rem) clamp(1.5rem,5vw,4rem) clamp(3rem,6vw,5rem);
   min-height: 92vh; display: flex; align-items: center;
-  background: var(--cream);
+  background-color: var(--cream);
 }
 
 .hero-bg {
@@ -208,6 +322,49 @@ section { padding: clamp(3rem,7vw,6rem) clamp(1.5rem,5vw,4rem); }
   width: min(400px, 40vw); pointer-events: none; display: none; z-index: 1;
 }
 @media(min-width:900px) { .hero-visual { display: block; } }
+
+/* ── HERO BATIK REVEAL ──────────────────────────────────── */
+.hero-batik {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#batik-mount {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  /* no mask, no --x/--y, no opacity */
+}
+@media (hover: hover) {
+  /* opacity controlled by JS spotlight logic */
+}
+/* Mobile: gentle ambient shimmer, no spotlight */
+@media (hover: none) {
+  .hero-batik {
+    opacity: 0.15;
+    animation: batik-shine 7s ease-in-out infinite;
+  }
+  #batik-rect { mask: none; }
+}
+@keyframes batik-shine {
+  0%   { transform: scale(1.04) translate(-2%, -1%); opacity: 0.08; }
+  50%  { transform: scale(1.0)  translate(2%,  1%);  opacity: 0.18; }
+  100% { transform: scale(1.04) translate(-2%, -1%); opacity: 0.08; }
+}
+/* Ensure your hero text/buttons stay above the SVG */
+.hero-content {
+  position: relative;
+  z-index: 10; 
+}
 
 /* ── STATS BAR ───────────────────────────────────────────── */
 .stats-bar {
@@ -1016,4 +1173,11 @@ footer ul a:hover { color: #fff; }
 .npc-signout:hover {
   background: #fdf0f0;
   color: var(--red-dk);
+}
+
+/* TEMP DEBUG: Delete this once you see the pattern working */
+#batik-mount {
+  opacity: 1 !important;
+  --x: 200px !important;
+  --y: 200px !important;
 }

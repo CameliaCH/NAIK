@@ -15,9 +15,9 @@ const mobileNav  = document.querySelector('.mobile-nav');
 
 if (hamburger && mobileNav) {
   // Toggle drawer open / closed
-  hamburger.addEventListener('click', (e) => {
+  hamburger?.addEventListener('click', (e) => {
     e.stopPropagation();
-    mobileNav.classList.toggle('open');
+    mobileNav?.classList.toggle('open');
   });
 
   // Close when clicking outside the drawer
@@ -29,7 +29,7 @@ if (hamburger && mobileNav) {
 
   // Close when any nav link inside the drawer is tapped
   mobileNav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => mobileNav.classList.remove('open'));
+    link?.addEventListener('click', () => mobileNav.classList.remove('open'));
   });
 }
 
@@ -292,7 +292,12 @@ function showToast(msg) {
 }
 
 function updateBadge() {
-  document.getElementById('saved-badge').textContent = savedIds.size;
+    const badge = document.getElementById('saved-badge'); // (Keep whatever ID you currently have)
+    
+    // THE FIX: If the badge doesn't exist, stop running this function!
+    if (!badge) return; 
+    
+    badge.textContent = savedIds.size; 
 }
 
 function salaryBracket(job) {
@@ -338,13 +343,13 @@ function buildCard(job, inSaved = false) {
   `;
 
   // Heart
-  card.querySelector('.heart-btn').addEventListener('click', e => {
+  card.querySelector('.heart-btn')?.addEventListener('click', e => {
     e.stopPropagation();
     toggleSave(job.id, card.querySelector('.heart-btn'));
   });
 
   // Click card → open modal
-  card.addEventListener('click', (e) => {
+  card?.addEventListener('click', (e) => {
     if (rankingMode) return;
     openModal(job);
   });
@@ -374,9 +379,19 @@ function filteredJobs() {
 
 function renderExplore() {
   const grid = document.getElementById('explore-grid');
+  
+  // 1. THE FIX: If the grid doesn't exist, we aren't on the Explore page. Stop running!
+  if (!grid) return; 
+  
   grid.innerHTML = '';
   const jobs = filteredJobs();
-  document.getElementById('results-num').textContent = jobs.length;
+  
+  // 2. EXTRA SAFETY: Only update the results number if that element actually exists
+  const resultsNum = document.getElementById('results-num');
+  if (resultsNum) {
+      resultsNum.textContent = jobs.length;
+  }
+  
   jobs.forEach(j => grid.appendChild(buildCard(j, false)));
 }
 
@@ -447,22 +462,22 @@ function toggleSave(id, btn) {
    DRAG-TO-RANK
 ═══════════════════════════════════════════ */
 function attachDragEvents(card) {
-  card.addEventListener('dragstart', e => {
+  card?.addEventListener('dragstart', e => {
     dragSrcId = parseInt(card.dataset.id);
     card.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
   });
-  card.addEventListener('dragend', () => {
+  card?.addEventListener('dragend', () => {
     card.classList.remove('dragging');
     document.querySelectorAll('.job-card').forEach(c => c.classList.remove('drag-over'));
   });
-  card.addEventListener('dragover', e => {
+  card?.addEventListener('dragover', e => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     document.querySelectorAll('.job-card').forEach(c => c.classList.remove('drag-over'));
     card.classList.add('drag-over');
   });
-  card.addEventListener('drop', e => {
+  card?.addEventListener('drop', e => {
     e.preventDefault();
     const destId = parseInt(card.dataset.id);
     if (dragSrcId === destId) return;
@@ -509,21 +524,20 @@ function updateModalSaveBtn() {
   btn.textContent = savedIds.has(currentJob.id) ? '💛 Saved' : '🤍 Save Job';
 }
 
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-overlay').addEventListener('click', e => {
+document.getElementById('modal-close')?.addEventListener('click', closeModal);
+document.getElementById('modal-overlay')?.addEventListener('click', e => {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 });
-document.getElementById('modal-save-btn').addEventListener('click', () => {
+document.getElementById('modal-save-btn')?.addEventListener('click', () => {
   if (!currentJob) return;
   toggleSave(currentJob.id, { classList: { add(){}, remove(){}, has:()=>false } });
   updateModalSaveBtn();
 });
-
 /* ═══════════════════════════════════════════
    TABS
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
+  btn?.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const tab = btn.dataset.tab;
@@ -537,14 +551,14 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
    FILTERS
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.filter-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
+  chip?.addEventListener('click', () => {
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     activeFilter = chip.dataset.filter;
     renderExplore();
   });
 });
-document.getElementById('sort-select').addEventListener('change', e => {
+document.getElementById('sort-select')?.addEventListener('change', e => {
   activeSort = e.target.value;
   renderExplore();
 });
@@ -552,7 +566,7 @@ document.getElementById('sort-select').addEventListener('change', e => {
 /* ═══════════════════════════════════════════
    RANKING MODE TOGGLE
 ═══════════════════════════════════════════ */
-document.getElementById('rank-toggle').addEventListener('click', () => {
+document.getElementById('rank-toggle')?.addEventListener('click', () => {
   rankingMode = !rankingMode;
   document.getElementById('rank-toggle').classList.toggle('active', rankingMode);
   document.getElementById('rank-hint').classList.toggle('hidden', !rankingMode);
@@ -564,3 +578,93 @@ document.getElementById('rank-toggle').addEventListener('click', () => {
 ═══════════════════════════════════════════ */
 updateBadge();
 renderExplore();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const nav = document.querySelector('.naik-nav');
+  
+  // Listen for the user scrolling
+  window.addEventListener('scroll', () => {
+    // If they scroll down more than 20px, add the class. Otherwise, remove it.
+    if (window.scrollY > 20) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  });
+});
+
+/* ── DARK MODE ───────────────────────────────────────────── */
+(function () {
+  const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+  const SUN  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+
+  function applyTheme(dark) {
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    const icon = document.getElementById('dark-icon');
+    if (icon) icon.innerHTML = dark ? MOON : SUN;
+  }
+
+  window.toggleDark = function () {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    localStorage.setItem('naik_theme', isDark ? 'light' : 'dark');
+    applyTheme(!isDark);
+  };
+
+  // Apply saved preference on load (no flash)
+  const saved = localStorage.getItem('naik_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved ? saved === 'dark' : prefersDark);
+})();
+
+
+/* ── HERO BATIK SPOTLIGHT ────────────────────────────────── */
+(function () {
+  const mount = document.getElementById('batik-mount');
+  if (!mount) return;
+
+  const svgUrl = mount.dataset.svgUrl;
+  if (!svgUrl) return;
+
+  fetch(svgUrl)
+    .then(r => {
+      if (!r.ok) throw new Error('SVG fetch failed: ' + r.status);
+      return r.text();
+    })
+    .then(svgText => {
+      mount.innerHTML = svgText;
+
+      const hero   = document.querySelector('.hero');
+      const svg    = mount.querySelector('svg');
+      const circle = mount.querySelector('#spotlight-circle');
+      if (!hero || !svg || !circle) return;
+
+      hero.addEventListener('mousemove', (e) => {
+        if (window.innerWidth <= 768) return;
+        const rect = hero.getBoundingClientRect();
+        circle.setAttribute('cx', e.clientX - rect.left);
+        circle.setAttribute('cy', e.clientY - rect.top);
+        svg.style.opacity = '1';
+      });
+
+      hero.addEventListener('mouseleave', () => {
+        if (window.innerWidth <= 768) return;
+        svg.style.opacity = '0';
+        setTimeout(() => {
+          circle.setAttribute('cx', -999);
+          circle.setAttribute('cy', -999);
+        }, 400);
+      });
+
+      // Mobile: scroll-driven shimmer (no spotlight needed)
+      window.addEventListener('scroll', () => {
+        if (window.innerWidth > 768) return;
+        const rect = hero.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          svg.style.opacity = '1';
+        } else {
+          svg.style.opacity = '0';
+        }
+      }, { passive: true });
+    })
+    .catch(err => console.warn('Batik load error:', err));
+})();

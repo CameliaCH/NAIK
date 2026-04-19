@@ -17,13 +17,32 @@
   <ul class="nav-links">
     <li><a href="{{ url_for('explore') }}" class="{{ 'nav-active' if active == 'explore' }}">🧭 Explore Careers</a></li>
     <li><a href="{{ url_for('skills') }}"  class="{{ 'nav-active' if active == 'skills' }}">💪 Skill Up</a></li>
-    <li><a href="{{ url_for('home') }}#hired" class="{{ 'nav-active' if active == 'hired' }}">💼 Get Hired</a></li>
+    <li><a href="{{ url_for('home') }}" class="{{ 'nav-active' if active == 'hired' }}">💼 Get Hired</a></li>
     <li class="her-link"><a href="{{ url_for('home') }}#forher" class="{{ 'nav-active' if active == 'forher' }}">🌸 For Her</a></li>
   </ul>
 
   <div class="nav-ctas">
     {% if session.get('user_id') %}
       <a href="{{ url_for('donate') }}" class="btn btn-primary">Donate ♡</a>
+      <button
+        class="dark-toggle"
+        id="dark-toggle"
+        aria-label="Toggle dark mode"
+        onclick="toggleDark()"
+      >
+        <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
 
       {#
         ── DYNAMIC ISLAND AVATAR ──────────────────────────────────────
@@ -147,8 +166,6 @@
   /* Links container */
   .nav-island-links {
     display: flex;
-    /* Reverse this too, so "Profile" is closest to the Avatar */
-    /* Or leave as normal if you want "Sign out" closest to the avatar */
     flex-direction: row; 
     align-items: center;
     gap: 2px;
@@ -168,7 +185,7 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.78rem;
     font-weight: 700;
-    color: rgba(255,255,255,0.8);
+    color: var(--peach);
     text-decoration: none;
     padding: 0.3rem 0.6rem;
     border-radius: 50px;
