@@ -8,33 +8,7 @@
    ============================================================ */
 
 
-/* ── 1. MOBILE NAV ───────────────────────────────────────── */
-
-const hamburger  = document.querySelector('.hamburger');
-const mobileNav  = document.querySelector('.mobile-nav');
-
-if (hamburger && mobileNav) {
-  // Toggle drawer open / closed
-  hamburger?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    mobileNav?.classList.toggle('open');
-  });
-
-  // Close when clicking outside the drawer
-  document.addEventListener('click', (e) => {
-    if (!mobileNav.contains(e.target) && !hamburger.contains(e.target)) {
-      mobileNav.classList.remove('open');
-    }
-  });
-
-  // Close when any nav link inside the drawer is tapped
-  mobileNav.querySelectorAll('a').forEach(link => {
-    link?.addEventListener('click', () => mobileNav.classList.remove('open'));
-  });
-}
-
-
-/* ── 2. STATS BAR COUNTER ANIMATION ─────────────────────── */
+/* ── STATS BAR COUNTER ANIMATION ────────────────────────── */
 
 /**
  * Animates a number element from 0 to `target`.
@@ -578,44 +552,6 @@ document.getElementById('rank-toggle')?.addEventListener('click', () => {
 ═══════════════════════════════════════════ */
 updateBadge();
 renderExplore();
-
-document.addEventListener('DOMContentLoaded', () => {
-  const nav = document.querySelector('.naik-nav');
-  
-  // Listen for the user scrolling
-  window.addEventListener('scroll', () => {
-    // If they scroll down more than 20px, add the class. Otherwise, remove it.
-    if (window.scrollY > 20) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
-    }
-  });
-});
-
-/* ── DARK MODE ───────────────────────────────────────────── */
-(function () {
-  const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-  const SUN  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
-
-  function applyTheme(dark) {
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    const icon = document.getElementById('dark-icon');
-    if (icon) icon.innerHTML = dark ? MOON : SUN;
-  }
-
-  window.toggleDark = function () {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    localStorage.setItem('naik_theme', isDark ? 'light' : 'dark');
-    applyTheme(!isDark);
-  };
-
-  // Apply saved preference on load (no flash)
-  const saved = localStorage.getItem('naik_theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(saved ? saved === 'dark' : prefersDark);
-})();
-
 
 /* ── HERO BATIK SPOTLIGHT ────────────────────────────────── */
 (function () {

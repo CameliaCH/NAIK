@@ -39,7 +39,7 @@
     /* ── WHY FIT BOX (modal) ── */
     .modal-why-fit {
       margin: 1.25rem 0 0;
-      background: var(--peach, #FFF0E6);
+      background: var(--card-bg2);
       border-radius: 12px;
       padding: .9rem 1.1rem;
     }
@@ -116,6 +116,9 @@
       transform: translateY(100%); opacity: 1 !important;
       transition: transform 0.36s cubic-bezier(.34,1.1,.64,1) !important;
     }
+    .desc-title {
+      color: white !important;
+    }
     .job-card:hover .job-desc { transform: translateY(0) !important; opacity: 1 !important; }
     .desc-text {
       display: -webkit-box !important; -webkit-line-clamp: 2;
@@ -136,9 +139,7 @@
   </style>
 {% endblock %}
 
-{% block scripts %}
-  <script src="{{ url_for('static', filename='naik.js') }}"></script>
-{% endblock %}
+{% block scripts %}{% endblock %}
 
 {% block content %}
 

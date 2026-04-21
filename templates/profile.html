@@ -17,7 +17,7 @@
 
     /* ── PROFILE HERO BANNER ─────────────────── */
     .profile-banner {
-      background: var(--ink);
+      background: var(--banner);
       padding: 2.5rem clamp(1.5rem,5vw,4rem) 0;
       position: relative; overflow: hidden;
     }
@@ -30,7 +30,7 @@
     .profile-banner-avatar-wrap { position: relative; flex-shrink: 0; }
     .profile-banner-avatar {
       width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
-      border: 4px solid rgba(255,255,255,0.15); display: block; background: var(--peach);
+      border: 4px solid rgba(255,255,255,0.15); display: block; background: var(--teal);
     }
     .profile-banner-info { flex: 1; min-width: 0; }
     .profile-banner-name {
@@ -54,7 +54,7 @@
       /* Ensure clicks register correctly */
       position: relative; z-index: 2;
     }
-    .ptab-btn:hover  { color: rgba(255,255,255,0.8); }
+    .ptab-btn:hover  { color: white; }
     .ptab-btn.active { color: #fff; border-bottom-color: var(--teal); }
 
     /* ── MAIN BODY ───────────────────────────── */
@@ -122,7 +122,7 @@
 
     /* ── EDIT PROFILE FORM ───────────────────── */
     .edit-section {
-      background: #fff; border: 1px solid var(--border);
+      background: var(--card-bg2); border: 1px solid var(--border);
       border-radius: 20px; padding: 2rem; margin-bottom: 1.5rem;
     }
     .edit-section-title {
@@ -182,7 +182,7 @@
     .save-row { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem; }
 
     .danger-zone {
-      background: #fdf0f0; border: 1px solid #f5c0c0; border-radius: 16px;
+      background: var(--rose-lt); border: 1px solid var(--red-dk); border-radius: 16px;
       padding: 1.5rem; margin-top: 2rem;
     }
     .danger-zone h3 { font-size: 1rem; color: var(--red); margin-bottom: 0.5rem; }
@@ -191,7 +191,7 @@
 
     /* ── QUIZ RESPONSES ──────────────────────── */
     .quiz-response-card {
-      background: #fff; border: 1px solid var(--border); border-radius: 16px;
+      background: var(--card-bg2); border: 1px solid var(--border); border-radius: 16px;
       padding: 1.5rem; margin-bottom: 1rem;
     }
     .qrc-meta { font-size: 0.72rem; color: var(--ink-lt); font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.03em; }
@@ -213,7 +213,7 @@
     .p-toast {
       position: fixed; bottom: 2rem; left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: var(--ink); color: #fff;
+      background: var(--ink); color: var(--card-bg);
       padding: 0.65rem 1.5rem; border-radius: 50px;
       font-size: 0.85rem; font-weight: 600;
       opacity: 0; transition: opacity 0.3s, transform 0.3s;
@@ -532,6 +532,7 @@
 
 
 {% block scripts %}
+  <script src="{{ url_for('static', filename='naik.js') }}"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════
    PROFILE PAGE JS

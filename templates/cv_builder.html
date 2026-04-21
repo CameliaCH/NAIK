@@ -9,20 +9,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
 <style>
-:root{--red:#BF4646;--teal:#7EACB5;--ink:#1A1A2E;--ink-mid:#6B6B80;--ink-lt:#9B9BAE;--cream:#FAF8F5;--peach:#FFF0E6;--border:#E8E3DD;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 
 /* ── HERO ── */
-.pm-hero{background:var(--ink);padding:3rem clamp(1.5rem,5vw,4rem) 2.5rem;text-align:center;position:relative;overflow:hidden;}
+.pm-hero{
+  background: linear-gradient(135deg, var(--teal-lt) 0%, #f5ede0 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem clamp(1.5rem,5vw,4rem) 2.5rem;
+  text-align: center;}
 .pm-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%,rgba(126,172,181,.15) 0%,transparent 70%);pointer-events:none;}
-.pm-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:.5rem;}
-.pm-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);color:#fff;margin-bottom:.5rem;position:relative;}
-.pm-hero h1 em{color:var(--teal);font-style:normal;}
-.pm-hero p{color:rgba(255,255,255,.65);font-size:.95rem;max-width:520px;margin:0 auto;position:relative;}
+.pm-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:.5rem;}
+.pm-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);color:var(--ink);margin-bottom:.5rem;position:relative;}
+.pm-hero h1 em{color:var(--red);font-style:normal;}
+.pm-hero p{color:var(--ink-lt);font-size:.95rem;max-width:520px;margin:0 auto;position:relative;}
 
 /* ── MODE TABS ── */
-.mode-tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.mode-tabs{display:flex;gap:0;background:var(--cream);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
 .mode-tab{flex:1;padding:1rem 1.5rem;font-size:.9rem;font-weight:700;color:var(--ink-mid);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;max-width:320px;}
 .mode-tab.active{color:var(--red);border-bottom-color:var(--red);}
 .mode-tab:hover:not(.active){color:var(--ink);background:var(--cream);}
@@ -47,14 +48,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 /* Template picker */
 .template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
 @media(max-width:580px){.template-grid{grid-template-columns:1fr;}}
-.tpl-card{border:2px solid var(--border);border-radius:16px;padding:1.25rem 1rem 1rem;cursor:pointer;transition:all .2s;background:#fff;position:relative;}
+.tpl-card{border:2px solid var(--border);border-radius:16px;padding:1.25rem 1rem 1rem;cursor:pointer;transition:all .2s;background:var(--card-bg2);position:relative;}
 .tpl-card:hover{border-color:rgba(126,172,181,.6);box-shadow:0 4px 16px rgba(0,0,0,.07);}
 .tpl-card.selected{border-color:var(--teal);box-shadow:0 0 0 3px rgba(126,172,181,.2);}
 .tpl-card.selected::after{content:'✓';position:absolute;top:.5rem;right:.6rem;font-size:.75rem;font-weight:800;color:var(--teal);}
 .tpl-preview{height:90px;border-radius:8px;overflow:hidden;margin-bottom:.75rem;border:1px solid var(--border);}
 /* Classic preview */
 .tpl-classic-preview{background:#fff;padding:.5rem .6rem;font-family:Georgia,serif;}
-.tcp-name{font-size:.55rem;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #333;padding-bottom:.2rem;margin-bottom:.3rem;}
+.tcp-name{color: black; font-size:.55rem;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #333;padding-bottom:.2rem;margin-bottom:.3rem;}
 .tcp-sec{font-size:.4rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-bottom:.5px solid #999;margin-bottom:.25rem;padding-bottom:.1rem;}
 .tcp-line{font-size:.38rem;color:#555;margin-bottom:.15rem;}
 /* Modern preview */
@@ -235,7 +236,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 ────────────────────────────────────────── */
 .polish-tip{background:var(--teal);color:#fff;border-radius:12px;padding:1rem 1.25rem;font-size:.88rem;line-height:1.6;margin-bottom:2rem;}
 .polish-tip strong{color:#fff;}
-.translator-card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem;}
+.translator-card{background:var(--card-bg2);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem;}
 .translator-card label{display:block;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-lt);margin-bottom:.6rem;}
 .translator-card textarea{width:100%;min-height:110px;padding:.9rem 1rem;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-size:.95rem;color:var(--ink);resize:vertical;outline:none;transition:border-color .2s;line-height:1.6;}
 .translator-card textarea:focus{border-color:var(--teal);}
@@ -257,7 +258,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 .examples-section h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--ink);margin-bottom:.4rem;}
 .examples-section p{font-size:.88rem;color:var(--ink-lt);margin-bottom:1.25rem;}
 .examples-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:1rem;}
-.example-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.25rem;cursor:pointer;transition:border-color .2s,transform .15s;}
+.example-card{background:var(--card-bg2);border:1px solid var(--border);border-radius:14px;padding:1.25rem;cursor:pointer;transition:border-color .2s,transform .15s;}
 .example-card:hover{border-color:var(--teal);transform:translateY(-2px);}
 .example-before{font-size:.85rem;color:var(--ink-mid);margin-bottom:.6rem;line-height:1.5;}
 .example-before::before{content:'You said:';display:block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-lt);margin-bottom:.3rem;}
@@ -272,19 +273,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 .history-item .h-copy{flex-shrink:0;padding:.3rem .7rem;background:var(--peach);border:none;border-radius:6px;font-size:.75rem;font-weight:600;color:var(--ink-mid);cursor:pointer;transition:background .2s;}
 .history-item .h-copy:hover{background:var(--teal);color:#fff;}
 
-/* ── FOOTER ── */
-footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3rem clamp(1.5rem,5vw,4rem) 2rem;}
-.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2rem;}
-@media(max-width:720px){.footer-grid{grid-template-columns:1fr 1fr;}}
-@media(max-width:460px){.footer-grid{grid-template-columns:1fr;}}
-.footer-brand .wordmark{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;display:block;margin-bottom:.5rem;}
-.footer-brand p{font-size:.82rem;line-height:1.6;}
-footer h4{font-size:.75rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin-bottom:.85rem;}
-footer ul{list-style:none;}
-footer ul li{margin-bottom:.5rem;}
-footer ul li a{font-size:.85rem;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s;}
-footer ul li a:hover{color:#fff;}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;font-size:.78rem;}
 </style>
 {% endblock %}
 
@@ -293,7 +281,7 @@ footer ul li a:hover{color:#fff;}
 
 <!-- HERO -->
 <div class="pm-hero">
-  <span class="pm-eyebrow">Skill Up</span>
+  <span class="section-label">Skill Up</span>
   <h1><em>CV</em> Builder</h1>
   <p>Build a complete CV step by step — or turn your everyday words into polished CV language.</p>
 </div>
@@ -570,45 +558,6 @@ footer ul li a:hover{color:#fff;}
   </div>
 
 </div><!-- /mode-polish -->
-
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <span class="wordmark">NAIK</span>
-      <p>Naikkan Taraf Hidup Anda — a free platform helping Malaysians find work, build skills, and know their rights.</p>
-    </div>
-    <div>
-      <h4>Platform</h4>
-      <ul>
-        <li><a href="{{ url_for('explore') }}">Explore Careers</a></li>
-        <li><a href="{{ url_for('skills') }}">Skill Up</a></li>
-        <li><a href="{{ url_for('explore') }}">Get Hired</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Resources</h4>
-      <ul>
-        <li><a href="{{ url_for('CVexamples') }}">CV Templates</a></li>
-        <li><a href="{{ url_for('jobGuide') }}">Job Guide</a></li>
-        <li><a href="{{ url_for('know') }}">Know Your Rights</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Organisation</h4>
-      <ul>
-        <li><a href="{{ url_for('home') }}#about">About NAIK</a></li>
-        <li><a href="{{ url_for('home') }}#team">Our Team</a></li>
-        <li><a href="https://github.com/CameliaCH/GetEmployed" target="_blank" rel="noopener">GitHub</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2025 NAIK — Naikkan Taraf Hidup Anda. All rights reserved.</span>
-    <span>Made with ❤️ in Malaysia</span>
-  </div>
-</footer>
 {% endblock %}
 
 {% block scripts %}
@@ -1080,15 +1029,6 @@ rawInput.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') translateCV();
 });
 
-// ── Mobile nav ──
-const hamburger = document.querySelector('.hamburger');
-const mobileNav = document.querySelector('.mobile-nav');
-if (hamburger && mobileNav) {
-  document.addEventListener('click', e => {
-    if (!mobileNav.contains(e.target) && !hamburger.contains(e.target))
-      mobileNav.classList.remove('open');
-  });
-}
 
 // Pre-populate one experience and one education item on load
 addExperienceItem();

@@ -12,6 +12,106 @@
 </head>
 <body>
   {% block content %}{% endblock %}
+  
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+     naik.css → footer, .footer-grid, .footer-bottom
+     ══════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+
+    <div class="footer-brand">
+      <span class="wordmark">NAIK</span>
+      <p>{{ t('footer.tagline') }}</p>
+      <div class="footer-btns">
+        <a href="#" class="btn btn-outline" style="font-size:0.8rem; color:rgba(255,255,255,0.6); border-color:rgba(255,255,255,0.2);">{{ t('footer.partner') }}</a>
+      </div>
+    </div>
+
+    <div>
+      <h4>{{ t('footer.platform') }}</h4>
+      <ul>
+        <li><a href="{{ url_for('explore') }}">{{ t('nav.explore') }}</a></li>
+        <li><a href="{{ url_for('skills') }}">{{ t('nav.skillup') }}</a></li>
+        <li><a href="{{ url_for('home') }}">{{ t('nav.getHired') }}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>{{ t('footer.resources') }}</h4>
+      <ul>
+        <li><a href="{{ url_for('know') }}">{{ t('footer.minWage') }}</a></li>
+        <li><a href="{{ url_for('CVexamples') }}">{{ t('footer.cvTemplates') }}</a></li>
+        <li><a href="{{ url_for('jobGuide') }}">{{ t('footer.jobGuide') }}</a></li>
+        <li><a href="{{ url_for('know') }}">{{ t('footer.jtksm') }}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>{{ t('footer.organisation') }}</h4>
+      <ul>
+        <li><a href="#about">{{ t('footer.about') }}</a></li>
+        <li><a href="#team">{{ t('footer.team') }}</a></li>
+        <li><a href="#">{{ t('footer.privacy') }}</a></li>
+        <li><a href="#">{{ t('footer.contact') }}</a></li>
+        <li><a href="https://github.com/CameliaCH/GetEmployed" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2025 NAIK — Naikkan Taraf Hidup Anda. {{ t('footer.rights') }}</span>
+    <span>{{ t('footer.madeIn') }}</span>
+  </div>
+</footer>
+
+  <script>
+    /* ── MOBILE NAV ── */
+    const hamburger = document.querySelector('.hamburger');
+    const mobileNav = document.querySelector('.mobile-nav');
+    if (hamburger && mobileNav) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileNav.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!mobileNav.contains(e.target) && !hamburger.contains(e.target))
+          mobileNav.classList.remove('open');
+      });
+      mobileNav.querySelectorAll('a').forEach(link =>
+        link.addEventListener('click', () => mobileNav.classList.remove('open'))
+      );
+    }
+
+    /* ── NAV SCROLL ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const nav = document.querySelector('.naik-nav');
+      if (!nav) return;
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 20);
+      });
+    });
+
+    /* ── DARK MODE ── */
+    (function () {
+      const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+      const SUN  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+      function applyTheme(dark) {
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        const icon = document.getElementById('dark-icon');
+        if (icon) icon.innerHTML = dark ? MOON : SUN;
+      }
+      window.toggleDark = function () {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        localStorage.setItem('naik_theme', isDark ? 'light' : 'dark');
+        applyTheme(!isDark);
+      };
+      const saved = localStorage.getItem('naik_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(saved ? saved === 'dark' : prefersDark);
+    })();
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

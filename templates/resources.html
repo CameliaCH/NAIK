@@ -8,18 +8,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
 <style>
-:root{--red:#BF4646;--teal:#7EACB5;--ink:#1A1A2E;--ink-mid:#6B6B80;--ink-lt:#9B9BAE;--cream:#FAF8F5;--peach:#FFF0E6;--border:#E8E3DD;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 
 /* ── HERO ── */
-.res-hero{background:var(--ink);padding:2.5rem clamp(1.5rem,5vw,4rem) 2rem;text-align:center;}
+.res-hero{
+    background: linear-gradient(-45deg, var(--peach) 0%, #f5ede0 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem clamp(1.5rem,5vw,4rem) 2.5rem;
+    text-align: center;}
 .res-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:.4rem;}
-.res-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;margin-bottom:.4rem;}
+.res-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--ink);margin-bottom:.4rem;}
 .res-hero h1 em{color:var(--teal);font-style:normal;}
-.res-hero p{color:rgba(255,255,255,.65);font-size:.88rem;max-width:500px;margin:0 auto;}
-.back-link{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:1rem;}
-.back-link:hover{color:#fff;}
+.res-hero p{color:var(--ink-mid);font-size:.88rem;max-width:500px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;color:var(--ink);text-decoration:none;margin-bottom:1rem;}
+.back-link:hover{color:var(--teal);}
 
 /* ── TABS ── */
 .resources-wrap{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem;}
