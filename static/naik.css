@@ -405,19 +405,77 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 @media (hover: hover) {
   /* opacity controlled by JS spotlight logic */
 }
-/* Mobile: gentle ambient shimmer, no spotlight */
 @media (hover: none) {
-  .hero-batik {
-    opacity: 0.15;
-    animation: batik-shine 7s ease-in-out infinite;
-  }
   #batik-rect { mask: none; }
+
+  #batik-mount svg {
+    opacity: 0;
+    -webkit-mask: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 35%,
+      white 47%,
+      white 53%,
+      transparent 65%,
+      transparent 100%
+    );
+    mask: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 35%,
+      white 47%,
+      white 53%,
+      transparent 65%,
+      transparent 100%
+    );
+    -webkit-mask-size: 300% 100%;
+    mask-size: 300% 100%;
+    -webkit-mask-position: -200% 0;
+    mask-position: -200% 0;
+    animation: batik-sweep 8s ease-in-out infinite;
+  }
+
+
+@keyframes batik-sweep {
+  0%   {
+    opacity: 1;
+    -webkit-mask-position: -200% 0;
+    mask-position: -200% 0;
+  }
+  100% {
+    opacity: 1;
+    -webkit-mask-position: 200% 0;
+    mask-position: 200% 0;
+  }
+}}
+
+  /* Sliding shine overlay via pseudo-element 
+  #batik-mount::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* Diagonal band: transparent → white → transparent, angled ~30° 
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(255, 255, 255, 0.18) 45%,
+      rgba(255, 255, 255, 0.32) 50%,
+      rgba(255, 255, 255, 0.18) 55%,
+      transparent 70%,
+      transparent 100%
+    );
+    /* Start fully off-screen left, end fully off-screen right 
+    transform: translateX(-100%);
+    animation: batik-shine-sweep 8s ease-in-out infinite;
+    pointer-events: none;
+  }
 }
-@keyframes batik-shine {
-  0%   { transform: scale(1.04) translate(-2%, -1%); opacity: 0.08; }
-  50%  { transform: scale(1.0)  translate(2%,  1%);  opacity: 0.18; }
-  100% { transform: scale(1.04) translate(-2%, -1%); opacity: 0.08; }
-}
+
+@keyframes batik-shine-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}*/
 /* Ensure your hero text/buttons stay above the SVG */
 .hero-content {
   position: relative;
@@ -1234,11 +1292,4 @@ footer ul a:hover { color: #fff; }
 .npc-signout:hover {
   background: #fdf0f0;
   color: var(--red-dk);
-}
-
-/* TEMP DEBUG: Delete this once you see the pattern working */
-#batik-mount {
-  opacity: 1 !important;
-  --x: 200px !important;
-  --y: 200px !important;
 }

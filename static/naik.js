@@ -654,17 +654,6 @@ document.addEventListener('DOMContentLoaded', () => {
           circle.setAttribute('cy', -999);
         }, 400);
       });
-
-      // Mobile: scroll-driven shimmer (no spotlight needed)
-      window.addEventListener('scroll', () => {
-        if (window.innerWidth > 768) return;
-        const rect = hero.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          svg.style.opacity = '1';
-        } else {
-          svg.style.opacity = '0';
-        }
-      }, { passive: true });
     })
     .catch(err => console.warn('Batik load error:', err));
 })();
