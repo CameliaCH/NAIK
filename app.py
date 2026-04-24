@@ -119,7 +119,6 @@ def inject_i18n():
     i18n_js = {k: t(k) for k in _JS_KEYS}
     return dict(t=t, lang=lang, i18n_js=i18n_js)
 
-
 # ─── LANGUAGE SWITCHER ────────────────────────────────────────
 @app.route('/set-lang')
 def set_lang():
