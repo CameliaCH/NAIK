@@ -540,11 +540,7 @@
 
 
 {% block scripts %}
-<<<<<<< Updated upstream
   <script src="{{ url_for('static', filename='naik.js') }}"></script>
-{% endblock %}
-=======
-<script src="{{ url_for('static', filename='naik.js') }}"></script>
 
 {% if session.get('user_id') %}
 <script>
@@ -670,3 +666,4 @@
 })();
 </script>
 {% endif %}
+{% endblock %}
