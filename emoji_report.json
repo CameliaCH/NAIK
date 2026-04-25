@@ -1,0 +1,361 @@
+[
+  {
+    "file": "en.json",
+    "emojis": [
+      "\u26a0",
+      "\u2728",
+      "\u2764",
+      "\ufe0f",
+      "\ud83c\udf38",
+      "\ud83d\udc9b",
+      "\ud83d\udcaa",
+      "\ud83d\udcbc",
+      "\ud83d\udcbe",
+      "\ud83d\udccb",
+      "\ud83d\udd04",
+      "\ud83d\uddfa",
+      "\ud83e\udd0d",
+      "\ud83e\udd16",
+      "\ud83e\uddd1",
+      "\ud83e\udded"
+    ],
+    "lines": [
+      {
+        "line": 6,
+        "text": "    \"forHer\": \"\ud83c\udf38 For Her\","
+      },
+      {
+        "line": 53,
+        "text": "    \"flowStartBtn\": \"\u2728 Start \u2014 Take the Quiz\","
+      },
+      {
+        "line": 104,
+        "text": "    \"forherBtn\": \"\ud83c\udf38 Open For Her \u2192\","
+      },
+      {
+        "line": 149,
+        "text": "    \"ctaExploreBtn\": \"\ud83e\udded Explore Careers\","
+      },
+      {
+        "line": 162,
+        "text": "    \"heroEyebrow\": \"\ud83d\udcaa Skill Up & Apply\","
+      },
+      {
+        "line": 165,
+        "text": "    \"savedLabel\": \"\ud83d\udccb Your Saved Jobs \u2014 Click to View Roadmap\","
+      },
+      {
+        "line": 171,
+        "text": "    \"savedViewRoadmap\": \"\ud83d\uddfa View Career Roadmap \u2192\","
+      },
+      {
+        "line": 180,
+        "text": "    \"tagAI\": \"\ud83e\udd16 AI-Powered\","
+      },
+      {
+        "line": 192,
+        "text": "    \"restartBtn\": \"\ud83d\udd04 Restart\","
+      },
+      {
+        "line": 203,
+        "text": "    \"statusStopped\": \"\u23f9\ufe0f Interview stopped\","
+      },
+      {
+        "line": 210,
+        "text": "    \"you\": \"\ud83e\uddd1 You: \","
+      },
+      {
+        "line": 211,
+        "text": "    \"interviewer\": \"\ud83e\udd16 Interviewer: \""
+      },
+      {
+        "line": 214,
+        "text": "    \"pageLabel\": \"\ud83d\udcbc Career Exploration\","
+      },
+      {
+        "line": 216,
+        "text": "    \"tabExplore\": \"\ud83e\udded Explore Jobs\","
+      },
+      {
+        "line": 217,
+        "text": "    \"tabSaved\": \"\ud83e\udd0d Saved\","
+      },
+      {
+        "line": 228,
+        "text": "    \"saveJob\": \"\ud83e\udd0d Save\","
+      },
+      {
+        "line": 229,
+        "text": "    \"savedJob\": \"\ud83d\udc9b Saved\","
+      },
+      {
+        "line": 231,
+        "text": "    \"toastSaved\": \"\ud83d\udcbe Job saved!\","
+      },
+      {
+        "line": 233,
+        "text": "    \"toastSaveFailed\": \"\u26a0\ufe0f Could not save \u2014 try again\","
+      },
+      {
+        "line": 234,
+        "text": "    \"toastUnsaveFailed\": \"\u26a0\ufe0f Could not remove \u2014 try again\","
+      },
+      {
+        "line": 259,
+        "text": "    \"madeIn\": \"Made with \u2764\ufe0f in Malaysia\","
+      }
+    ]
+  },
+  {
+    "file": "ms.json",
+    "emojis": [
+      "\u26a0",
+      "\u2728",
+      "\u2764",
+      "\ufe0f",
+      "\ud83c\udf38",
+      "\ud83d\udc9b",
+      "\ud83d\udcbc",
+      "\ud83d\udcbe",
+      "\ud83d\udd04",
+      "\ud83d\uddfa",
+      "\ud83e\udd0d",
+      "\ud83e\udd16",
+      "\ud83e\uddd1",
+      "\ud83e\udded"
+    ],
+    "lines": [
+      {
+        "line": 6,
+        "text": "    \"forHer\": \"\ud83c\udf38 Untuk Wanita\","
+      },
+      {
+        "line": 53,
+        "text": "    \"flowStartBtn\": \"\u2728 Mulakan \u2014 Ambil Kuiz\","
+      },
+      {
+        "line": 104,
+        "text": "    \"forherBtn\": \"\ud83c\udf38 Buka Untuk Wanita \u2192\","
+      },
+      {
+        "line": 171,
+        "text": "    \"savedViewRoadmap\": \"\ud83d\uddfa Lihat Peta Jalan Kerjaya \u2192\","
+      },
+      {
+        "line": 180,
+        "text": "    \"tagAI\": \"\ud83e\udd16 Berkuasa AI\","
+      },
+      {
+        "line": 192,
+        "text": "    \"restartBtn\": \"\ud83d\udd04 Mula Semula\","
+      },
+      {
+        "line": 203,
+        "text": "    \"statusStopped\": \"\u23f9\ufe0f Temu duga dihentikan\","
+      },
+      {
+        "line": 210,
+        "text": "    \"you\": \"\ud83e\uddd1 Anda: \","
+      },
+      {
+        "line": 211,
+        "text": "    \"interviewer\": \"\ud83e\udd16 Penemuduga: \""
+      },
+      {
+        "line": 214,
+        "text": "    \"pageLabel\": \"\ud83d\udcbc Penerokaan Kerjaya\","
+      },
+      {
+        "line": 216,
+        "text": "    \"tabExplore\": \"\ud83e\udded Terokai Pekerjaan\","
+      },
+      {
+        "line": 217,
+        "text": "    \"tabSaved\": \"\ud83e\udd0d Disimpan\","
+      },
+      {
+        "line": 228,
+        "text": "    \"saveJob\": \"\ud83e\udd0d Simpan\","
+      },
+      {
+        "line": 229,
+        "text": "    \"savedJob\": \"\ud83d\udc9b Disimpan\","
+      },
+      {
+        "line": 231,
+        "text": "    \"toastSaved\": \"\ud83d\udcbe Pekerjaan disimpan!\","
+      },
+      {
+        "line": 233,
+        "text": "    \"toastSaveFailed\": \"\u26a0\ufe0f Tidak dapat disimpan \u2014 cuba lagi\","
+      },
+      {
+        "line": 234,
+        "text": "    \"toastUnsaveFailed\": \"\u26a0\ufe0f Tidak dapat dikeluarkan \u2014 cuba lagi\","
+      },
+      {
+        "line": 259,
+        "text": "    \"madeIn\": \"Dibuat dengan \u2764\ufe0f di Malaysia\","
+      }
+    ]
+  },
+  {
+    "file": "zh.json",
+    "emojis": [
+      "\u26a0",
+      "\u270f",
+      "\u2728",
+      "\u2764",
+      "\ufe0f",
+      "\ud83c\udf38",
+      "\ud83c\udfe0",
+      "\ud83d\udc64",
+      "\ud83d\udc9b",
+      "\ud83d\udcaa",
+      "\ud83d\udcbc",
+      "\ud83d\udcbe",
+      "\ud83d\udccb",
+      "\ud83d\udd04",
+      "\ud83d\uddfa",
+      "\ud83d\udeaa",
+      "\ud83e\udd0d",
+      "\ud83e\udd16",
+      "\ud83e\uddd1",
+      "\ud83e\udded"
+    ],
+    "lines": [
+      {
+        "line": 3,
+        "text": "    \"explore\": \"\ud83e\udded \u63a2\u7d22\u804c\u4e1a\","
+      },
+      {
+        "line": 4,
+        "text": "    \"skillup\": \"\ud83d\udcaa \u63d0\u5347\u6280\u80fd\","
+      },
+      {
+        "line": 5,
+        "text": "    \"getHired\": \"\ud83d\udcbc \u6c42\u804c\","
+      },
+      {
+        "line": 6,
+        "text": "    \"forHer\": \"\ud83c\udf38 \u5973\u6027\u4e13\u533a\","
+      },
+      {
+        "line": 9,
+        "text": "    \"home\": \"\ud83c\udfe0 \u9996\u9875\","
+      },
+      {
+        "line": 10,
+        "text": "    \"viewProfile\": \"\ud83d\udc64 \u67e5\u770b\u6863\u6848\","
+      },
+      {
+        "line": 11,
+        "text": "    \"editProfile\": \"\u270f\ufe0f \u7f16\u8f91\u6863\u6848\","
+      },
+      {
+        "line": 12,
+        "text": "    \"signOut\": \"\ud83d\udeaa \u9000\u51fa\u767b\u5f55\","
+      },
+      {
+        "line": 13,
+        "text": "    \"myProfile\": \"\ud83d\udc64 \u6211\u7684\u6863\u6848\""
+      },
+      {
+        "line": 26,
+        "text": "    \"heroExploreBtn\": \"\ud83e\udded \u63a2\u7d22\u804c\u4e1a\","
+      },
+      {
+        "line": 53,
+        "text": "    \"flowStartBtn\": \"\u2728 \u5f00\u59cb\u2014\u2014\u53c2\u52a0\u6d4b\u9a8c\","
+      },
+      {
+        "line": 54,
+        "text": "    \"flowBrowseBtn\": \"\ud83e\udded \u6d4f\u89c8\u6240\u6709\u804c\u4f4d\","
+      },
+      {
+        "line": 64,
+        "text": "    \"skillupBtn\": \"\ud83d\udcaa \u524d\u5f80\u63d0\u5347\u6280\u80fd \u2192\","
+      },
+      {
+        "line": 84,
+        "text": "    \"hiredBtn\": \"\ud83d\udcbc \u521b\u5efa\u60a8\u7684\u7b80\u5386 \u2192\","
+      },
+      {
+        "line": 104,
+        "text": "    \"forherBtn\": \"\ud83c\udf38 \u8fdb\u5165\u5973\u6027\u4e13\u533a \u2192\","
+      },
+      {
+        "line": 149,
+        "text": "    \"ctaExploreBtn\": \"\ud83e\udded \u63a2\u7d22\u804c\u4e1a\","
+      },
+      {
+        "line": 162,
+        "text": "    \"heroEyebrow\": \"\ud83d\udcaa \u63d0\u5347\u6280\u80fd\u5e76\u7533\u8bf7\","
+      },
+      {
+        "line": 165,
+        "text": "    \"savedLabel\": \"\ud83d\udccb \u5df2\u4fdd\u5b58\u804c\u4f4d \u2014 \u70b9\u51fb\u67e5\u770b\u8def\u7ebf\u56fe\","
+      },
+      {
+        "line": 171,
+        "text": "    \"savedViewRoadmap\": \"\ud83d\uddfa \u67e5\u770b\u804c\u4e1a\u8def\u7ebf\u56fe \u2192\","
+      },
+      {
+        "line": 180,
+        "text": "    \"tagAI\": \"\ud83e\udd16 AI\u9a71\u52a8\","
+      },
+      {
+        "line": 192,
+        "text": "    \"restartBtn\": \"\ud83d\udd04 \u91cd\u65b0\u5f00\u59cb\","
+      },
+      {
+        "line": 203,
+        "text": "    \"statusStopped\": \"\u23f9\ufe0f \u9762\u8bd5\u5df2\u505c\u6b62\","
+      },
+      {
+        "line": 210,
+        "text": "    \"you\": \"\ud83e\uddd1 \u60a8\uff1a\","
+      },
+      {
+        "line": 211,
+        "text": "    \"interviewer\": \"\ud83e\udd16 \u9762\u8bd5\u5b98\uff1a\""
+      },
+      {
+        "line": 214,
+        "text": "    \"pageLabel\": \"\ud83d\udcbc \u804c\u4e1a\u63a2\u7d22\","
+      },
+      {
+        "line": 216,
+        "text": "    \"tabExplore\": \"\ud83e\udded \u63a2\u7d22\u804c\u4f4d\","
+      },
+      {
+        "line": 217,
+        "text": "    \"tabSaved\": \"\ud83e\udd0d \u5df2\u4fdd\u5b58\","
+      },
+      {
+        "line": 228,
+        "text": "    \"saveJob\": \"\ud83e\udd0d \u6536\u85cf\","
+      },
+      {
+        "line": 229,
+        "text": "    \"savedJob\": \"\ud83d\udc9b \u5df2\u6536\u85cf\","
+      },
+      {
+        "line": 231,
+        "text": "    \"toastSaved\": \"\ud83d\udcbe \u804c\u4f4d\u5df2\u6536\u85cf\uff01\","
+      },
+      {
+        "line": 233,
+        "text": "    \"toastSaveFailed\": \"\u26a0\ufe0f \u65e0\u6cd5\u4fdd\u5b58\u2014\u2014\u8bf7\u91cd\u8bd5\","
+      },
+      {
+        "line": 234,
+        "text": "    \"toastUnsaveFailed\": \"\u26a0\ufe0f \u65e0\u6cd5\u79fb\u9664\u2014\u2014\u8bf7\u91cd\u8bd5\","
+      },
+      {
+        "line": 259,
+        "text": "    \"madeIn\": \"\u7528\u2764\ufe0f\u5728\u9a6c\u6765\u897f\u4e9a\u5236\u9020\","
+      }
+    ]
+  }
+]

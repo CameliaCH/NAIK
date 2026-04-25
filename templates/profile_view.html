@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+{% from '_nav.html' import naik_nav with context %}
+
+{% block title %}{{ viewed_user.get('name','') }} {{ viewed_user.get('surname','') }} — NAIK{% endblock %}
+
+{% block head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <style>
+  /* ══════════════════════════════════════════════
+     PROFILE VIEW PAGE
+  ══════════════════════════════════════════════ */
+
+  /* ── BANNER ─────────────────────────────────── */
+  .pv-banner {
+    background: var(--alw-dk);
+    padding: clamp(5rem,10vw,7rem) clamp(1.5rem,5vw,4rem) 0;
+    position: relative; overflow: hidden;
+  }
+  .pv-banner-bg {
+    position: absolute; inset: 0; opacity: 0.06; pointer-events: none;
+  }
+  .pv-banner-inner {
+    position: relative; z-index: 1;
+    display: flex; align-items: flex-end; gap: 2rem;
+    max-width: 960px; margin: 0 auto; padding-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .pv-avatar {
+    width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+    border: 4px solid rgba(255,255,255,0.15); display: block;
+    flex-shrink: 0; background: var(--teal);
+  }
+  .pv-avatar-letter {
+    width: 100px; height: 100px; border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem; font-weight: 700; color: #fff;
+    flex-shrink: 0; background: var(--red);
+  }
+  .pv-info { flex: 1; min-width: 0; }
+  .pv-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    color: #fff; font-weight: 700; margin-bottom: 0.3rem;
+  }
+  .pv-headline { font-size: 0.9rem; color: rgba(255,255,255,0.55); margin-bottom: 0.4rem; }
+  .pv-bio { font-size: 0.82rem; color: rgba(255,255,255,0.38); max-width: 520px; line-height: 1.6; }
+  .pv-back {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.78rem; font-weight: 600;
+    color: rgba(255,255,255,0.35); text-decoration: none;
+    transition: color 0.15s; margin-bottom: 1.5rem;
+  }
+  .pv-back:hover { color: rgba(255,255,255,0.7); }
+
+  /* ── BODY ───────────────────────────────────── */
+  .pv-body {
+    max-width: 960px; margin: 0 auto;
+    padding: 2.5rem clamp(1rem,4vw,2rem) 6rem;
+  }
+
+  /* ── SECTION ────────────────────────────────── */
+  .pv-section {
+    background: var(--card-bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 1.75rem 2rem; margin-bottom: 1.5rem;
+  }
+  .pv-section-title {
+    font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--red); margin-bottom: 1.25rem;
+  }
+
+  /* ── POSITIONS ──────────────────────────────── */
+  .pos-list { display: flex; flex-direction: column; gap: 1rem; }
+  .pos-item {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+  }
+  .pos-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .pos-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--red); flex-shrink: 0; margin-top: 0.35rem;
+  }
+  .pos-dot.past { background: var(--border); }
+  .pos-title { font-size: 0.9rem; font-weight: 700; color: var(--ink); margin-bottom: 0.2rem; }
+  .pos-company { font-size: 0.8rem; color: var(--ink-lt); }
+  .pos-years { font-size: 0.74rem; color: var(--ink-lt); margin-top: 0.1rem; }
+  .pos-current-badge {
+    display: inline-block; font-size: 0.62rem; font-weight: 800;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--red); color: #fff;
+    border-radius: 50px; padding: 0.1rem 0.5rem; margin-left: 0.4rem;
+  }
+  .pos-empty { font-size: 0.85rem; color: var(--ink-lt); }
+
+  /* ── SAVED JOBS GRID ────────────────────────── */
+  .pv-jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(280px,100%), 1fr));
+    gap: 1.1rem;
+  }
+  .mini-job-card {
+    background: var(--cream); border: 1px solid var(--border); border-radius: 16px;
+    overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer; text-decoration: none; display: block;
+  }
+  .mini-job-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(28,23,19,0.09); }
+  .mjc-thumb {
+    height: 100px; background-size: cover; background-position: center; position: relative;
+    background-color: var(--border);
+  }
+  .mjc-badge {
+    position: absolute; top: 8px; left: 8px;
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 50px;
+    background: rgba(255,255,255,0.92); color: var(--ink-mid);
+  }
+  .mjc-body { padding: 0.85rem 1rem; }
+  .mjc-emoji { font-size: 1.3rem; margin-bottom: 0.2rem; }
+  .mjc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 0.15rem;
+  }
+  .mjc-salary { font-size: 0.72rem; font-weight: 700; color: var(--teal); }
+
+  /* ── NOT FOUND ──────────────────────────────── */
+  .pv-not-found {
+    text-align: center; padding: 6rem 2rem;
+    max-width: 480px; margin: 0 auto;
+  }
+  .pv-not-found .icon { font-size: 3rem; margin-bottom: 1rem; }
+  .pv-not-found h2 { margin-bottom: 0.75rem; font-size: 1.75rem; }
+  .pv-not-found p { font-size: 0.9rem; color: var(--ink-lt); line-height: 1.7; }
+
+  @media (max-width: 520px) {
+    .pv-banner-inner { gap: 1.25rem; }
+    .pv-avatar, .pv-avatar-letter { width: 72px; height: 72px; font-size: 2rem; }
+    .pv-section { padding: 1.25rem; }
+  }
+  </style>
+{% endblock %}
+
+{% block content %}
+{{ naik_nav(active='') }}
+
+{% set full_name = ((viewed_user.get('name','') + ' ' + viewed_user.get('surname','')).strip()) %}
+{% set positions = viewed_user.get('positions') or [] %}
+
+<!-- ── BANNER ── -->
+<div class="pv-banner">
+  <svg class="pv-banner-bg" viewBox="0 0 1200 220" xmlns="http://www.w3.org/2000/svg"
+       preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <circle cx="1100" cy="40"  r="220" fill="none" stroke="#7EACB5" stroke-width="1"/>
+    <circle cx="80"   cy="190" r="170" fill="none" stroke="#BF4646" stroke-width="0.8"/>
+    <circle cx="600"  cy="110" r="310" fill="none" stroke="#EDDCC6" stroke-width="1.2"/>
+  </svg>
+  <div class="pv-banner-inner">
+
+    <div>
+      <a href="javascript:history.back()" class="pv-back">← Back</a>
+    </div>
+
+    <div style="display:flex;align-items:flex-end;gap:2rem;flex-wrap:wrap;flex:1;">
+      {% if viewed_user.get('avatar_url') %}
+        <img src="{{ viewed_user['avatar_url'] }}" alt="{{ full_name }}"
+             class="pv-avatar"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="pv-avatar-letter" style="display:none;">
+          {{ (viewed_user.get('name') or 'U')[0].upper() }}
+        </div>
+      {% else %}
+        <div class="pv-avatar-letter">
+          {{ (viewed_user.get('name') or 'U')[0].upper() }}
+        </div>
+      {% endif %}
+
+      <div class="pv-info">
+        <div class="pv-name">{{ full_name or 'NAIK Member' }}</div>
+        <div class="pv-headline">{{ viewed_user.get('headline') or 'NAIK Member' }}</div>
+        {% if viewed_user.get('description') %}
+          <div class="pv-bio">{{ viewed_user['description'] }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── BODY ── -->
+<div class="pv-body">
+
+  {% if viewed_user.get('description') %}
+  <!-- About -->
+  <div class="pv-section">
+    <div class="pv-section-title">About</div>
+    <p style="font-size:.9rem;color:var(--ink-mid);line-height:1.75;white-space:pre-wrap;">{{ viewed_user['description'] }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Experience -->
+  <div class="pv-section">
+    <div class="pv-section-title">Experience</div>
+    {% if positions %}
+      <div class="pos-list">
+        {% for pos in positions %}
+        <div class="pos-item">
+          <div class="pos-dot {{ '' if pos.get('current') else 'past' }}"></div>
+          <div>
+            <div class="pos-title">
+              {{ pos.get('title','') }}
+              {% if pos.get('current') %}
+                <span class="pos-current-badge">Current</span>
+              {% endif %}
+            </div>
+            <div class="pos-company">{{ pos.get('company','') }}</div>
+            <div class="pos-years">
+              {{ pos.get('start_year','') }}
+              {% if pos.get('current') %} – Present
+              {% elif pos.get('end_year') %} – {{ pos['end_year'] }}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="pos-empty">No positions listed yet.</p>
+    {% endif %}
+  </div>
+
+  <!-- Saved Jobs (only if public_saved_jobs is True) -->
+  {% if viewed_user.get('public_saved_jobs') %}
+  <div class="pv-section">
+    <div class="pv-section-title">Saved Jobs</div>
+    {% if saved_jobs %}
+      <div class="pv-jobs-grid" id="pv-jobs-grid">
+        <!-- rendered by JS for thumbnails -->
+      </div>
+    {% else %}
+      <p style="font-size:.85rem;color:var(--ink-lt);">No saved jobs to display.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Connect CTA (only for logged-in viewers) -->
+  {% if session.get('user_id') %}
+  <div style="text-align:center;padding:1.5rem;background:var(--cream);border:1.5px dashed var(--border);border-radius:16px;">
+    <p style="font-size:.85rem;color:var(--ink-lt);margin-bottom:1rem;line-height:1.7;">
+      Inspired by {{ viewed_user.get('name','this person') }}'s journey?
+      Share your own story or find a mentor on NAIK.
+    </p>
+    <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
+      <a href="{{ url_for('connect') }}" class="btn btn-primary">💬 Go to Connect</a>
+      <a href="{{ url_for('match') }}"   class="btn btn-teal">🤝 Find a Mentor</a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+/* ── Render saved jobs with thumbnails ──────────────────── */
+const SAVED_JOBS = {{ saved_jobs | tojson }};
+
+function jobThumbUrl(job) {
+  if (job.image_url) return job.image_url;
+  const search = [job.title_en||'', job.tagline_en||'', job.duties_en||''].join(' ').toLowerCase();
+  const map = [
+    { keys: ['barista','coffee','café','cafe'],   photo: '1495474472287-4d71bcdd2085' },
+    { keys: ['baker','pastry','kuih','cake'],      photo: '1556217477-d325251ece38' },
+    { keys: ['grab','driver','e-hailing'],         photo: '1449965408869-eaa3f722e40d' },
+    { keys: ['warehouse','logistics','picker'],    photo: '1553413077-190dd305871c' },
+    { keys: ['retail','cashier','mall'],           photo: '1441986300917-64674bd600d8' },
+    { keys: ['admin','clerk','receptionist'],      photo: '1497032628192-86f99bcd76bc' },
+    { keys: ['customer service','helpdesk'],       photo: '1521737604893-d14cc237f11d' },
+    { keys: ['tutor','teacher','educator'],        photo: '1509062522246-3755977927d7' },
+    { keys: ['nurse','hospital','clinical'],       photo: '1584308666744-24d5c474f2ae' },
+    { keys: ['graphic design','designer'],         photo: '1561070791-2526d30994b5' },
+    { keys: ['social media','content creator'],    photo: '1611162617213-7d7a39e9b1d7' },
+    { keys: ['delivery rider','food delivery'],    photo: '1592861956120-e524fc739696' },
+  ];
+  for (const entry of map)
+    if (entry.keys.some(k => search.includes(k)))
+      return `https://images.unsplash.com/photo-${entry.photo}?w=400&q=70&fit=crop`;
+  return `https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&q=70&fit=crop`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('pv-jobs-grid');
+  if (!grid || !SAVED_JOBS.length) return;
+
+  SAVED_JOBS.forEach(job => {
+    const mn = job.entry_salary_min;
+    const mx = job.entry_salary_max;
+    const salary = mn && mx ? `RM ${mn.toLocaleString()}–${mx.toLocaleString()}/mo`
+                : mn        ? `From RM ${mn.toLocaleString()}/mo` : '';
+    const imgUrl = jobThumbUrl(job);
+
+    const card = document.createElement('a');
+    card.href      = `/roadmap/view?job=${job.id}`;
+    card.className = 'mini-job-card';
+    card.innerHTML = `
+      <div class="mjc-thumb" style="background-image:url('${imgUrl}');">
+        <span class="mjc-badge">${job.work_type || 'Full-time'}</span>
+      </div>
+      <div class="mjc-body">
+        <div class="mjc-emoji">${job.emoji || '💼'}</div>
+        <div class="mjc-name">${job.title_en || ''}</div>
+        ${salary ? `<div class="mjc-salary">${salary}</div>` : ''}
+      </div>`;
+    grid.appendChild(card);
+  });
+});
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='naik.js') }}"></script>
+{% endblock %}

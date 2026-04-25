@@ -71,18 +71,19 @@
     }
     .dash-header h2 { font-size: 1.25rem; color: var(--ink); }
 
-    /* Saved jobs scroll strip (like skills.html) */
+    /* Saved jobs grid */
     .saved-scroll-strip {
-      display: flex; gap: .75rem; overflow-x: auto; padding-bottom: .5rem; margin-bottom: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
     }
-    .saved-scroll-strip::-webkit-scrollbar { height: 4px; }
-    .saved-scroll-strip::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
     /* Mini job card */
     .mini-job-card {
-      background: #fff; border: 1px solid var(--border); border-radius: 16px;
+      background: var(--card-bg2); border: 1px solid var(--border); border-radius: 16px;
       overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
-      cursor: pointer; text-decoration: none; display: block; min-width: 190px; flex-shrink: 0;
+      cursor: pointer; text-decoration: none; display: block;
     }
     .mini-job-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(28,23,19,0.1); }
     .mjc-thumb {
@@ -470,6 +471,77 @@
         </div>
       </div>
 
+      <!-- Experience / Positions -->
+      <div class="edit-section" id="positions-section">
+        <div class="edit-section-title">Experience</div>
+        <p style="font-size:.82rem;color:var(--ink-lt);margin-bottom:1.25rem;line-height:1.6;">
+          Current and past positions shown on your public profile.
+        </p>
+        <div id="positions-list">
+          <!-- rendered by JS from user data -->
+        </div>
+        <!-- Add position form -->
+        <div id="add-pos-form" style="display:none; background:var(--cream); border:1.5px solid var(--border); border-radius:12px; padding:1.1rem; margin-bottom:1rem;">
+          <div class="edit-grid" style="margin-bottom:.75rem;">
+            <div class="ef-group">
+              <label for="pos-title">Job Title</label>
+              <input type="text" id="pos-title" placeholder="e.g. Delivery Rider">
+            </div>
+            <div class="ef-group">
+              <label for="pos-company">Company / Organisation</label>
+              <input type="text" id="pos-company" placeholder="e.g. Grab">
+            </div>
+            <div class="ef-group">
+              <label for="pos-start">Start Year</label>
+              <input type="number" id="pos-start" placeholder="e.g. 2022" min="1970" max="2099">
+            </div>
+            <div class="ef-group" id="pos-end-group">
+              <label for="pos-end">End Year</label>
+              <input type="number" id="pos-end" placeholder="e.g. 2024" min="1970" max="2099">
+            </div>
+          </div>
+          <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:600;color:var(--ink-mid);cursor:pointer;margin-bottom:.85rem;">
+            <input type="checkbox" id="pos-current" onchange="toggleCurrentPos(this.checked)"> I currently work here
+          </label>
+          <div style="display:flex;gap:.5rem;">
+            <button class="btn btn-teal" style="font-size:.82rem;" onclick="addPosition()">Add</button>
+            <button class="btn btn-outline" style="font-size:.82rem;" onclick="hideAddPos()">Cancel</button>
+          </div>
+        </div>
+        <button class="btn btn-outline" style="font-size:.82rem;margin-bottom:1.25rem;" id="show-add-pos-btn" onclick="showAddPos()">+ Add Position</button>
+        <div class="save-row">
+          <button class="btn btn-teal" onclick="savePositions()">Save Experience</button>
+        </div>
+      </div>
+
+      <!-- Privacy -->
+      <div class="edit-section" id="privacy-section">
+        <div class="edit-section-title">Privacy</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+          <div>
+            <p style="font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;">Show saved jobs on my public profile</p>
+            <p style="font-size:.78rem;color:var(--ink-lt);line-height:1.55;">
+              When on, anyone viewing your profile at
+              <code style="font-size:.74rem;background:var(--border);border-radius:4px;padding:.05rem .35rem;">/u/{{ user.get('id','…') }}</code>
+              can see which jobs you've saved.
+            </p>
+          </div>
+          <label class="ob-toggle-label" aria-label="Toggle saved jobs visibility">
+            <input type="checkbox" id="privacy-jobs-toggle" style="display:none;"
+                   {{ 'checked' if user.get('public_saved_jobs') }}
+                   onchange="savePrivacy(this.checked)">
+            <div class="ob-toggle-track {{ 'on' if user.get('public_saved_jobs') }}" id="privacy-jobs-track">
+              <div class="ob-toggle-thumb"></div>
+            </div>
+          </label>
+        </div>
+        <p style="font-size:.78rem;color:var(--ink-lt);margin-top:1rem;">
+          Your profile URL:
+          <a href="/u/{{ user.get('id','') }}" target="_blank"
+             style="color:var(--teal);font-weight:600;word-break:break-all;">/u/{{ user.get('id','') }}</a>
+        </p>
+      </div>
+
       <!-- Onboarding toggle -->
       <div class="edit-section" id="ob-toggle-section">
         <div class="edit-section-title">Getting Started Progress</div>
@@ -702,6 +774,84 @@ document.getElementById('avatar-upload-btn').addEventListener('click', async () 
   }
 });
 
+/* ── POSITIONS ──────────────────────────────────────────── */
+let positions = {{ (user.get('positions') or []) | tojson }};
+
+function renderPositions() {
+  const list = document.getElementById('positions-list');
+  if (!positions.length) {
+    list.innerHTML = `<p style="font-size:.82rem;color:var(--ink-lt);margin-bottom:1rem;">No positions added yet.</p>`;
+    return;
+  }
+  list.innerHTML = positions.map((p, i) => `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;
+                background:var(--cream);border:1.5px solid var(--border);border-radius:12px;
+                padding:.85rem 1rem;margin-bottom:.65rem;">
+      <div>
+        <div style="font-size:.88rem;font-weight:700;color:var(--ink);">${esc(p.title)}
+          ${p.current ? `<span style="font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--teal);color:#fff;border-radius:50px;padding:.1rem .5rem;margin-left:.4rem;">Current</span>` : ''}
+        </div>
+        <div style="font-size:.78rem;color:var(--ink-lt);margin-top:.15rem;">${esc(p.company)}
+          &nbsp;·&nbsp;${p.start_year}${p.current ? ' – Present' : (p.end_year ? ' – ' + p.end_year : '')}
+        </div>
+      </div>
+      <button onclick="removePosition(${i})" title="Remove"
+              style="background:none;border:none;color:var(--ink-lt);cursor:pointer;font-size:1rem;padding:.1rem .35rem;border-radius:6px;transition:color .15s;"
+              onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--ink-lt)'">✕</button>
+    </div>`).join('');
+}
+
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showAddPos() {
+  document.getElementById('add-pos-form').style.display = 'block';
+  document.getElementById('show-add-pos-btn').style.display = 'none';
+  document.getElementById('pos-title').focus();
+}
+function hideAddPos() {
+  document.getElementById('add-pos-form').style.display = 'none';
+  document.getElementById('show-add-pos-btn').style.display = '';
+  ['pos-title','pos-company','pos-start','pos-end'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pos-current').checked = false;
+  document.getElementById('pos-end-group').style.opacity = '1';
+}
+function toggleCurrentPos(isCurrent) {
+  const endGroup = document.getElementById('pos-end-group');
+  endGroup.style.opacity = isCurrent ? '.4' : '1';
+  if (isCurrent) document.getElementById('pos-end').value = '';
+}
+function addPosition() {
+  const title   = document.getElementById('pos-title').value.trim();
+  const company = document.getElementById('pos-company').value.trim();
+  const start   = parseInt(document.getElementById('pos-start').value) || null;
+  const current = document.getElementById('pos-current').checked;
+  const end     = current ? null : (parseInt(document.getElementById('pos-end').value) || null);
+  if (!title || !company || !start) {
+    showToast('Please fill in title, company and start year.');
+    return;
+  }
+  positions.unshift({ title, company, start_year: start, end_year: end, current });
+  renderPositions();
+  hideAddPos();
+}
+function removePosition(i) {
+  positions.splice(i, 1);
+  renderPositions();
+}
+function savePositions() {
+  postUpdate({ positions }, '✅ Experience saved!');
+}
+
+/* ── PRIVACY ────────────────────────────────────────────── */
+function savePrivacy(isPublic) {
+  const track = document.getElementById('privacy-jobs-track');
+  if (track) track.classList.toggle('on', isPublic);
+  postUpdate({ public_saved_jobs: isPublic },
+    isPublic ? '✅ Saved jobs are now public.' : '✅ Saved jobs are now private.');
+}
+
 /* ── DELETE ACCOUNT ─────────────────────────────────────── */
 function confirmDelete() {
   if (!confirm('Are you sure you want to delete your account? This cannot be undone.')) return;
@@ -729,7 +879,7 @@ async function loadSavedJobs() {
       return;
     }
 
-    stripEl.style.display = 'flex';
+    stripEl.style.display = 'grid';
 
     data.jobs.forEach(job => {
       if (!job) return;
@@ -857,6 +1007,7 @@ window.resetOnboarding = function() {
 document.addEventListener('DOMContentLoaded', () => {
   loadSavedJobs();
   initObToggle();
+  renderPositions();
 });
 </script>
 {% endblock %}

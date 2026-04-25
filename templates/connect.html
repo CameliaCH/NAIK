@@ -1,0 +1,1009 @@
+{% extends "base.html" %}
+{% from '_nav.html' import naik_nav with context %}
+
+{% block title %}Connect — NAIK{% endblock %}
+
+{% block head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <style>
+
+  /* ── MATCH MENTOR FLOATING ISLAND ─────────────────────────── */
+  .match-float-island {
+    position: fixed;
+    top: 76px;
+    right: 1.25rem;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: var(--alw-dk);
+    border-radius: 50px;
+    padding: 5px 5px 5px 5px;
+    /*padding: 5px 14px 5px 5px;*/
+    text-decoration: none;
+    box-shadow: 0 4px 18px rgba(28,23,19,0.28);
+    transition: background 0.18s, box-shadow 0.18s;
+  }
+  .match-float-island:hover {
+    background: var(--rose);
+    box-shadow: 0 6px 24px rgba(212,115,138,0.38);
+  }
+  .mfi-icon-wrap {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--rose);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: background 0.18s;
+  }
+  .match-float-island:hover .mfi-icon-wrap {
+    background: rgba(255,255,255,0.2);
+  }
+  .mfi-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  /* ── PAGE HERO ─────────────────────────────────────────────── */
+  .connect-hero {
+    background: linear-gradient(135deg, var(--teal-lt) 0%, var(--cream) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem clamp(1.5rem,5vw,4rem) 2.5rem;
+    text-align: center;
+  }
+  .connect-hero h1 {
+    font-size: clamp(2.4rem,5vw,4rem);
+    margin-bottom: 0.75rem;
+  }
+  .connect-hero h1 em { font-style: normal; color: var(--red); }
+  .connect-hero p { color: var(--ink-lt); font-size: 1rem; max-width: 460px; margin: 0 auto; line-height: 1.7; }
+
+  /* ── MAIN LAYOUT ───────────────────────────────────────────── */
+  .connect-main {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem clamp(1rem,4vw,1.5rem) 6rem;
+  }
+
+  /* ── COMPOSER CARD ─────────────────────────────────────────── */
+  .composer-card {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 1.25rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 2px 12px rgba(28,23,19,0.05);
+  }
+  .composer-top {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    margin-bottom: 0.85rem;
+  }
+  .composer-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .composer-textarea {
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink);
+    background: var(--cream);
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    line-height: 1.6;
+    transition: border-color 0.15s;
+  }
+  .composer-textarea:focus { border-color: var(--red); }
+  .composer-textarea::placeholder { color: var(--ink-lt); }
+
+  /* Image preview */
+  .composer-image-preview {
+    position: relative;
+    margin-bottom: 0.75rem;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+  }
+  .composer-image-preview img {
+    width: 100%; max-height: 220px; object-fit: cover; display: block;
+  }
+  .remove-image-btn {
+    position: absolute; top: 0.5rem; right: 0.5rem;
+    background: rgba(28,23,19,0.65); color: #fff;
+    border: none; border-radius: 50%;
+    width: 26px; height: 26px;
+    font-size: 0.75rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .remove-image-btn:hover { background: var(--red); }
+
+  .composer-section-label {
+    font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-lt);
+    margin-bottom: 0.55rem;
+  }
+  .composer-tags {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+  .ctag {
+    border: 1.5px solid var(--border); border-radius: 50px;
+    padding: 0.28rem 0.75rem; font-size: 0.75rem; font-weight: 600;
+    color: var(--ink-mid); background: var(--cream); cursor: pointer;
+    transition: all 0.15s; user-select: none;
+  }
+  .ctag.selected { border-color: var(--red); background: #fdf0f0; color: var(--red); }
+
+  .composer-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border);
+    padding-top: 0.85rem;
+    margin-top: 0.25rem;
+  }
+  .composer-actions { display: flex; gap: 0.5rem; }
+  .composer-action-btn {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.38rem 0.8rem;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem; font-weight: 600;
+    color: var(--ink-mid); background: var(--cream);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .composer-action-btn:hover { border-color: var(--red); color: var(--red); }
+  .composer-submit {
+    background: var(--red); color: #fff; border: none;
+    border-radius: 10px; padding: 0.55rem 1.4rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem; font-weight: 700; cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .composer-submit:hover { background: var(--red-dk); transform: translateY(-1px); }
+
+  /* ── POST CARD ─────────────────────────────────────────────── */
+  .post-card {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(28,23,19,0.04);
+    transition: box-shadow 0.2s;
+  }
+  .post-card:hover { box-shadow: 0 4px 20px rgba(28,23,19,0.08); }
+
+  .post-header {
+    display: flex; align-items: center; gap: 0.85rem;
+    padding: 1.1rem 1.25rem 0;
+  }
+  .post-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 700;
+    color: #fff; flex-shrink: 0;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    overflow: hidden;
+  }
+  .post-avatar:hover { opacity: 0.85; }
+
+  .post-author-info { flex: 1; min-width: 0; }
+  .post-author-name {
+    font-weight: 800; font-size: 0.88rem; color: var(--ink);
+    text-decoration: none;
+    display: block;
+  }
+  .post-author-name:hover { color: var(--red); }
+  .post-author-role { font-size: 0.74rem; color: var(--ink-lt); margin-top: 0.1rem; }
+  .post-timestamp { font-size: 0.72rem; color: var(--ink-lt); white-space: nowrap; }
+
+  .post-body {
+    padding: 0.85rem 1.25rem 0;
+    font-size: 0.88rem; color: var(--ink-mid);
+    line-height: 1.7; white-space: pre-wrap;
+  }
+  .post-body.expanded { }
+
+  .post-image {
+    margin: 0.85rem 1.25rem 0;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .post-image img {
+    width: 100%; max-height: 320px; object-fit: cover; display: block;
+  }
+
+  .post-tags {
+    display: flex; flex-wrap: wrap; gap: 0.3rem;
+    padding: 0.75rem 1.25rem 0;
+  }
+  .post-tag {
+    font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.6rem;
+    border-radius: 50px; background: #f1dddd; color: var(--red);
+    letter-spacing: 0.04em;
+  }
+
+  .post-footer {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.85rem 1.25rem 1rem;
+    border-top: 1px solid var(--border);
+    margin-top: 0.85rem;
+  }
+  .post-action {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.78rem; font-weight: 600; color: var(--ink-lt);
+    background: none; border: none; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 0.3rem 0.5rem; border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .post-action:hover { color: var(--ink); background: var(--border); }
+  .post-action.liked { color: var(--red); }
+  .post-action.liked:hover { color: var(--red-dk); background: #fdf0f0; }
+  .post-action-sep { width: 1px; height: 16px; background: var(--border); flex-shrink: 0; }
+  .post-footer-time { margin-left: auto; font-size: 0.72rem; color: var(--ink-lt); }
+
+  /* ── REPLY SECTION ─────────────────────────────────────────── */
+  .post-replies {
+    border-top: 1px solid var(--border);
+    padding: 0.85rem 1.25rem;
+    display: none;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .post-replies.open { display: flex; }
+
+  .reply-item {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+  }
+  .reply-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem; font-weight: 700;
+    color: #fff; flex-shrink: 0;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    overflow: hidden;
+  }
+  .reply-avatar:hover { opacity: 0.85; }
+  .reply-bubble {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px 12px 12px 4px;
+    padding: 0.6rem 0.85rem;
+    flex: 1;
+  }
+  .reply-author {
+    font-size: 0.75rem; font-weight: 800; color: var(--ink);
+    text-decoration: none; display: block; margin-bottom: 0.2rem;
+  }
+  .reply-author:hover { color: var(--red); }
+  .reply-text { font-size: 0.82rem; color: var(--ink-mid); line-height: 1.6; }
+  .reply-meta { font-size: 0.68rem; color: var(--ink-lt); margin-top: 0.3rem; }
+
+  .reply-composer {
+    display: flex; gap: 0.65rem; align-items: flex-start;
+    margin-top: 0.35rem;
+  }
+  .reply-input {
+    flex: 1; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 0.5rem 0.85rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem; color: var(--ink); background: var(--cream);
+    outline: none; transition: border-color 0.15s;
+  }
+  .reply-input:focus { border-color: var(--red); }
+  .reply-input::placeholder { color: var(--ink-lt); }
+  .reply-submit {
+    background: var(--red); color: #fff; border: none;
+    border-radius: 8px; padding: 0.45rem 0.9rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem; font-weight: 700; cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .reply-submit:hover { background: var(--red-dk); }
+
+  /* ── NEW POST ANIMATION ────────────────────────────────────── */
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .post-card.new { animation: slideDown 0.35s ease forwards; }
+
+  /* ── POST SUCCESS TOAST ────────────────────────────────────── */
+  .connect-toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    background: var(--alw-dk); color: #fff;
+    padding: 0.7rem 1.5rem; border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 600;
+    box-shadow: 0 4px 20px rgba(28,23,19,0.3);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+    z-index: 500;
+  }
+  .connect-toast.show { opacity: 1; }
+
+  /* ── EMPTY FEED ────────────────────────────────────────────── */
+  .feed-empty {
+    text-align: center; padding: 4rem 2rem;
+    color: var(--ink-lt); font-size: 0.88rem; line-height: 1.7;
+  }
+  .feed-empty .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+
+  /* ── MOBILE ────────────────────────────────────────────────── */
+  @media (max-width: 520px) {
+    .match-float-island { top: 68px; right: 0.75rem; }
+    .composer-tags .ctag { font-size: 0.7rem; }
+  }
+
+  </style>
+{% endblock %}
+
+{% block content %}
+{{ naik_nav(active='connect') }}
+
+<!-- ── FLOATING MENTOR MATCH ISLAND ── -->
+<a href="{{ url_for('match') }}" class="match-float-island" title="Find an Ibu Mentor">
+  <span class="mfi-icon-wrap">🤝</span>
+  <!--<span class="mfi-text">Mentor Match</span>-->
+</a>
+
+<!-- ── HERO ── -->
+<section class="connect-hero">
+  <span class="section-label">Community</span>
+  <h1>Connect.<br><em>Grow together.</em></h1>
+  <p>Share your journey, tips, and wins with thousands of Malaysians on the same path.</p>
+</section>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="connect-main">
+
+  <!-- ── POST COMPOSER ── -->
+  <div class="composer-card">
+    <div class="composer-top">
+      {% set _initial = (session.get('user_name', 'Y')[0]).upper() if session.get('user_name') else 'Y' %}
+      {% if session.get('avatar_url') %}
+      <div class="composer-avatar" id="my-avatar" style="padding:0;">
+        <img src="{{ session.get('avatar_url') }}" alt="{{ _initial }}"
+             style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;"
+             id="my-avatar-img" data-initial="{{ _initial }}">
+      </div>
+      {% else %}
+      <div class="composer-avatar" id="my-avatar">{{ _initial }}</div>
+      {% endif %}
+      <textarea
+        class="composer-textarea"
+        id="composer-text"
+        placeholder="Share an experience, tip, or ask the community a question…"
+        rows="3"
+      ></textarea>
+    </div>
+
+    <!-- Image preview (hidden by default) -->
+    <div class="composer-image-preview" id="image-preview" style="display:none;">
+      <img id="preview-img" src="" alt="Attached image">
+      <button class="remove-image-btn" onclick="removeImage()" title="Remove image">✕</button>
+    </div>
+
+    <!-- Tag selector -->
+    <div class="composer-section-label">Add tags</div>
+    <div class="composer-tags" id="composer-tags">
+      <div class="ctag" data-tag="Success Story">🎉 Success Story</div>
+      <div class="ctag" data-tag="Career Tips">💡 Career Tips</div>
+      <div class="ctag" data-tag="Job Hunting">🔍 Job Hunting</div>
+      <div class="ctag" data-tag="For Her">🌸 For Her</div>
+      <div class="ctag" data-tag="Question">❓ Question</div>
+      <div class="ctag" data-tag="Resources">📚 Resources</div>
+      <div class="ctag" data-tag="CV & Resume">📄 CV & Resume</div>
+    </div>
+
+    <!-- Footer row -->
+    <div class="composer-footer">
+      <div class="composer-actions">
+        <label class="composer-action-btn" title="Attach a photo">
+          <input type="file" id="image-input" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
+          📷 Photo
+        </label>
+      </div>
+      <button class="composer-submit" onclick="submitPost()">Post →</button>
+    </div>
+  </div>
+
+  <!-- ── POST FEED ── -->
+  <div class="post-feed" id="post-feed">
+    <!-- rendered by JS -->
+  </div>
+
+</div>
+
+<!-- ── TOAST ── -->
+<div class="connect-toast" id="connect-toast"></div>
+
+<!-- Server-side values passed safely via data attributes, not injected into JS -->
+<div id="connect-data"
+     data-avatar="{{ session.get('avatar_url') or '' }}"
+     data-initial="{{ (session.get('user_name', 'Y')[0]).upper() if session.get('user_name') else 'Y' }}"
+     data-name="{{ session.get('user_name', 'You') }}"
+     hidden></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   CONNECT — Demo social feed
+   All data is static for the demo. Backend integration TBD.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── SESSION CONSTANTS ──────────────────────────────────── */
+const _cd           = document.getElementById('connect-data');
+const MY_AVATAR_URL = _cd.dataset.avatar || null;
+const MY_INITIAL    = _cd.dataset.initial || 'Y';
+const MY_NAME       = _cd.dataset.name    || 'You';
+const MY_USER_URL   = '/profile';
+
+/* ── AVATAR COLOURS ─────────────────────────────────────── */
+const AVATAR_COLOURS = [
+  '#BF4646','#D4738A','#7EACB5','#5a8f9a','#9b3838',
+  '#c45e78','#b73939','#6a7d8e','#a0522d','#4a7c59',
+];
+function avatarColour(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xfffffff;
+  return AVATAR_COLOURS[h % AVATAR_COLOURS.length];
+}
+
+/* ── FORMAT RELATIVE TIME ───────────────────────────────── */
+function relTime(isoStr) {
+  const diff = Date.now() - new Date(isoStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1)    return 'Just now';
+  if (mins < 60)   return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)    return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7)    return `${days}d ago`;
+  return new Date(isoStr).toLocaleDateString('en-MY', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function fullTime(isoStr) {
+  return new Date(isoStr).toLocaleString('en-MY', {
+    day:'numeric', month:'short', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+}
+
+/* ── DEMO POST DATA ─────────────────────────────────────── */
+const DEMO_POSTS = [
+  {
+    id: 1,
+    author: {
+      name: 'Rizal bin Hassan',
+      initial: 'R',
+      role: 'Delivery Rider · Kuala Lumpur',
+      url: '/profile',
+    },
+    content: `Just hit RM 2,800 this month doing Grab delivery — and I never would have tried it without the NAIK career quiz! 😄
+
+The quiz matched me to logistics & delivery work and the roadmap showed me exactly how to get my B2 licence and register with Grab. Took about 3 weeks from quiz to first delivery.
+
+To anyone still on the fence — the hours are flexible, you're your own boss, and it's much less scary than it looks. Happy to answer any questions!`,
+    image: null,
+    tags: ['Success Story', 'Career Tips'],
+    timestamp: '2026-04-25T08:14:00',
+    likes: 62,
+    replies: [
+      {
+        author: { name: 'Aminah Yusof', initial: 'A', role: 'Housewife · Shah Alam', url: '/profile' },
+        content: 'Congratulations Rizal! My husband is thinking of doing delivery on weekends for extra income. Was the registration process hard?',
+        timestamp: '2026-04-25T08:45:00',
+      },
+      {
+        author: { name: 'Rizal bin Hassan', initial: 'R', role: 'Delivery Rider · KL', url: '/profile' },
+        content: 'Not hard at all! The NAIK roadmap even has a step-by-step guide for Grab registration. The licence is the longest part — about 2 weeks.',
+        timestamp: '2026-04-25T09:02:00',
+      },
+      {
+        author: { name: 'Farid Azman', initial: 'F', role: 'Electrician · Petaling Jaya', url: '/profile' },
+        content: 'Which time slots earn the most? Mornings or evenings?',
+        timestamp: '2026-04-25T10:30:00',
+      },
+    ],
+  },
+  {
+    id: 2,
+    author: {
+      name: 'Nurul Huda Binti Rahmat',
+      initial: 'N',
+      role: 'Returning to Work · Selangor',
+      url: '/profile',
+    },
+    content: `5 CV tips that actually got me called back after a 4-year gap 📄
+
+1. Lead with a short "Professional Summary" instead of an Objective — explain what you bring, not what you want
+2. List your caregiving years honestly under "Career Break" — most HR now respect it
+3. Turn volunteer/community work into bullet points with impact numbers
+4. Use the AI CV Builder on NAIK — it transformed my market-stall experience into something I was proud to send
+5. Customise 3 lines for each job application. Takes 5 minutes, makes a huge difference.
+
+Got 3 callbacks in 2 weeks after doing this. You can do it too. 💪`,
+    image: null,
+    tags: ['CV & Resume', 'Career Tips', 'For Her'],
+    timestamp: '2026-04-24T14:22:00',
+    likes: 118,
+    replies: [
+      {
+        author: { name: 'Siti Norzahra', initial: 'S', role: 'Admin Clerk · Penang', url: '/profile' },
+        content: 'This is exactly what I needed to read today. Thank you kak! Saving this post.',
+        timestamp: '2026-04-24T15:10:00',
+      },
+      {
+        author: { name: 'Lee Hui Ling', initial: 'L', role: 'Looking for work · Ipoh', url: '/profile' },
+        content: 'How do you describe a career break without it sounding negative? I was out 6 years raising 2 kids.',
+        timestamp: '2026-04-24T16:45:00',
+      },
+      {
+        author: { name: 'Nurul Huda Binti Rahmat', initial: 'N', role: 'Returning to Work · Selangor', url: '/profile' },
+        content: 'Write: "2020–2024 — Career Break: Full-time caregiver for two children. Managed household budget, coordinated schedules, community volunteer." That\'s real work experience, Hui Ling!',
+        timestamp: '2026-04-24T17:20:00',
+      },
+    ],
+  },
+  {
+    id: 3,
+    author: {
+      name: 'Priya Selvam',
+      initial: 'P',
+      role: 'Social Media Manager · WFH',
+      url: '/profile',
+    },
+    content: `Quick tip for anyone job hunting online 🔍
+
+Most job boards are overwhelming. Here's my filter routine:
+→ Sort by "Posted this week" only
+→ Filter "Remote" or "Work from home" if you have kids
+→ Ignore jobs with 10+ requirements — they're usually flexible on half of them
+→ Apply within 48 hours of posting — response rates drop fast after that
+
+The NAIK "Explore Jobs" page is actually the cleanest one I've found for M40/B40 roles. No login spam, no sketchy listings.
+
+What job boards do you all prefer? Drop in the comments 👇`,
+    image: null,
+    tags: ['Job Hunting', 'Career Tips'],
+    timestamp: '2026-04-23T11:05:00',
+    likes: 84,
+    replies: [
+      {
+        author: { name: 'Ahmad Tarmizi', initial: 'A', role: 'Looking for work · Johor', url: '/profile' },
+        content: 'JobStreet Malaysia is decent for admin roles. Hiredly is good for tech. NAIK Explore is great because it actually explains WHY you\'d be a fit.',
+        timestamp: '2026-04-23T11:50:00',
+      },
+      {
+        author: { name: 'Wan Aishah', initial: 'W', role: 'Teacher · Kelantan', url: '/profile' },
+        content: 'Don\'t forget LinkedIn! Update your profile even if you\'re shy about it. Recruiters do search there.',
+        timestamp: '2026-04-23T13:20:00',
+      },
+    ],
+  },
+  {
+    id: 4,
+    author: {
+      name: 'Hafizah Binti Othman',
+      initial: 'H',
+      role: 'Home Baker · Klang Valley',
+      url: '/profile',
+    },
+    content: `For all the mamas thinking about starting a home food business — you don't need a lot of money to start. 🍰
+
+I started my kek batik & nasi lemak frozen pack business with RM 200. That was 4 years ago. Now I'm doing RM 12,000+/month gross.
+
+The Subsidy Finder on NAIK helped me find 2 grants I didn't know existed — MRANTI Geran Usahawan and my state's SME microgrant. Covered my first commercial oven!
+
+DM me if you want to know how I packaged things for Shopee — that's where 60% of my orders come from now.`,
+    image: null,
+    tags: ['Success Story', 'For Her', 'Resources'],
+    timestamp: '2026-04-22T09:30:00',
+    likes: 203,
+    replies: [
+      {
+        author: { name: 'Rozita Md Isa', initial: 'R', role: 'Ibu Rumah · Seremban', url: '/profile' },
+        content: 'Kak Hafizah! I\'ve been following your journey. Can you share which SSM category you registered under for home food?',
+        timestamp: '2026-04-22T10:15:00',
+      },
+      {
+        author: { name: 'Hafizah Binti Othman', initial: 'H', role: 'Home Baker · Klang', url: '/profile' },
+        content: 'Sole proprietorship under "Makanan & Minuman". Cost me RM60 and took 30 minutes online at mySSM.com.my. Do it! It opens so many doors.',
+        timestamp: '2026-04-22T10:55:00',
+      },
+      {
+        author: { name: 'Nabilah Zainal', initial: 'N', role: 'Part-time Baker · Subang', url: '/profile' },
+        content: 'Did you need a Sijil Pengesahan Halal for Shopee? I\'ve been worried about this.',
+        timestamp: '2026-04-22T14:00:00',
+      },
+      {
+        author: { name: 'Hafizah Binti Othman', initial: 'H', role: 'Home Baker · Klang', url: '/profile' },
+        content: 'Shopee doesn\'t require it but customers prefer it. JAKIM halal cert for home businesses is free — apply via e-halal.islam.gov.my. Takes about 3 months.',
+        timestamp: '2026-04-22T15:30:00',
+      },
+    ],
+  },
+  {
+    id: 5,
+    author: {
+      name: 'Marcus Tan Wei Jian',
+      initial: 'M',
+      role: 'IT Support Technician · Penang',
+      url: '/profile',
+    },
+    content: `Anyone tried the Mock Interview feature on NAIK?
+
+I was terrified of interviews — hadn't had one in 7 years. Used the BM interview practice before my Maxis technician interview last week.
+
+The AI interviewer asked tough questions ("tell me about a time you failed") and gave feedback on my answers. Did it 4 times until I felt confident.
+
+Got the job. Starting 5 May. Salary 40% more than my old admin role.
+
+This platform is genuinely free and genuinely useful. Tell your friends.`,
+    image: null,
+    tags: ['Success Story', 'Career Tips'],
+    timestamp: '2026-04-21T16:48:00',
+    likes: 157,
+    replies: [
+      {
+        author: { name: 'Jasmine Loh', initial: 'J', role: 'Jobseeker · KL', url: '/profile' },
+        content: 'Congrats Marcus!! I have an interview next Thursday. Going to use the mock interview tonight!',
+        timestamp: '2026-04-21T17:30:00',
+      },
+      {
+        author: { name: 'Iskandar Putra', initial: 'I', role: 'Fresh Grad · UTM', url: '/profile' },
+        content: 'Does it work for fresh grad interviews too? Or is it more for experienced people?',
+        timestamp: '2026-04-22T08:10:00',
+      },
+      {
+        author: { name: 'Marcus Tan Wei Jian', initial: 'M', role: 'IT Support · Penang', url: '/profile' },
+        content: 'I think it works for everyone — you can pick the job type. For fresh grads it would probably focus on motivation and potential rather than experience.',
+        timestamp: '2026-04-22T08:45:00',
+      },
+    ],
+  },
+];
+
+/* ── STATE ──────────────────────────────────────────────── */
+let likedPosts   = new Set();
+let openReplies  = new Set();
+let posts        = [...DEMO_POSTS];
+let nextId       = 100;
+let composerImageDataUrl = null;
+
+/* ── MAP DEMO AUTHORS TO /u/<id> URLS ───────────────────── */
+const DEMO_USER_IDS = {
+  'Rizal bin Hassan':          1001,
+  'Nurul Huda Binti Rahmat':   1002,
+  'Priya Selvam':              1003,
+  'Hafizah Binti Othman':      1004,
+  'Marcus Tan Wei Jian':       1005,
+  'Aminah Yusof':              1006,
+  'Farid Azman':               1007,
+  'Siti Norzahra':             1008,
+  'Lee Hui Ling':              1009,
+  'Ahmad Tarmizi':             1010,
+  'Wan Aishah':                1011,
+  'Rozita Md Isa':             1012,
+  'Nabilah Zainal':            1013,
+  'Jasmine Loh':               1014,
+  'Iskandar Putra':            1015,
+};
+DEMO_POSTS.forEach(post => {
+  const pid = DEMO_USER_IDS[post.author.name];
+  post.author.url = pid ? `/u/${pid}` : '#';
+  (post.replies || []).forEach(r => {
+    const rid = DEMO_USER_IDS[r.author.name];
+    r.author.url = rid ? `/u/${rid}` : '#';
+  });
+});
+
+/* ── AVATAR ELEMENT HELPER ──────────────────────────────── */
+function avatarEl(author, cls) {
+  const colour = avatarColour(author.name);
+  const ini    = author.initial || (author.name || 'U')[0].toUpperCase();
+  if (author.avatar_url) {
+    return `<a href="${author.url}" class="${cls}" style="background:${colour};padding:0;" title="${author.name}">` +
+           `<img src="${author.avatar_url}" alt="${ini}" ` +
+           `style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" ` +
+           `onerror="this.parentElement.innerHTML='${ini}'"></a>`;
+  }
+  return `<a href="${author.url}" class="${cls}" style="background:${colour};" title="${author.name}">${ini}</a>`;
+}
+
+/* ── RENDER FEED ────────────────────────────────────────── */
+function renderFeed() {
+  const feed = document.getElementById('post-feed');
+  if (!posts.length) {
+    feed.innerHTML = `
+      <div class="feed-empty">
+        <div class="icon">💬</div>
+        <p>No posts yet. Be the first to share something!</p>
+      </div>`;
+    return;
+  }
+  feed.innerHTML = posts.map(post => renderPost(post)).join('');
+}
+
+function renderPost(post, isNew = false) {
+  const isLiked      = likedPosts.has(post.id);
+  const repliesOpen  = openReplies.has(post.id);
+  const colour       = avatarColour(post.author.name);
+  const likeCount    = post.likes + (isLiked ? 1 : 0);
+  const replyCount   = post.replies ? post.replies.length : 0;
+
+  const myReplyAvatar = MY_AVATAR_URL
+    ? `<div class="reply-avatar" style="background:${avatarColour(MY_NAME)};padding:0;">` +
+      `<img src="${MY_AVATAR_URL}" alt="${MY_INITIAL}" ` +
+      `style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" ` +
+      `onerror="this.parentElement.innerHTML='${MY_INITIAL}'"></div>`
+    : `<div class="reply-avatar" style="background:${avatarColour(MY_NAME)};">${MY_INITIAL}</div>`;
+
+  return `
+  <div class="post-card${isNew ? ' new' : ''}" id="post-${post.id}">
+    <div class="post-header">
+      ${avatarEl(post.author, 'post-avatar')}
+      <div class="post-author-info">
+        <a href="${post.author.url}" class="post-author-name">${post.author.name}</a>
+        <div class="post-author-role">${post.author.role}</div>
+      </div>
+      <div class="post-timestamp" title="${fullTime(post.timestamp)}">${relTime(post.timestamp)}</div>
+    </div>
+
+    <div class="post-body">${escHtml(post.content)}</div>
+
+    ${post.image ? `
+    <div class="post-image">
+      <img src="${post.image}" alt="Post image" loading="lazy">
+    </div>` : ''}
+
+    ${post.tags && post.tags.length ? `
+    <div class="post-tags">
+      ${post.tags.map(t => `<span class="post-tag">${t}</span>`).join('')}
+    </div>` : ''}
+
+    <div class="post-footer">
+      <button class="post-action${isLiked ? ' liked' : ''}"
+              onclick="toggleLike(${post.id})"
+              aria-label="${isLiked ? 'Unlike' : 'Like'} post">
+        ${isLiked ? '❤️' : '🤍'} <span id="like-count-${post.id}">${likeCount}</span>
+      </button>
+      <div class="post-action-sep"></div>
+      <button class="post-action" onclick="toggleReplies(${post.id})">
+        💬 ${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}
+      </button>
+    </div>
+
+    <div class="post-replies${repliesOpen ? ' open' : ''}" id="replies-${post.id}">
+      ${post.replies && post.replies.length ? post.replies.map(r => renderReply(r)).join('') : ''}
+      <div class="reply-item">
+        ${myReplyAvatar}
+        <div class="reply-bubble" style="padding:0; background:transparent; border:none; flex:1;">
+          <div class="reply-composer">
+            <input class="reply-input" type="text" placeholder="Write a reply…"
+                   id="reply-input-${post.id}"
+                   onkeydown="if(event.key==='Enter') submitReply(${post.id})">
+            <button class="reply-submit" onclick="submitReply(${post.id})">Reply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderReply(reply) {
+  return `
+  <div class="reply-item">
+    ${avatarEl(reply.author, 'reply-avatar')}
+    <div class="reply-bubble">
+      <a href="${reply.author.url}" class="reply-author">${reply.author.name}</a>
+      <div class="reply-text">${escHtml(reply.content)}</div>
+      <div class="reply-meta">${reply.author.role} · ${relTime(reply.timestamp)}</div>
+    </div>
+  </div>`;
+}
+
+function escHtml(str) {
+  return str
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+/* ── INTERACTIONS ───────────────────────────────────────── */
+function toggleLike(postId) {
+  const btn       = document.querySelector(`#post-${postId} .post-action`);
+  const countEl   = document.getElementById(`like-count-${postId}`);
+  const post      = posts.find(p => p.id === postId);
+  if (!post || !btn || !countEl) return;
+
+  if (likedPosts.has(postId)) {
+    likedPosts.delete(postId);
+    btn.classList.remove('liked');
+    btn.setAttribute('aria-label', 'Like post');
+    btn.querySelector('span') || null;
+    btn.innerHTML = `🤍 <span id="like-count-${postId}">${post.likes}</span>`;
+  } else {
+    likedPosts.add(postId);
+    btn.classList.add('liked');
+    btn.setAttribute('aria-label', 'Unlike post');
+    btn.innerHTML = `❤️ <span id="like-count-${postId}">${post.likes + 1}</span>`;
+  }
+}
+
+function toggleReplies(postId) {
+  const section = document.getElementById(`replies-${postId}`);
+  if (!section) return;
+  if (openReplies.has(postId)) {
+    openReplies.delete(postId);
+    section.classList.remove('open');
+  } else {
+    openReplies.add(postId);
+    section.classList.add('open');
+    section.querySelector('.reply-input')?.focus();
+  }
+}
+
+function submitReply(postId) {
+  const input = document.getElementById(`reply-input-${postId}`);
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+
+  const newReply = {
+    author: {
+      name:       MY_NAME,
+      initial:    MY_INITIAL,
+      avatar_url: MY_AVATAR_URL,
+      role:       'NAIK Member',
+      url:        MY_USER_URL,
+    },
+    content: text,
+    timestamp: new Date().toISOString(),
+  };
+
+  post.replies = post.replies || [];
+  post.replies.push(newReply);
+
+  const repliesSection = document.getElementById(`replies-${postId}`);
+  const newReplyEl = document.createElement('div');
+  newReplyEl.innerHTML = renderReply(newReply);
+  const composerItem = repliesSection.querySelector('.reply-item:last-child');
+  repliesSection.insertBefore(newReplyEl.firstElementChild, composerItem);
+
+  input.value = '';
+  showToast('Reply posted!');
+
+  // Update reply count on button
+  const replyBtn = document.querySelector(`#post-${postId} .post-action:nth-child(3)`);
+  if (replyBtn) {
+    replyBtn.innerHTML = `💬 ${post.replies.length} ${post.replies.length === 1 ? 'reply' : 'replies'}`;
+  }
+}
+
+/* ── POST COMPOSER ──────────────────────────────────────── */
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    composerImageDataUrl = e.target.result;
+    document.getElementById('preview-img').src = composerImageDataUrl;
+    document.getElementById('image-preview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage() {
+  composerImageDataUrl = null;
+  document.getElementById('preview-img').src = '';
+  document.getElementById('image-preview').style.display = 'none';
+  document.getElementById('image-input').value = '';
+}
+
+function submitPost() {
+  const text = document.getElementById('composer-text').value.trim();
+  if (!text) {
+    showToast('Please write something before posting.');
+    return;
+  }
+
+  const selectedTags = [...document.querySelectorAll('.ctag.selected')].map(el => el.dataset.tag);
+
+  const newPost = {
+    id: nextId++,
+    author: {
+      name:       MY_NAME,
+      initial:    MY_INITIAL,
+      avatar_url: MY_AVATAR_URL,
+      role:       'NAIK Member',
+      url:        MY_USER_URL,
+    },
+    content: text,
+    image: composerImageDataUrl || null,
+    tags: selectedTags,
+    timestamp: new Date().toISOString(),
+    likes: 0,
+    replies: [],
+  };
+
+  posts.unshift(newPost);
+
+  const feed = document.getElementById('post-feed');
+  const newEl = document.createElement('div');
+  newEl.innerHTML = renderPost(newPost, true);
+  feed.prepend(newEl.firstElementChild);
+
+  // Reset composer
+  document.getElementById('composer-text').value = '';
+  document.querySelectorAll('.ctag.selected').forEach(el => el.classList.remove('selected'));
+  removeImage();
+
+  showToast('Post shared with the community!');
+}
+
+/* ── TOAST ──────────────────────────────────────────────── */
+function showToast(msg) {
+  const t = document.getElementById('connect-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── INIT ───────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  // Composer avatar image fallback
+  const myAvatarImg = document.getElementById('my-avatar-img');
+  if (myAvatarImg) {
+    myAvatarImg.onerror = function() {
+      const wrap = document.getElementById('my-avatar');
+      wrap.textContent  = MY_INITIAL;
+      wrap.style.padding = '';
+    };
+  }
+
+  // Tag chips
+  document.querySelectorAll('.ctag').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('selected'));
+  });
+
+  renderFeed();
+});
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='naik.js') }}"></script>
+{% endblock %}

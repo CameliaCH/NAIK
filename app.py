@@ -230,6 +230,49 @@ def subsidy():
 def match():
     return render_template("match.html")
 
+@app.route("/connect")
+def connect():
+    return render_template("connect.html")
+
+
+@app.route("/u/<int:user_id>")
+def profile_view(user_id):
+    if session.get("user_id") == user_id:
+        return redirect(url_for("profile"))
+
+    from flask import abort
+    try:
+        res = supabase.table("users").select(
+            "id, name, surname, headline, description, avatar_url, public_saved_jobs, positions"
+        ).eq("id", user_id).maybe_single().execute()
+        viewed_user = res.data if res else None
+    except Exception:
+        viewed_user = None
+
+    if not viewed_user:
+        abort(404)
+
+    saved_jobs = []
+
+    if viewed_user.get("public_saved_jobs"):
+        try:
+            sj = supabase.table("saved_jobs").select("job_id").eq("user_id", user_id).execute()
+            job_ids = [row["job_id"] for row in (sj.data or [])]
+            if job_ids:
+                jobs_res = supabase.table("jobs").select("*").in_("id", job_ids).execute()
+                jobs_by_id = {str(j["id"]): j for j in (jobs_res.data or [])}
+                saved_jobs = [jobs_by_id[str(jid)] for jid in job_ids if str(jid) in jobs_by_id]
+        except Exception:
+            pass
+
+    import json
+    from static.static_data import JOBS
+    jobs_json = json.dumps(JOBS)
+    return render_template("profile_view.html",
+                           viewed_user=viewed_user,
+                           saved_jobs=saved_jobs,
+                           jobs_json=jobs_json)
+
 # ══════════════════════════════════════════════════════════════
 #  PROFILE PAGE
 # ══════════════════════════════════════════════════════════════
@@ -308,7 +351,8 @@ def profile_update():
     if not session.get("user_id"):
         return jsonify({"success": False, "error": "Not logged in"}), 401
     data = request.json
-    allowed = {"name", "surname", "headline", "description", "age", "gender", "email"}
+    allowed = {"name", "surname", "headline", "description", "age", "gender", "email",
+               "public_saved_jobs", "positions"}
     updates = {k: v for k, v in data.items() if k in allowed}
     if not updates:
         return jsonify({"success": False, "error": "Nothing to update"}), 400

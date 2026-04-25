@@ -595,8 +595,6 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 }
 .detail-section--alt {
   background: #FAFAFA;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
 }
 
 .detail-inner {
@@ -746,7 +744,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 .step p  { font-size: 0.85rem; }
 
 /* ── TESTIMONIALS ────────────────────────────────────────── */
-.testimonials { background: var(--bg-dark); padding: clamp(3rem,7vw,6rem) clamp(1.5rem,5vw,4rem); }
+.testimonials { background: var(--bg-dark); padding: clamp(3rem,7vw,6rem) clamp(1.5rem,5vw,4rem); border-bottom: 5px dotted var(--border);}
 .testimonials .section-label { color: var(--red); }
 .testimonials .section-header h2 { color: var(--ink); }
 .testimonials-grid {
@@ -801,7 +799,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 
 /* ── FOOTER ──────────────────────────────────────────────── */
 footer {
-  background: var(--ink); color: rgba(255,255,255,0.7);
+  background: var(--ink); color: rgba(255,255,255,0.7); opacity: 0.8;
   padding: 3.5rem clamp(1.5rem,5vw,4rem) 2rem;
   position: relative;
   z-index: 5;
