@@ -11,20 +11,20 @@
 
 /* ── HERO ── */
 .res-hero{
-    background: linear-gradient(-45deg, var(--peach) 0%, #f5ede0 100%);
+    background: linear-gradient(-45deg, var(--peach) 0%, #bdb4a4 100%);
     border-bottom: 1px solid var(--border);
     padding: 3rem clamp(1.5rem,5vw,4rem) 2.5rem;
     text-align: center;}
-.res-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:.4rem;}
-.res-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--ink);margin-bottom:.4rem;}
+.res-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:.5rem;}
+.res-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);color:var(--ink);margin-bottom:.5rem;position:relative;}
 .res-hero h1 em{color:var(--teal);font-style:normal;}
-.res-hero p{color:var(--ink-mid);font-size:.88rem;max-width:500px;margin:0 auto;}
+.res-hero p{color:var(--ink-mid);font-size:.95rem;max-width:520px;margin:0 auto;position:relative;}
 .back-link{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;color:var(--ink);text-decoration:none;margin-bottom:1rem;}
 .back-link:hover{color:var(--teal);}
 
 /* ── TABS ── */
 .resources-wrap{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem;}
-.res-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem;background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:.5rem;}
+.res-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem;background:var(--card-bg2);border:1.5px solid var(--border);border-radius:14px;padding:.5rem;}
 .res-tab{flex:1;min-width:120px;padding:.55rem .75rem;border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;color:var(--ink-mid);cursor:pointer;border-radius:10px;transition:all .18s;white-space:nowrap;}
 .res-tab:hover{background:var(--cream);color:var(--ink);}
 .res-tab.active{background:var(--red);color:#fff;}
@@ -33,15 +33,15 @@
 
 /* ── WHATSAPP CARDS ── */
 .wa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
-.wa-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;display:flex;flex-direction:column;gap:.5rem;}
+.wa-card{background:var(--card-bg2);border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;display:flex;flex-direction:column;gap:.5rem;}
 .wa-context{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);}
 .wa-body{font-size:.82rem;color:var(--ink);line-height:1.6;background:var(--cream);border-radius:8px;padding:.75rem;}
 .wa-note{font-size:.72rem;color:var(--ink-lt);font-style:italic;}
-.btn-copy-wa{align-self:flex-start;padding:.4rem .9rem;background:var(--ink);color:#fff;border:none;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .15s;}
+.btn-copy-wa{align-self:flex-start;padding:.4rem .9rem;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .15s;}
 .btn-copy-wa:hover{background:#333;}
 
 /* ── CHECKLIST ── */
-.checklist-group{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+.checklist-group{background:var(--card-bg2);border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
 .checklist-group-title{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:.75rem;}
 .check-item{display:flex;align-items:center;gap:.75rem;padding:.55rem .5rem;border-radius:8px;cursor:pointer;transition:background .15s;user-select:none;}
 .check-item:hover{background:var(--cream);}
@@ -55,7 +55,7 @@
 
 /* ── RIGHTS CARDS ── */
 .rights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:1.25rem;}
-.rights-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;}
+.rights-card{background:var(--card-bg2);border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;}
 .rights-icon{font-size:1.5rem;margin-bottom:.4rem;}
 .rights-title{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-lt);margin-bottom:.2rem;}
 .rights-value{font-size:1.05rem;font-weight:800;color:var(--ink);margin-bottom:.4rem;}
@@ -67,7 +67,7 @@
 .links-section{margin-bottom:1.5rem;}
 .links-section-title{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lt);margin-bottom:.75rem;}
 .links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;}
-.link-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.75rem;text-decoration:none;transition:all .18s;}
+.link-card{background:var(--card-bg2);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.75rem;text-decoration:none;transition:all .18s;}
 .link-card:hover{border-color:var(--teal);box-shadow:0 4px 14px rgba(0,0,0,.06);}
 .link-icon{font-size:1.3rem;flex-shrink:0;}
 .link-name{font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:.15rem;}
@@ -90,7 +90,7 @@
 .gig-flags li{font-size:.84rem;color:var(--ink);line-height:1.45;}
 .gig-steps{display:flex;flex-direction:column;gap:.6rem;}
 .gig-step{display:flex;gap:.75rem;align-items:flex-start;font-size:.84rem;color:var(--ink);line-height:1.5;}
-.gig-step-num{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem;}
+.gig-step-num{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem;}
 </style>
 {% endblock %}
 
@@ -99,8 +99,7 @@
 
 <!-- Hero -->
 <div class="res-hero">
-  <a href="{{ url_for('skills') }}" class="back-link">← Back to Skill Up</a>
-  <span class="res-eyebrow">👩 For Women Re-entering Work</span>
+  <span class="res-eyebrow">For Women Re-entering Work</span>
   <h1>Resources to help you<br><em>return with confidence</em></h1>
   <p>Templates, your legal rights as a woman, safe gig work tips, and trusted links — all free, all in one place.</p>
 </div>
@@ -109,11 +108,11 @@
 
   <!-- Tab bar -->
   <div class="res-tabs">
-    <button class="res-tab active" onclick="switchResTab('res-wa', this)">📱 WhatsApp Templates</button>
-    <button class="res-tab" onclick="switchResTab('res-checklist', this)">✅ Job-Hunt Checklist</button>
-    <button class="res-tab" onclick="switchResTab('res-rights', this)">👩 Women's Rights</button>
-    <button class="res-tab" onclick="switchResTab('res-links', this)">🔗 Useful Links</button>
-    <button class="res-tab" onclick="switchResTab('res-gig', this)">🛡️ Safe Gig Work</button>
+    <button class="res-tab active" onclick="switchResTab('res-wa', this)">WhatsApp Templates</button>
+    <button class="res-tab" onclick="switchResTab('res-checklist', this)">Job-Hunt Checklist</button>
+    <button class="res-tab" onclick="switchResTab('res-rights', this)">Women's Rights</button>
+    <button class="res-tab" onclick="switchResTab('res-links', this)">Useful Links</button>
+    <button class="res-tab" onclick="switchResTab('res-gig', this)">Safe Gig Work</button>
   </div>
 
   <!-- ── TAB 1: WhatsApp Templates ── -->
@@ -262,7 +261,7 @@
       <div class="links-section-title">🎓 Free Learning</div>
       <div class="links-grid">
         <a href="https://learndigital.withgoogle.com/digitalgarage" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">🔵</div>
+          <div class="link-icon"><img src="{{ url_for('static', filename='images/google-digital-garage.png') }}" alt="Google Digital Garage" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
           <div><div class="link-name">Google Digital Garage</div><div class="link-desc">Free digital marketing & career courses</div><span class="link-badge badge-free">Free</span></div>
         </a>
         <a href="https://www.myskills.gov.my" target="_blank" rel="noopener" class="link-card">
@@ -270,11 +269,11 @@
           <div><div class="link-name">MySkills Portal</div><div class="link-desc">Govt-recognised skills & certification courses</div><span class="link-badge badge-govt">Government</span></div>
         </a>
         <a href="https://www.mdec.my/digital-skills" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">💻</div>
+          <div class="link-icon"><img src="{{ url_for('static', filename='images/mdec.png') }}" alt="MDEC" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
           <div><div class="link-name">MDEC Digital Skills</div><div class="link-desc">Tech skills training for Malaysians</div><span class="link-badge badge-free">Free</span></div>
         </a>
         <a href="https://www.coursera.org/courses?query=free" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">📖</div>
+          <div class="link-icon"><img src="{{ url_for('static', filename='images/coursera.png') }}" alt="Coursera" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
           <div><div class="link-name">Coursera (Free Audit)</div><div class="link-desc">Audit thousands of university courses free</div><span class="link-badge badge-free">Free</span></div>
         </a>
       </div>
@@ -288,7 +287,7 @@
           <div><div class="link-name">JobsMalaysia</div><div class="link-desc">Official government job portal</div><span class="link-badge badge-govt">Government</span></div>
         </a>
         <a href="https://www.myfuturejobs.gov.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">🌟</div>
+          <div class="link-icon"><img src="{{ url_for('static', filename='images/my-future-jobs.png') }}" alt="MYFutureJobs" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
           <div><div class="link-name">MYFutureJobs</div><div class="link-desc">Govt portal for fresh grads & job seekers</div><span class="link-badge badge-govt">Government</span></div>
         </a>
         <a href="https://www.hiredly.com" target="_blank" rel="noopener" class="link-card">
@@ -296,7 +295,7 @@
           <div><div class="link-name">Hiredly</div><div class="link-desc">Jobs with salary transparency</div><span class="link-badge badge-free">Free</span></div>
         </a>
         <a href="https://www.jobstreet.com.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">🔍</div>
+          <div class="link-icon"><img src="{{ url_for('static', filename='images/jobstreet.png') }}" alt="JobStreet" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
           <div><div class="link-name">JobStreet</div><div class="link-desc">Malaysia's largest job board</div><span class="link-badge badge-free">Free</span></div>
         </a>
       </div>
@@ -314,11 +313,11 @@
           <div><div class="link-name">SOCSO / PERKESO</div><div class="link-desc">Worker insurance & injury protection</div><span class="link-badge badge-govt">Government</span></div>
         </a>
         <a href="https://mysalam.com.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">🤝</div>
+          <div class="link-icon"><img src="{{ url_for('static', filename='images/mysalam.png') }}" alt="MySalam" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
           <div><div class="link-name">MySalam</div><div class="link-desc">Free insurance for B40 — including gig workers</div><span class="link-badge badge-free">Free</span></div>
         </a>
         <a href="https://www.ptptn.gov.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">🎓</div>
+          <div class="link-icon"><img src="{{ url_for('static', filename='images/myptptn.png') }}" alt="PTPTN" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
           <div><div class="link-name">PTPTN</div><div class="link-desc">Study loans & repayment assistance</div><span class="link-badge badge-govt">Government</span></div>
         </a>
       </div>

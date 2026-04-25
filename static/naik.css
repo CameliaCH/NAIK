@@ -1310,3 +1310,22 @@ footer ul a:hover { color: #fff; }
   background: #fdf0f0;
   color: var(--red-dk);
 }
+
+/*naik.js tools section styles*/
+.tool-card{
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.75rem;
+  z-index: 5;
+}
+
+.tools-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
+  gap: 1.25rem; max-width: 1000px; margin: 0 auto;
+  padding: 2.5rem 2rem; 
+}
+
+.tools-grid h3,p {
+  margin-bottom: 1.5rem;
+}

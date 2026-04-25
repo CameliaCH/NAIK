@@ -339,7 +339,7 @@
 .how-header h2 { margin-bottom: .5rem; }
 .how-header p { color: var(--ink-lt); font-size: .95rem; }
 .how-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; max-width: 1000px; margin: 0 auto; margin-bottom: 4rem;}
-.how-step { z-index: 5;background: var(--cream); padding: 2.5rem 2rem; border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem;}
+.how-step { z-index: 5;background: var(--cream); padding: 2.5rem 2rem; border: 1px solid var(--border); border-radius: 16px;}
 .how-step-num { font-size: .68rem; font-weight: 800; letter-spacing: .12em; color: var(--red); text-transform: uppercase; margin-bottom: 1.25rem; }
 .how-step h3 { font-size: 1.1rem; font-weight: 800; color: var(--ink); margin-bottom: .5rem; letter-spacing: -.02em; }
 .how-step p { font-size: .83rem; color: var(--ink-lt); line-height: 1.6; }
@@ -500,32 +500,28 @@
   </div>
 </section>
 
-<<<<<<< Updated upstream
-
-
-
 <!-- TOOLS GRID: Subsidy Finder + Mentor Match -->
 <section style="background:var(--cream); border-top:1px solid var(--border); padding:clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem);">
-  <div class="section-header center" style="margin-bottom:3rem;">
+  <div class="section-header center">
     <span class="section-label">More Tools</span>
     <h2>Free resources<br><em style="font-style:normal;color:var(--red);">built for you.</em></h2>
   </div>
-  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; max-width:800px; margin:0 auto;">
+  <div class="tools-grid">
 
-    <div style="background:#fff; border:1px solid var(--border); border-radius:16px; padding:2rem; display:flex; flex-direction:column; gap:1rem;">
-      <div style="font-size:2rem;">💰</div>
-      <span class="section-label" style="margin:0;">Subsidy & Grant Finder</span>
-      <h3 style="font-size:1.2rem; font-weight:800; color:var(--ink); margin:0; letter-spacing:-.02em;">Find government aid you qualify for.</h3>
-      <p style="font-size:.85rem; color:var(--ink-lt); line-height:1.6; margin:0;">Answer 5 questions. Get a personalised list of subsidies, grants, and welfare programmes — in BM, English, or Mandarin.</p>
-      <a href="{{ url_for('subsidy') }}" class="btn btn-primary" style="margin-top:auto;">Find My Subsidies</a>
+    <div class="tool-card">
+      <div>💰</div>
+      <span class="section-label">Subsidy & Grant Finder</span>
+      <h3>Find government aid you qualify for.</h3>
+      <p>Answer 5 questions. Get a personalised list of subsidies, grants, and welfare programmes — in BM, English, or Mandarin.</p>
+      <a href="{{ url_for('subsidy') }}" class="btn btn-primary">Find My Subsidies</a>
     </div>
 
-    <div style="background:#fff; border:1px solid var(--border); border-radius:16px; padding:2rem; display:flex; flex-direction:column; gap:1rem;">
-      <div style="font-size:2rem;">🤝</div>
-      <span class="section-label" style="margin:0;">Mentor Match</span>
-      <h3 style="font-size:1.2rem; font-weight:800; color:var(--ink); margin:0; letter-spacing:-.02em;">Get guided by someone who's been there.</h3>
-      <p style="font-size:.85rem; color:var(--ink-lt); line-height:1.6; margin:0;">Connect with volunteer mentors from your industry. Ask questions, get advice, and navigate your career with real support.</p>
-      <a href="{{ url_for('match') }}" class="btn btn-teal" style="margin-top:auto;">Find a Mentor</a>
+    <div class="tool-card">
+      <div>🤝</div>
+      <span class="section-label">Mentor Match</span>
+      <h3>Get guided by someone who's been there.</h3>
+      <p>Connect with volunteer mentors from your industry. Ask questions, get advice, and navigate your career with real support.</p>
+      <a href="{{ url_for('match') }}" class="btn btn-teal">Find a Mentor</a>
     </div>
 
   </div>
@@ -674,5 +670,3 @@
 })();
 </script>
 {% endif %}
-{% endblock %}
->>>>>>> Stashed changes
