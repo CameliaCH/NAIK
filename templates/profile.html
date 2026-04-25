@@ -17,7 +17,7 @@
 
     /* ── PROFILE HERO BANNER ─────────────────── */
     .profile-banner {
-      background: var(--banner);
+      background: var(--alw-dk);
       padding: 2.5rem clamp(1.5rem,5vw,4rem) 0;
       position: relative; overflow: hidden;
     }
@@ -470,6 +470,46 @@
         </div>
       </div>
 
+      <!-- Onboarding toggle -->
+      <div class="edit-section" id="ob-toggle-section">
+        <div class="edit-section-title">Getting Started Progress</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+          <div>
+            <p style="font-size:.88rem;color:var(--ink-mid);line-height:1.6;margin-bottom:.25rem;">
+              Show the onboarding progress tracker on the home page and as a floating indicator on all pages.
+            </p>
+            <p style="font-size:.78rem;color:var(--ink-lt);" id="ob-toggle-status">Loading…</p>
+          </div>
+          <!-- Toggle switch -->
+          <label class="ob-toggle-label" aria-label="Toggle onboarding tracker">
+            <input type="checkbox" id="ob-toggle-input" onchange="toggleOnboarding(this.checked)" style="display:none;">
+            <div class="ob-toggle-track" id="ob-toggle-track">
+              <div class="ob-toggle-thumb" id="ob-toggle-thumb"></div>
+            </div>
+          </label>
+        </div>
+        <div style="margin-top:1rem;">
+          <button class="btn btn-outline" style="font-size:.8rem;" onclick="resetOnboarding()">↺ Reset progress &amp; show again</button>
+        </div>
+      </div>
+      <style>
+        .ob-toggle-label { cursor:pointer; flex-shrink:0; }
+        .ob-toggle-track {
+          width: 48px; height: 26px; border-radius: 50px;
+          background: var(--border); position: relative;
+          transition: background 0.2s;
+        }
+        .ob-toggle-track.on { background: var(--teal); }
+        .ob-toggle-thumb {
+          width: 20px; height: 20px; border-radius: 50%;
+          background: #fff; position: absolute;
+          top: 3px; left: 3px;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+          transition: transform 0.2s cubic-bezier(.34,1.2,.64,1);
+        }
+        .ob-toggle-track.on .ob-toggle-thumb { transform: translateX(22px); }
+      </style>
+
       <!-- Danger zone -->
       <div class="danger-zone">
         <h3>⚠️ Danger Zone</h3>
@@ -752,7 +792,71 @@ function jobThumbUrl(job) {
   return `https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&q=70&fit=crop`;
 }
 
+/* ── ONBOARDING TOGGLE ──────────────────────────────────── */
+function initObToggle() {
+  const USER_ID  = window.NAIK_USER_ID;
+  if (!USER_ID) return;
+
+  const PREF_KEY    = `naik_ob_hidden_${USER_ID}`;
+  const isHidden    = localStorage.getItem(PREF_KEY) === 'hidden';
+  const input       = document.getElementById('ob-toggle-input');
+  const track       = document.getElementById('ob-toggle-track');
+  const statusEl    = document.getElementById('ob-toggle-status');
+
+  if (!input) return;
+
+  function setToggleUI(visible) {
+    input.checked = visible;
+    track.classList.toggle('on', visible);
+    statusEl.textContent = visible
+      ? 'Currently showing — visible on all pages.'
+      : 'Currently hidden — you can turn it back on anytime.';
+  }
+
+  setToggleUI(!isHidden);
+}
+
+window.toggleOnboarding = function(checked) {
+  const USER_ID = window.NAIK_USER_ID;
+  if (!USER_ID) return;
+  const PREF_KEY = `naik_ob_hidden_${USER_ID}`;
+  const track    = document.getElementById('ob-toggle-track');
+  const statusEl = document.getElementById('ob-toggle-status');
+
+  if (checked) {
+    localStorage.removeItem(PREF_KEY);
+    track.classList.add('on');
+    statusEl.textContent = 'Currently showing — visible on all pages.';
+    if (window.naik_ob) window.naik_ob.show();
+  } else {
+    localStorage.setItem(PREF_KEY, 'hidden');
+    track.classList.remove('on');
+    statusEl.textContent = 'Currently hidden — you can turn it back on anytime.';
+    if (window.naik_ob) window.naik_ob.hide();
+  }
+  showToast(checked ? '✅ Onboarding tracker shown' : '✅ Onboarding tracker hidden');
+};
+
+window.resetOnboarding = function() {
+  const USER_ID = window.NAIK_USER_ID;
+  if (!USER_ID) return;
+  const PREF_KEY = `naik_ob_hidden_${USER_ID}`;
+  const DONE_KEY = `naik_ob_steps_${USER_ID}`;
+  localStorage.removeItem(PREF_KEY);
+  localStorage.removeItem(DONE_KEY);
+  const input = document.getElementById('ob-toggle-input');
+  const track = document.getElementById('ob-toggle-track');
+  const statusEl = document.getElementById('ob-toggle-status');
+  if (input) { input.checked = true; track.classList.add('on'); }
+  if (statusEl) statusEl.textContent = 'Currently showing — visible on all pages.';
+  if (window.naik_ob) window.naik_ob.show();
+  showToast('↺ Progress reset! Onboarding tracker is back.');
+};
+
 /* ── INIT ────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', loadSavedJobs);
+document.addEventListener('DOMContentLoaded', () => {
+  loadSavedJobs();
+  initObToggle();
+});
 </script>
 {% endblock %}

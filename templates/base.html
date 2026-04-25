@@ -7,19 +7,18 @@
   <script>
     window.LANG  = {{ lang | tojson }};
     window.i18n  = {{ i18n_js | tojson }};
+    window.NAIK_USER_ID = {{ session.get('user_id') | tojson }};
   </script>
   {% block head %}{% endblock %}
 </head>
 <body>
   {% block content %}{% endblock %}
-  
+
 <!-- ══════════════════════════════════════════════════════════
      FOOTER
-     naik.css → footer, .footer-grid, .footer-bottom
      ══════════════════════════════════════════════════════════ -->
 <footer>
   <div class="footer-grid">
-
     <div class="footer-brand">
       <span class="wordmark">NAIK</span>
       <p>{{ t('footer.tagline') }}</p>
@@ -27,7 +26,6 @@
         <a href="#" class="btn btn-outline" style="font-size:0.8rem; color:rgba(255,255,255,0.6); border-color:rgba(255,255,255,0.2);">{{ t('footer.partner') }}</a>
       </div>
     </div>
-
     <div>
       <h4>{{ t('footer.platform') }}</h4>
       <ul>
@@ -36,7 +34,6 @@
         <li><a href="{{ url_for('home') }}">{{ t('nav.getHired') }}</a></li>
       </ul>
     </div>
-
     <div>
       <h4>{{ t('footer.resources') }}</h4>
       <ul>
@@ -46,7 +43,6 @@
         <li><a href="{{ url_for('know') }}">{{ t('footer.jtksm') }}</a></li>
       </ul>
     </div>
-
     <div>
       <h4>{{ t('footer.organisation') }}</h4>
       <ul>
@@ -57,61 +53,398 @@
         <li><a href="https://github.com/CameliaCH/GetEmployed" target="_blank" rel="noopener">GitHub</a></li>
       </ul>
     </div>
-
   </div>
-
   <div class="footer-bottom">
     <span>© 2025 NAIK — Naikkan Taraf Hidup Anda. {{ t('footer.rights') }}</span>
     <span>{{ t('footer.madeIn') }}</span>
   </div>
 </footer>
 
-  <script>
-    /* ── MOBILE NAV ── */
-    const hamburger = document.querySelector('.hamburger');
-    const mobileNav = document.querySelector('.mobile-nav');
-    if (hamburger && mobileNav) {
-      hamburger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        mobileNav.classList.toggle('open');
-      });
-      document.addEventListener('click', (e) => {
-        if (!mobileNav.contains(e.target) && !hamburger.contains(e.target))
-          mobileNav.classList.remove('open');
-      });
-      mobileNav.querySelectorAll('a').forEach(link =>
-        link.addEventListener('click', () => mobileNav.classList.remove('open'))
-      );
+<!-- ══════════════════════════════════════════════════════════
+     ONBOARDING ISLAND (logged-in users only, dismissible)
+     ══════════════════════════════════════════════════════════ -->
+{% if session.get('user_id') %}
+<style>
+/* ── ONBOARDING ISLAND ──────────────────────────────────── */
+.ob-island-wrap {
+  position: fixed;
+  bottom: 1.75rem;
+  left: 1.75rem;
+  z-index: 400;
+  display: none; /* shown by JS once state loaded */
+}
+.ob-island-wrap.ob-ready { display: block; }
+.ob-island-wrap.ob-hidden { display: none !important; }
+
+/* The pill itself */
+.ob-pill {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--alw-dk);
+  border-radius: 50px;
+  padding: 5px;
+  cursor: pointer;
+  overflow: hidden;
+  max-width: 46px;
+  max-height: 46px;
+  box-shadow: 0 4px 20px rgba(28,23,19,0.3);
+  transition:
+    max-width  0.45s cubic-bezier(.34,1.1,.64,1),
+    max-height 0.45s cubic-bezier(.34,1.1,.64,1),
+    padding    0.4s  cubic-bezier(.34,1.1,.64,1),
+    gap        0.3s  cubic-bezier(.34,1.1,.64,1),
+    box-shadow 0.25s ease;
+  white-space: nowrap;
+  outline: none;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+}
+
+.ob-pill:hover,
+.ob-pill:focus-within,
+.ob-island-wrap.ob-expanded .ob-pill {
+  max-width: 300px;
+  max-height: 56px;
+  padding: 5px 18px 5px 5px;
+  gap: 12px;
+  box-shadow: 0 8px 32px rgba(28,23,19,0.38);
+}
+
+/* SVG ring */
+.ob-ring-wrap {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.ob-svg {
+  width: 36px;
+  height: 36px;
+  transform: rotate(-90deg);
+  display: block;
+}
+.ob-track {
+  fill: none;
+  stroke: rgba(255,255,255,0.12);
+  stroke-width: 3;
+}
+.ob-fill {
+  fill: none;
+  stroke: var(--teal, #7EACB5);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 100.53; /* 2π × 16 */
+  stroke-dashoffset: 100.53;
+  transition: stroke-dashoffset 0.7s cubic-bezier(.4,0,.2,1), stroke 0.3s;
+}
+.ob-fill.complete { stroke: #4ade80; }
+
+/* Percentage text inside ring */
+.ob-pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  pointer-events: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Text content (revealed on expand) */
+.ob-content {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s 0.14s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.ob-pill:hover .ob-content,
+.ob-pill:focus-within .ob-content,
+.ob-island-wrap.ob-expanded .ob-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ob-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.ob-next {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+.ob-next-link {
+  color: var(--teal, #7EACB5);
+  text-decoration: none;
+  display: inline;
+}
+.ob-next-link:hover { text-decoration: underline; }
+
+/* Dismiss button */
+.ob-dismiss {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--red, #BF4646);
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 0.55rem;
+  font-weight: 900;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 1;
+  font-family: sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+  z-index: 2;
+}
+.ob-dismiss:hover { transform: scale(1.2); }
+.ob-island-wrap:hover .ob-dismiss,
+.ob-island-wrap.ob-expanded .ob-dismiss { display: flex; }
+
+@media (max-width: 480px) {
+  .ob-island-wrap { bottom: 1rem; left: 1rem; }
+}
+</style>
+
+<div class="ob-island-wrap" id="ob-island-wrap" aria-label="Your onboarding progress">
+  <button class="ob-pill" id="ob-pill" type="button" aria-expanded="false">
+    <div class="ob-ring-wrap">
+      <svg class="ob-svg" viewBox="0 0 36 36" aria-hidden="true">
+        <circle class="ob-track" cx="18" cy="18" r="16"/>
+        <circle class="ob-fill" id="ob-fill" cx="18" cy="18" r="16"/>
+      </svg>
+      <div class="ob-pct" id="ob-pct">0%</div>
+    </div>
+    <div class="ob-content">
+      <span class="ob-label">Getting started</span>
+      <span class="ob-next" id="ob-next-text">Loading…</span>
+    </div>
+  </button>
+  <button class="ob-dismiss" id="ob-dismiss" title="Hide onboarding" aria-label="Dismiss onboarding">✕</button>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   NAIK ONBOARDING ISLAND
+   Tracks 5 steps, persists completion per-user in localStorage.
+   Checks live data from existing APIs for quiz + saved jobs.
+   ══════════════════════════════════════════════════════════ */
+(function () {
+  const USER_ID   = window.NAIK_USER_ID;
+  if (!USER_ID) return; // not logged in
+
+  const PREF_KEY    = `naik_ob_hidden_${USER_ID}`;
+  const DONE_KEY    = `naik_ob_steps_${USER_ID}`;
+  const CIRCUMF     = 2 * Math.PI * 16; // 100.53
+
+  const wrap    = document.getElementById('ob-island-wrap');
+  const fill    = document.getElementById('ob-fill');
+  const pctEl   = document.getElementById('ob-pct');
+  const nextEl  = document.getElementById('ob-next-text');
+  const dismiss = document.getElementById('ob-dismiss');
+  const pill    = document.getElementById('ob-pill');
+
+  // If user hid it, stop entirely
+  if (localStorage.getItem(PREF_KEY) === 'hidden') return;
+
+  const STEPS = [
+    {
+      id:    'quiz',
+      label: '📋 Take the career quiz',
+      url:   '/roadmap',
+      check: async (done) => {
+        // Already marked done locally? trust it.
+        if (done.quiz) return true;
+        // Check via API: quiz results exist?
+        try {
+          const r = await fetch('/api/quiz/results');
+          const d = await r.json();
+          return !!(d.quiz);
+        } catch { return false; }
+      }
+    },
+    {
+      id:    'save_job',
+      label: '💾 Save your first job',
+      url:   '/explore',
+      check: async (done) => {
+        if (done.save_job) return true;
+        try {
+          const r = await fetch('/api/quiz/results');
+          const d = await r.json();
+          return !!(d.savedJobIds && d.savedJobIds.length > 0);
+        } catch { return false; }
+      }
+    },
+    {
+      id:    'roadmap',
+      label: '🗺 View a career roadmap',
+      url:   '/skills',
+      check: async (done) => done.roadmap || false
+    },
+    {
+      id:    'cv',
+      label: '📄 Build your CV',
+      url:   '/cv-builder',
+      check: async (done) => done.cv || false
+    },
+    {
+      id:    'profile',
+      label: '👤 Complete your profile',
+      url:   '/profile#edit',
+      check: async (done) => done.profile || false
+    }
+  ];
+
+  // Load locally-stored completions
+  let stored = {};
+  try { stored = JSON.parse(localStorage.getItem(DONE_KEY) || '{}'); } catch {}
+
+  // Auto-mark roadmap if we're currently on /roadmap/view
+  if (location.pathname.startsWith('/roadmap/view')) stored.roadmap = true;
+  // Auto-mark cv if on /cv-builder
+  if (location.pathname.startsWith('/cv-builder'))   stored.cv      = true;
+
+  async function evaluate() {
+    const results = await Promise.all(STEPS.map(s => s.check(stored)));
+    results.forEach((done, i) => {
+      if (done) stored[STEPS[i].id] = true;
+    });
+    // Persist
+    localStorage.setItem(DONE_KEY, JSON.stringify(stored));
+
+    const completedCount = results.filter(Boolean).length;
+    const pct = Math.round((completedCount / STEPS.length) * 100);
+
+    // Update ring
+    const offset = CIRCUMF - (pct / 100) * CIRCUMF;
+    fill.style.strokeDashoffset = offset;
+    pctEl.textContent = pct + '%';
+    if (pct === 100) fill.classList.add('complete');
+
+    // Find next incomplete step
+    const nextIdx = results.findIndex(r => !r);
+    if (nextIdx === -1) {
+      nextEl.innerHTML = `<span style="color:#4ade80">All done! 🎉</span>`;
+    } else {
+      const step = STEPS[nextIdx];
+      nextEl.innerHTML = `<a class="ob-next-link" href="${step.url}">${step.label}</a>`;
     }
 
-    /* ── NAV SCROLL ── */
-    document.addEventListener('DOMContentLoaded', () => {
-      const nav = document.querySelector('.naik-nav');
-      if (!nav) return;
-      window.addEventListener('scroll', () => {
-        nav.classList.toggle('scrolled', window.scrollY > 20);
-      });
-    });
+    // Show the island
+    wrap.classList.add('ob-ready');
 
-    /* ── DARK MODE ── */
-    (function () {
-      const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-      const SUN  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
-      function applyTheme(dark) {
-        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-        const icon = document.getElementById('dark-icon');
-        if (icon) icon.innerHTML = dark ? MOON : SUN;
-      }
-      window.toggleDark = function () {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        localStorage.setItem('naik_theme', isDark ? 'light' : 'dark');
-        applyTheme(!isDark);
-      };
-      const saved = localStorage.getItem('naik_theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      applyTheme(saved ? saved === 'dark' : prefersDark);
-    })();
-  </script>
-  {% block scripts %}{% endblock %}
+    // If 100% complete, auto-hide after 8 seconds
+    if (pct === 100) {
+      setTimeout(() => { wrap.classList.add('ob-hidden'); }, 8000);
+    }
+  }
+
+  // Run on load
+  evaluate();
+
+  // Dismiss button
+  dismiss.addEventListener('click', (e) => {
+    e.stopPropagation();
+    localStorage.setItem(PREF_KEY, 'hidden');
+    wrap.classList.add('ob-hidden');
+    // Dispatch event so profile.html toggle can sync
+    window.dispatchEvent(new CustomEvent('ob-dismissed'));
+  });
+
+  // Expose for profile toggle
+  window.naik_ob = {
+    show: () => {
+      localStorage.removeItem(PREF_KEY);
+      wrap.classList.remove('ob-hidden');
+      wrap.classList.add('ob-ready');
+    },
+    hide: () => {
+      localStorage.setItem(PREF_KEY, 'hidden');
+      wrap.classList.add('ob-hidden');
+    },
+    isHidden: () => localStorage.getItem(PREF_KEY) === 'hidden',
+    // Expose for NAIK.html hero to mark roadmap/cv visits
+    markStep: (stepId) => {
+      stored[stepId] = true;
+      localStorage.setItem(DONE_KEY, JSON.stringify(stored));
+      evaluate();
+    }
+  };
+})();
+</script>
+{% endif %}
+
+<script>
+  /* ── MOBILE NAV ── */
+  const hamburger = document.querySelector('.hamburger');
+  const mobileNav = document.querySelector('.mobile-nav');
+  if (hamburger && mobileNav) {
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileNav.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+      if (!mobileNav.contains(e.target) && !hamburger.contains(e.target))
+        mobileNav.classList.remove('open');
+    });
+    mobileNav.querySelectorAll('a').forEach(link =>
+      link.addEventListener('click', () => mobileNav.classList.remove('open'))
+    );
+  }
+
+  /* ── NAV SCROLL ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('.naik-nav');
+    if (!nav) return;
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+  });
+
+  /* ── DARK MODE ── */
+  (function () {
+    const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+    const SUN  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+    function applyTheme(dark) {
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      const icon = document.getElementById('dark-icon');
+      if (icon) icon.innerHTML = dark ? MOON : SUN;
+    }
+    window.toggleDark = function () {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      localStorage.setItem('naik_theme', isDark ? 'light' : 'dark');
+      applyTheme(!isDark);
+    };
+    const saved = localStorage.getItem('naik_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(saved ? saved === 'dark' : prefersDark);
+  })();
+</script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

@@ -553,7 +553,7 @@ document.getElementById('rank-toggle')?.addEventListener('click', () => {
 updateBadge();
 renderExplore();
 
-/* ── HERO BATIK SPOTLIGHT ────────────────────────────────── */
+/* ── FULL-PAGE BATIK SPOTLIGHT ───────────────────────────── */
 (function () {
   const mount = document.getElementById('batik-mount');
   if (!mount) return;
@@ -569,20 +569,18 @@ renderExplore();
     .then(svgText => {
       mount.innerHTML = svgText;
 
-      const hero   = document.querySelector('.hero');
       const svg    = mount.querySelector('svg');
       const circle = mount.querySelector('#spotlight-circle');
-      if (!hero || !svg || !circle) return;
+      if (!svg || !circle) return;
 
-      hero.addEventListener('mousemove', (e) => {
+      document.addEventListener('mousemove', (e) => {
         if (window.innerWidth <= 768) return;
-        const rect = hero.getBoundingClientRect();
-        circle.setAttribute('cx', e.clientX - rect.left);
-        circle.setAttribute('cy', e.clientY - rect.top);
+        circle.setAttribute('cx', e.clientX);
+        circle.setAttribute('cy', e.clientY);
         svg.style.opacity = '1';
       });
 
-      hero.addEventListener('mouseleave', () => {
+      document.documentElement.addEventListener('mouseleave', () => {
         if (window.innerWidth <= 768) return;
         svg.style.opacity = '0';
         setTimeout(() => {
