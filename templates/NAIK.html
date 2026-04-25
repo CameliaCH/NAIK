@@ -9,13 +9,90 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
 
+  <style>
+  /* ── WATERCOLOR WORD HERO ─────────────────────────────── */
+  .hero-headline-pre {
+    display: block;
+    font-weight: inherit;
+    font-size: inherit;
+    line-height: 1.08;
+  }
+  .wc-word-outer {
+    display: block;
+    line-height: 1.12;
+    min-height: 1.15em;
+  }
+  .wc-word {
+    display: inline;
+    color: var(--red);
+    font-style: italic;
+    opacity: 0;
+    will-change: filter, opacity, transform;
+  }
+  .wc-word.wc-active {
+    filter: url(#wc-filter);
+    animation: wc-reveal 3.8s ease-in-out forwards;
+  }
+  @keyframes wc-reveal {
+    0%   { opacity: 0;    transform: scale(1.07) translateY(7px);
+           text-shadow: 0 0 30px rgba(191,70,70,0.7), 0 0 60px rgba(212,115,138,0.45); }
+    22%  { opacity: 0.88; transform: scale(1.01) translateY(2px);
+           text-shadow: 0 0 12px rgba(191,70,70,0.4), 0 0 24px rgba(212,115,138,0.28); }
+    32%  { opacity: 1;    transform: scale(1) translateY(0);
+           text-shadow: 0 0 4px rgba(191,70,70,0.12); }
+    76%  { opacity: 1;    transform: scale(1); text-shadow: none; }
+    90%  { opacity: 0.3;  transform: scale(0.98) translateY(-3px);
+           text-shadow: 0 0 10px rgba(191,70,70,0.35); }
+    100% { opacity: 0;    transform: scale(0.94) translateY(-7px);
+           text-shadow: 0 0 24px rgba(191,70,70,0.5); }
+  }
+
+  /* ── HOW IT WORKS ────────────────────────────────────── */
+  .how-section {
+    background: var(--cream);
+    padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem);
+    border-top: 1px solid var(--border);
+    border-bottom: 5px dotted var(--border);
+  }
+  .how-header { text-align: center; margin-bottom: 4rem; }
+  .how-header h2 { margin-bottom: .5rem; }
+  .how-header p { color: var(--ink-lt); font-size: .95rem; }
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+    max-width: 1000px;
+    margin: 0 auto 4rem;
+  }
+  .how-step {
+    z-index: 5;
+    background: var(--cream);
+    opacity: 0.8;
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .how-step-num {
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+  .how-step h3 { font-size: 1.1rem; font-weight: 800; color: var(--ink); margin-bottom: .5rem; letter-spacing: -.02em; }
+  .how-step p  { font-size: .83rem; color: var(--ink-lt); line-height: 1.6; }
+  .how-ctas    { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+
+  .detail-section { background-color: var(--cream); }
+  #explore-section { border-bottom: 5px dotted var(--border); }
+  </style>
+
   {% if session.get('user_id') %}
   <style>
-  /* ══════════════════════════════════════════════════════════
-     ONBOARDING HERO — shown once user is signed in
-     ══════════════════════════════════════════════════════════ */
+  /* ── ONBOARDING HERO — shown once user is signed in ───── */
   .ob-hero {
-    display: none; /* revealed by JS if user is new/incomplete */
+    display: none;
     background: linear-gradient(-45deg, var(--teal) 0%, var(--cream) 100%);
     padding: clamp(3rem, 7vw, 5.5rem) clamp(1.5rem, 5vw, 4rem);
     position: relative;
@@ -25,7 +102,6 @@
   }
   .ob-hero.ob-hero-visible { display: block; }
 
-  /* Decorative rings */
   .ob-hero-bg {
     position: absolute;
     inset: 0;
@@ -46,205 +122,111 @@
     align-items: center;
   }
   @media (max-width: 680px) {
-    .ob-hero-inner {
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
-      text-align: center;
-    }
-    .ob-big-ring { margin: 0 auto; }
+    .ob-hero-inner { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
+    .ob-big-ring   { margin: 0 auto; }
   }
 
-  /* ── LARGE PROGRESS RING ── */
-  .ob-big-ring {
-    position: relative;
-    width: 160px;
-    height: 160px;
-    flex-shrink: 0;
-  }
-  .ob-big-svg {
-    width: 160px;
-    height: 160px;
+  .ob-big-ring { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+  .ob-big-svg  {
+    width: 160px; height: 160px;
     transform: rotate(-90deg);
     display: block;
     filter: drop-shadow(0 0 18px rgba(126,172,181,0.35));
   }
-  .ob-big-track {
-    fill: none;
-    stroke: rgba(255,255,255,0.08);
-    stroke-width: 6;
-  }
-  .ob-big-fill {
+  .ob-big-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 6; }
+  .ob-big-fill  {
     fill: none;
     stroke: var(--teal, #7EACB5);
     stroke-width: 6;
     stroke-linecap: round;
-    stroke-dasharray: 439.82; /* 2π × 70 */
+    stroke-dasharray: 439.82;
     stroke-dashoffset: 439.82;
     transition: stroke-dashoffset 1s cubic-bezier(.4,0,.2,1) 0.3s, stroke 0.4s;
   }
   .ob-big-fill.complete { stroke: #4ade80; }
   .ob-big-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
     gap: 0.1rem;
   }
   .ob-big-pct {
     font-family: 'Playfair Display', serif;
-    font-size: 2.6rem;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1;
-    letter-spacing: -0.04em;
+    font-size: 2.6rem; font-weight: 700;
+    color: #fff; line-height: 1; letter-spacing: -0.04em;
   }
   .ob-big-label {
-    font-size: 0.65rem;
-    font-weight: 700;
+    font-size: 0.65rem; font-weight: 700;
     color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+    text-transform: uppercase; letter-spacing: 0.12em;
   }
 
-  /* ── TEXT SIDE ── */
-  .ob-hero-copy {}
   .ob-hero-eyebrow {
     display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--teal, #7EACB5);
-    margin-bottom: 0.6rem;
+    font-size: 0.68rem; font-weight: 800;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--teal, #7EACB5); margin-bottom: 0.6rem;
   }
   .ob-hero-title {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-    font-weight: 700;
-    color: #fff;
-    line-height: 1.2;
-    margin-bottom: 1rem;
+    font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 1rem;
   }
   .ob-hero-title em { color: var(--teal, #7EACB5); font-style: normal; }
 
-  /* Steps list */
   .ob-steps-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    margin-bottom: 1.75rem;
+    list-style: none; display: flex; flex-direction: column;
+    gap: 0.55rem; margin-bottom: 1.75rem;
   }
   .ob-step-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.88rem;
-    color: rgba(255,255,255,0.55);
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-weight: 500;
-    transition: color 0.2s;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.88rem; color: rgba(255,255,255,0.55);
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; transition: color 0.2s;
   }
-  .ob-step-item.done {
-    color: rgba(255,255,255,0.35);
-    text-decoration: line-through;
-    text-decoration-color: rgba(255,255,255,0.2);
-  }
-  .ob-step-item.next-step {
-    color: #fff;
-    font-weight: 700;
-  }
+  .ob-step-item.done { color: rgba(255,255,255,0.35); text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.2); }
+  .ob-step-item.next-step { color: #fff; font-weight: 700; }
   .ob-step-check {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     border: 2px solid rgba(255,255,255,0.18);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 0.7rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 0.7rem;
     transition: background 0.3s, border-color 0.3s;
   }
-  .ob-step-item.done .ob-step-check {
-    background: rgba(74,222,128,0.2);
-    border-color: #4ade80;
-    color: #4ade80;
-  }
-  .ob-step-item.next-step .ob-step-check {
-    background: rgba(126,172,181,0.2);
-    border-color: var(--teal, #7EACB5);
-    color: var(--teal, #7EACB5);
-  }
-  .ob-step-link {
-    color: inherit;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
+  .ob-step-item.done      .ob-step-check { background: rgba(74,222,128,0.2); border-color: #4ade80; color: #4ade80; }
+  .ob-step-item.next-step .ob-step-check { background: rgba(126,172,181,0.2); border-color: var(--teal, #7EACB5); color: var(--teal, #7EACB5); }
+  .ob-step-link { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; }
   .ob-step-link:hover { text-decoration: underline; }
-  .ob-step-arrow {
-    font-size: 0.75rem;
-    opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-  .ob-step-item.next-step .ob-step-arrow {
-    opacity: 1;
-  }
+  .ob-step-arrow { font-size: 0.75rem; opacity: 0; transition: opacity 0.2s, transform 0.2s; }
+  .ob-step-item.next-step .ob-step-arrow { opacity: 1; }
 
-  /* CTA row */
-  .ob-cta-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
+  .ob-cta-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
   @media (max-width: 680px) { .ob-cta-row { justify-content: center; } }
 
   .ob-btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
+    display: inline-flex; align-items: center; gap: 0.45rem;
     padding: 0.7rem 1.5rem;
-    background: var(--teal, #7EACB5);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
+    background: var(--teal, #7EACB5); color: #fff;
+    border: none; border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 700;
+    text-decoration: none; cursor: pointer; transition: background 0.2s, transform 0.15s;
   }
   .ob-btn-primary:hover { background: #6a9aa3; transform: translateY(-1px); }
 
   .ob-dismiss-link {
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.3);
-    background: none;
-    border: none;
-    cursor: pointer;
+    font-size: 0.78rem; color: rgba(255,255,255,0.3);
+    background: none; border: none; cursor: pointer;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    text-decoration: underline;
-    transition: color 0.2s;
+    text-decoration: underline; transition: color 0.2s;
   }
   .ob-dismiss-link:hover { color: rgba(255,255,255,0.6); }
 
-  /* Completion state */
   .ob-hero-complete-msg {
     display: none;
     background: rgba(74,222,128,0.1);
     border: 1px solid rgba(74,222,128,0.2);
-    border-radius: 12px;
-    padding: 0.9rem 1.25rem;
-    font-size: 0.88rem;
-    color: #86efac;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    margin-bottom: 1rem;
+    border-radius: 12px; padding: 0.9rem 1.25rem;
+    font-size: 0.88rem; color: #86efac;
+    font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 1rem;
   }
   </style>
   {% endif %}
@@ -254,7 +236,7 @@
 
 {{ naik_nav(active='home') }}
 
-{# ══ ONBOARDING HERO — logged-in users only ══ #}
+{# ── ONBOARDING HERO — logged-in users only ── #}
 {% if session.get('user_id') %}
 <section class="ob-hero" id="ob-hero" aria-label="Your onboarding progress">
   <svg class="ob-hero-bg" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -264,10 +246,7 @@
     <circle cx="600"  cy="200" r="320" fill="none" stroke="#EDDCC6" stroke-width="1"/>
     <rect x="900" y="200" width="40" height="40" fill="none" stroke="#7EACB5" stroke-width="0.8" transform="rotate(45 920 220)"/>
   </svg>
-
   <div class="ob-hero-inner">
-
-    <!-- Big ring -->
     <div class="ob-big-ring" id="ob-big-ring">
       <svg class="ob-big-svg" viewBox="0 0 160 160" aria-hidden="true">
         <circle class="ob-big-track" cx="80" cy="80" r="70"/>
@@ -278,76 +257,54 @@
         <span class="ob-big-label">complete</span>
       </div>
     </div>
-
-    <!-- Copy -->
     <div class="ob-hero-copy">
       <span class="ob-hero-eyebrow">🚀 Getting started</span>
       <h2 class="ob-hero-title" id="ob-hero-title">
         Welcome, <em id="ob-hero-name">{{ session.get('user_name', '').split(' ')[0] or 'there' }}</em>.<br>
         Let's set you up for success.
       </h2>
-
       <div class="ob-hero-complete-msg" id="ob-hero-complete-msg">
         🎉 You're all set! Your profile is complete. Explore your roadmaps and keep growing.
       </div>
-
-      <ul class="ob-steps-list" id="ob-steps-list">
-        <!-- populated by JS -->
-      </ul>
-
+      <ul class="ob-steps-list" id="ob-steps-list"></ul>
       <div class="ob-cta-row">
         <a href="#" class="ob-btn-primary" id="ob-cta-btn">Start →</a>
         <button class="ob-dismiss-link" id="ob-hero-dismiss">Hide this</button>
       </div>
     </div>
-
   </div>
 </section>
 {% endif %}
 
-
-<!-- ══ FULL-PAGE BATIK OVERLAY ══ -->
+<!-- Batik overlay + watercolor SVG filter -->
 <div id="batik-mount" data-svg-url="{{ url_for('static', filename='batik.svg') }}"></div>
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="wc-filter" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+      <feTurbulence id="wc-turb" type="turbulence" baseFrequency="0.038 0.048" numOctaves="4" seed="2" result="noise"/>
+      <feDisplacementMap id="wc-disp" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feGaussianBlur id="wc-gblur" in="displaced" stdDeviation="0"/>
+    </filter>
+  </defs>
+</svg>
 
-<!-- ══ STANDARD HERO ══ -->
+<!-- ══ HERO ══ -->
 <section class="hero" id="home">
   <div class="hero-content">
     <div class="hero-badge"><span class="dot"></span> Free · Malaysia · AI-Powered</div>
-    <h1>Get hired.<br><em>Rise further.</em></h1>
-    <p class="subtitle">Career quiz, job matches, and AI tools — all free.</p>
+    <h1>
+      <span class="hero-headline-pre">Every woman deserves to</span>
+      <span class="wc-word-outer"><span class="wc-word" id="wc-hero-word">Rise.</span></span>
+    </h1>
     <div class="hero-stats">
-      <div class="hero-stat">
-        <span class="num">12,400+</span>
-        <span class="label">Malaysians helped</span>
-      </div>
-      <div class="hero-stat">
-        <span class="num">380+</span>
-        <span class="label">Jobs listed</span>
-      </div>
-      <div class="hero-stat">
-        <span class="num">Free</span>
-        <span class="label">Always</span>
-      </div>
+      <div class="hero-stat"><span class="num">12,400+</span><span class="label">Malaysians helped</span></div>
+      <div class="hero-stat"><span class="num">380+</span><span class="label">Jobs listed</span></div>
+      <div class="hero-stat"><span class="num">Free</span><span class="label">Always</span></div>
     </div>
   </div>
 </section>
 
-
-<style>
-.how-section { background: var(--cream); padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); border-top: 1px solid var(--border); border-bottom: 5px dotted var(--border); }
-.how-header { text-align: center; margin-bottom: 4rem; }
-.how-header h2 { margin-bottom: .5rem; }
-.how-header p { color: var(--ink-lt); font-size: .95rem; }
-.how-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; max-width: 1000px; margin: 0 auto; margin-bottom: 4rem;}
-.how-step { z-index: 5;background: var(--cream); opacity: 0.8;padding: 2.5rem 2rem; border: 1px solid var(--border); border-radius: 16px;}
-.how-step-num { font-size: .68rem; font-weight: 800; letter-spacing: .12em; color: var(--red); text-transform: uppercase; margin-bottom: 1.25rem; }
-.how-step h3 { font-size: 1.1rem; font-weight: 800; color: var(--ink); margin-bottom: .5rem; letter-spacing: -.02em; }
-.how-step p { font-size: .83rem; color: var(--ink-lt); line-height: 1.6; }
-.how-ctas { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
-.detail-section { background-color: var(--cream);}
-#explore-section { border-bottom: 5px dotted var(--border);}
-</style>
-
+<!-- ══ HOW IT WORKS ══ -->
 <section class="how-section">
   <div class="how-header">
     <span class="section-label">How it works</span>
@@ -377,7 +334,7 @@
   </div>
 </section>
 
-
+<!-- ══ CAREER QUIZ & JOBS ══ -->
 <section class="detail-section" id="explore-section">
   <div class="detail-inner">
     <div class="detail-copy">
@@ -407,6 +364,7 @@
   </div>
 </section>
 
+<!-- ══ SKILL UP & GET HIRED ══ -->
 <section class="detail-section detail-section--alt" id="skillup-hired">
   <div class="detail-inner">
     <div class="detail-copy">
@@ -436,6 +394,7 @@
   </div>
 </section>
 
+<!-- ══ FOR HER ══ -->
 <section class="for-her" id="forher">
   <div class="for-her-inner">
     <div>
@@ -463,10 +422,35 @@
   </div>
 </section>
 
+<!-- ══ MORE TOOLS ══ -->
+<section style="background:var(--cream); border-bottom: 5px dotted var(--border); padding:clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem);">
+  <div class="section-header center">
+    <span class="section-label">More Tools</span>
+    <h2>Free resources<br><em style="font-style:normal;color:var(--red);">built for you.</em></h2>
+  </div>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div>💰</div>
+      <span class="section-label">Subsidy & Grant Finder</span>
+      <h3>Find government aid you qualify for.</h3>
+      <p>Answer 5 questions. Get a personalised list of subsidies, grants, and welfare programmes — in BM, English, or Mandarin.</p>
+      <a href="{{ url_for('subsidy') }}" class="btn btn-primary">Find My Subsidies</a>
+    </div>
+    <div class="tool-card">
+      <div>🤝</div>
+      <span class="section-label">Mentor Match</span>
+      <h3>Get guided by someone who's been there.</h3>
+      <p>Connect with volunteer mentors from your industry. Ask questions, get advice, and navigate your career with real support.</p>
+      <a href="{{ url_for('match') }}" class="btn btn-teal">Find a Mentor</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
 <section class="testimonials">
   <div class="section-header center">
-    <span class="section-label">Real stories</span>
-    <h2>They Naik'd.</h2>
+    <span class="section-label">{{ t('home.testiLabel') }}</span>
+    <h2>{{ t('home.testiHeading') }}</h2>
   </div>
   <div class="testimonials-grid">
     <div class="testimonial-card">
@@ -487,6 +471,7 @@
   </div>
 </section>
 
+<!-- ══ TEAM ══ -->
 <section style="background: var(--cream); border-bottom: 5px dotted var(--border);">
   <div class="section-header center">
     <span class="section-label">Team</span>
@@ -501,33 +486,7 @@
   </div>
 </section>
 
-<!-- TOOLS GRID: Subsidy Finder + Mentor Match -->
-<section style="background:var(--cream); border-bottom: 5px dotted var(--border); padding:clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem);">
-  <div class="section-header center">
-    <span class="section-label">More Tools</span>
-    <h2>Free resources<br><em style="font-style:normal;color:var(--red);">built for you.</em></h2>
-  </div>
-  <div class="tools-grid">
-
-    <div class="tool-card">
-      <div>💰</div>
-      <span class="section-label">Subsidy & Grant Finder</span>
-      <h3>Find government aid you qualify for.</h3>
-      <p>Answer 5 questions. Get a personalised list of subsidies, grants, and welfare programmes — in BM, English, or Mandarin.</p>
-      <a href="{{ url_for('subsidy') }}" class="btn btn-primary">Find My Subsidies</a>
-    </div>
-
-    <div class="tool-card">
-      <div>🤝</div>
-      <span class="section-label">Mentor Match</span>
-      <h3>Get guided by someone who's been there.</h3>
-      <p>Connect with volunteer mentors from your industry. Ask questions, get advice, and navigate your career with real support.</p>
-      <a href="{{ url_for('match') }}" class="btn btn-teal">Find a Mentor</a>
-    </div>
-
-  </div>
-</section>
-
+<!-- ══ FINAL CTA ══ -->
 <section style="background:var(--bg-dark); text-align:center; padding:7rem 2rem;">
   <p style="color:var(--red); font-size:.68rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; margin-bottom:1.25rem;">Free. Always.</p>
   <h2 style="color:var(--ink); margin-bottom:1rem; font-size:clamp(2.2rem,5vw,4rem); letter-spacing:-0.04em; line-height:1.08;">Your next step<br>starts here.</h2>
@@ -537,50 +496,115 @@
     <a href="{{ url_for('explore') }}" class="btn btn-lg" style="background:var(--ink); color:var(--cream); border-color:rgba(255,255,255,0.12);">Browse Jobs</a>
   </div>
 </section>
+
 {% endblock %}
 
 
 {% block scripts %}
   <script src="{{ url_for('static', filename='naik.js') }}"></script>
+  <script>
+  (function () {
+    var WORDS = ['Rise.', 'Lead.', 'Excel.', 'Thrive.', 'Build.', 'Shine.', 'Grow.'];
+    var SEEDS = [2, 7, 13, 5, 18, 9, 3];
+    var idx   = 0;
+    var rafId = null;
+
+    var el     = document.getElementById('wc-hero-word');
+    var feDisp = document.getElementById('wc-disp');
+    var feBlur = document.getElementById('wc-gblur');
+    var feTurb = document.getElementById('wc-turb');
+    if (!el || !feDisp || !feBlur || !feTurb) return;
+
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInQuad(t)   { return t * t; }
+
+    function runFilter() {
+      if (rafId) cancelAnimationFrame(rafId);
+      var start  = performance.now();
+      var PHASE1 = 900;
+      var PHASE2 = 3000;
+      var TOTAL  = 3800;
+
+      function tick(now) {
+        var elapsed = now - start;
+        var scale, blur;
+
+        if (elapsed <= PHASE1) {
+          var t = easeOutCubic(elapsed / PHASE1);
+          scale = 32 * (1 - t);
+          blur  = 3.5 * (1 - t);
+        } else if (elapsed <= PHASE2) {
+          scale = 0; blur = 0;
+        } else if (elapsed <= TOTAL) {
+          var t = easeInQuad((elapsed - PHASE2) / (TOTAL - PHASE2));
+          scale = 26 * t;
+          blur  = 2.5 * t;
+        } else {
+          feDisp.setAttribute('scale', '0');
+          feBlur.setAttribute('stdDeviation', '0');
+          return;
+        }
+
+        feDisp.setAttribute('scale', scale.toFixed(2));
+        feBlur.setAttribute('stdDeviation', blur.toFixed(2));
+        rafId = requestAnimationFrame(tick);
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function activate() {
+      feTurb.setAttribute('seed', SEEDS[idx]);
+      el.classList.remove('wc-active');
+      void el.offsetWidth;
+      el.classList.add('wc-active');
+      runFilter();
+    }
+
+    function nextWord() {
+      el.classList.remove('wc-active');
+      void el.offsetWidth;
+      idx = (idx + 1) % WORDS.length;
+      el.textContent = WORDS[idx];
+      activate();
+    }
+
+    activate();
+    setInterval(nextWord, 3800);
+  }());
+  </script>
 
 {% if session.get('user_id') %}
 <script>
-/* ══════════════════════════════════════════════════════════
-   ONBOARDING HERO — NAIK.html
-   Mirrors the same step logic as the island in base.html
-   ══════════════════════════════════════════════════════════ */
 (function () {
   const USER_ID  = window.NAIK_USER_ID;
   if (!USER_ID) return;
 
   const PREF_KEY = `naik_ob_hidden_${USER_ID}`;
   const DONE_KEY = `naik_ob_steps_${USER_ID}`;
-  const CIRCUMF  = 2 * Math.PI * 70; // 439.82
+  const CIRCUMF  = 2 * Math.PI * 70;
 
-  const hero     = document.getElementById('ob-hero');
-  const bigFill  = document.getElementById('ob-big-fill');
-  const bigPct   = document.getElementById('ob-big-pct');
-  const stepsList= document.getElementById('ob-steps-list');
-  const ctaBtn   = document.getElementById('ob-cta-btn');
+  const hero       = document.getElementById('ob-hero');
+  const bigFill    = document.getElementById('ob-big-fill');
+  const bigPct     = document.getElementById('ob-big-pct');
+  const stepsList  = document.getElementById('ob-steps-list');
+  const ctaBtn     = document.getElementById('ob-cta-btn');
   const dismissBtn = document.getElementById('ob-hero-dismiss');
   const completeMsg= document.getElementById('ob-hero-complete-msg');
 
-  // Don't show if user dismissed the island
   if (localStorage.getItem(PREF_KEY) === 'hidden') return;
 
   const STEPS = [
-    { id: 'quiz',     emoji: '📋', label: 'Take the career quiz',      url: '/roadmap'  },
-    { id: 'save_job', emoji: '💾', label: 'Save your first job',        url: '/explore'  },
-    { id: 'roadmap',  emoji: '🗺', label: 'View a career roadmap',      url: '/skills'   },
-    { id: 'cv',       emoji: '📄', label: 'Build your CV',              url: '/cv-builder'},
-    { id: 'profile',  emoji: '👤', label: 'Complete your profile',      url: '/profile#edit'},
+    { id: 'quiz',     emoji: '📋', label: 'Take the career quiz',  url: '/roadmap'      },
+    { id: 'save_job', emoji: '💾', label: 'Save your first job',   url: '/explore'      },
+    { id: 'roadmap',  emoji: '🗺', label: 'View a career roadmap', url: '/skills'       },
+    { id: 'cv',       emoji: '📄', label: 'Build your CV',         url: '/cv-builder'   },
+    { id: 'profile',  emoji: '👤', label: 'Complete your profile', url: '/profile#edit' },
   ];
 
   let stored = {};
   try { stored = JSON.parse(localStorage.getItem(DONE_KEY) || '{}'); } catch {}
 
   async function checkSteps() {
-    // Check quiz + saved_jobs from API
     try {
       const r = await fetch('/api/quiz/results');
       const d = await r.json();
@@ -593,13 +617,10 @@
     const completedCount = STEPS.filter(s => stored[s.id]).length;
     const pct = Math.round((completedCount / STEPS.length) * 100);
 
-    // If 100% done and it was dismissed before, skip showing
     if (pct === 100 && localStorage.getItem(PREF_KEY) === 'hidden') return;
 
-    // Show hero
     hero.classList.add('ob-hero-visible');
 
-    // Animate big ring
     const offset = CIRCUMF - (pct / 100) * CIRCUMF;
     bigFill.style.strokeDashoffset = offset;
     bigPct.textContent = pct + '%';
@@ -608,7 +629,6 @@
       completeMsg.style.display = 'block';
     }
 
-    // Render steps list
     stepsList.innerHTML = '';
     let firstNext = null;
     STEPS.forEach(step => {
@@ -645,7 +665,6 @@
       stepsList.appendChild(li);
     });
 
-    // CTA button targets next step
     if (firstNext) {
       ctaBtn.href = firstNext.url;
       ctaBtn.textContent = 'Go: ' + firstNext.label + ' →';
@@ -657,11 +676,9 @@
 
   checkSteps();
 
-  // Dismiss
   dismissBtn.addEventListener('click', () => {
     localStorage.setItem(PREF_KEY, 'hidden');
     hero.classList.remove('ob-hero-visible');
-    // Also hide the floating island
     if (window.naik_ob) window.naik_ob.hide();
   });
 })();

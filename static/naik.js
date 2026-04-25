@@ -573,20 +573,130 @@ renderExplore();
       const circle = mount.querySelector('#spotlight-circle');
       if (!svg || !circle) return;
 
+      // Motion trail: lerp spotlight toward cursor each frame
+      let targetX = -999, targetY = -999;
+      let currentX = -999, currentY = -999;
+      let mouseActive = false;
+      const LERP = 0.1;
+
+      (function trail() {
+        if (mouseActive) {
+          currentX += (targetX - currentX) * LERP;
+          currentY += (targetY - currentY) * LERP;
+          circle.setAttribute('cx', currentX);
+          circle.setAttribute('cy', currentY);
+        }
+        requestAnimationFrame(trail);
+      })();
+
       document.addEventListener('mousemove', (e) => {
         if (window.innerWidth <= 768) return;
-        circle.setAttribute('cx', e.clientX);
-        circle.setAttribute('cy', e.clientY);
-        svg.style.opacity = '1';
+        targetX = e.clientX;
+        targetY = e.clientY;
+        if (!mouseActive) {
+          // Snap on first entry so it doesn't drag from (-999,-999)
+          currentX = e.clientX;
+          currentY = e.clientY;
+          mouseActive = true;
+          svg.style.opacity = '1';
+        }
       });
 
       document.documentElement.addEventListener('mouseleave', () => {
         if (window.innerWidth <= 768) return;
+        mouseActive = false;
         svg.style.opacity = '0';
         setTimeout(() => {
+          targetX = -999; targetY = -999;
+          currentX = -999; currentY = -999;
           circle.setAttribute('cx', -999);
           circle.setAttribute('cy', -999);
         }, 400);
+      });
+
+      // Concentric spotlight wave on click — each ring is an annular batik reveal
+      const NS   = 'http://www.w3.org/2000/svg';
+      const defs = svg.querySelector('defs');
+      let waveId = 0;
+
+      // Ring parameters: [maxRadius, duration, ringWidth, softness]
+      const WAVE_PARAMS = [
+        [160,  800, 55, 18],
+        [260, 1100, 55, 18],
+        [360, 1400, 55, 18],
+      ];
+
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) return;
+
+        WAVE_PARAMS.forEach(([maxR, duration, ringW, soft]) => {
+          const id = ++waveId;
+
+          // Radial gradient defines the ring shape in mask-space (userSpaceOnUse)
+          const grad = document.createElementNS(NS, 'radialGradient');
+          grad.id = `wg-${id}`;
+          grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+          grad.setAttribute('cx', e.clientX);
+          grad.setAttribute('cy', e.clientY);
+          grad.setAttribute('r', '1');
+
+          // 5 stops: black-center → soft-inner → white-ring → soft-outer → black
+          const stopEls = [0, 0, 1, 1, 0].map(white => {
+            const s = document.createElementNS(NS, 'stop');
+            s.setAttribute('stop-color', white ? 'white' : 'black');
+            grad.appendChild(s);
+            return s;
+          });
+          defs.appendChild(grad);
+
+          // Mask that wraps a full-page rect filled with the ring gradient
+          const maskEl = document.createElementNS(NS, 'mask');
+          maskEl.id = `wm-${id}`;
+          const maskRect = document.createElementNS(NS, 'rect');
+          maskRect.setAttribute('width', '100%');
+          maskRect.setAttribute('height', '100%');
+          maskRect.setAttribute('fill', `url(#wg-${id})`);
+          maskEl.appendChild(maskRect);
+          defs.appendChild(maskEl);
+
+          // Full-page batik rect visible only through the ring mask
+          const waveRect = document.createElementNS(NS, 'rect');
+          waveRect.setAttribute('width', '100%');
+          waveRect.setAttribute('height', '100%');
+          waveRect.setAttribute('fill', 'url(#batik)');
+          waveRect.setAttribute('mask', `url(#wm-${id})`);
+          svg.appendChild(waveRect);
+
+          const start = performance.now();
+
+          (function tick(now) {
+            const t      = Math.min((now - start) / duration, 1);
+            const eased  = 1 - Math.pow(1 - t, 2.5);
+            const outerR = Math.max(1, eased * maxR);
+            const innerR = Math.max(0, outerR - ringW);
+
+            // Recompute stop offsets so they describe the ring within [0, outerR]
+            const s0 = 0;
+            const s1 = Math.max(0,    (innerR - soft) / outerR);
+            const s2 = Math.min(0.98,  innerR          / outerR);
+            const s3 = Math.max(s2, Math.min(0.99, (outerR - soft) / outerR));
+            const s4 = 1;
+
+            grad.setAttribute('r', outerR);
+            [s0, s1, s2, s3, s4].forEach((off, i) =>
+              stopEls[i].setAttribute('offset', (off * 100).toFixed(1) + '%')
+            );
+            waveRect.setAttribute('opacity', ((1 - t) * 0.9).toFixed(3));
+
+            if (t < 1) {
+              requestAnimationFrame(tick);
+            } else {
+              waveRect.remove();
+              maskEl.remove();
+              grad.remove();
+            }
+          })(performance.now());
+        });
       });
     })
     .catch(err => console.warn('Batik load error:', err));

@@ -15,8 +15,10 @@
   --red-dk:  #9b3838;
   --teal:    #b73939;
   --teal-lt: #b8d8dd;
+  --alw-teal: #7EACB5;
   --peach:   white;
   --cream:   white;
+  --creamy:  #f5ede0; /*#bdb4a4*/
   --rose:    #D4738A;
   --rose-lt: #f7e4e9;
   --ink:     #1c1713;
@@ -81,8 +83,10 @@
   --red-dk:  #c84c4c;
   --teal:    #7EACB5;
   --teal-lt: #5a8f9a;
+  --alw-teal: #7EACB5;
   --peach:   #4c1e23;
   --cream:   #1a1612;
+  --creamy:  #1a1612;
   --rose:    #c45e78;
   --rose-lt: #2a1820;
   --ink:     #f0ece6;
@@ -184,7 +188,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 .btn-primary  { background: var(--red); color: #fff; border-color: var(--red); box-shadow: 0 1px 2px rgba(220,38,38,0.3); }
 .btn-primary:hover { background: var(--red-dk); border-color: var(--red-dk); box-shadow: 0 4px 14px rgba(220,38,38,0.35); }
 .btn-teal     { background: var(--card-bg2); color: var(--ink); border-color: var(--border); }
-.btn-teal:hover   { border-color: var(--ink); background: var(--ink); color: #fff; }
+.btn-teal:hover   { border-color: var(--alw-teal); background: var(--alw-teal); color: #fff; }
 .btn-rose     { background: var(--rose); color: #fff; border-color: var(--rose); }
 .btn-rose:hover   { background: var(--red-dk); border-color: var(--red-dk); }
 .btn-lg { padding: 0.85rem 2rem; font-size: 0.95rem; border-radius: 10px; }
@@ -267,7 +271,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 @media(min-width:900px) { .nav-links { display: flex; } }
 
 .nav-links a {
-  padding: 0.35rem 0.7rem; border-radius: 6px;
+  padding: 0.35rem 3rem; border-radius: 6px;
   text-decoration: none; font-size: 0.82rem; font-weight: 500;
   color: var(--ink-mid); transition: color 0.15s;
 }
@@ -686,6 +690,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 /* ── FOR HER SECTION ─────────────────────────────────────── */
 .for-her {
   background: var(--rose-lt);
+  opacity:0.9;
   border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
   position: relative;
   z-index: 3;

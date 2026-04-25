@@ -68,7 +68,7 @@ def _load_translations(lang: str) -> dict:
     try:
         with open(path, encoding='utf-8') as f:
             return json.load(f)
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError):
         return {}
 
 def _get_nested(d: dict, key: str):

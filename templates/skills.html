@@ -22,7 +22,7 @@
 
 /* ── HERO ── */
 .skill-hero{
-  background: linear-gradient(135deg, var(--teal-lt) 0%, #f5ede0 100%);
+  background: linear-gradient(135deg, var(--teal-lt) 0%, var(--creamy) 100%);
   border-bottom: 1px solid var(--border);
   padding: 3rem clamp(1.5rem,5vw,4rem) 2.5rem;
   text-align: center;}
@@ -67,43 +67,31 @@
 .divider{border:none;border-top:1px solid var(--border);margin:2rem 0;}
 
 /* ── TOOLS GRID ── */
-.tools-wrap{max-width:900px;margin:0 auto;padding:0 1.5rem 4rem;}
+.tools-wrap{max-width:900px;margin:0 auto;padding:0 1.5rem;}
 .tools-header{margin-bottom:1.75rem;}
 .tools-header h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--ink);margin-bottom:.25rem;}
 .tools-header p{font-size:.84rem;color:var(--ink-mid);line-height:1.5;}
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.25rem;margin: 0 auto;margin-bottom: 5rem;}
 
 .tool-card{
   background:var(--card-bg2);border:1.5px solid var(--border);border-radius:20px;
   padding:2rem 1.75rem;text-decoration:none;display:flex;flex-direction:column;
-  position:relative;overflow:hidden;min-height:220px;
+  min-height:220px;
   transition:transform .35s cubic-bezier(.34,1.2,.64,1),box-shadow .35s,border-color .3s;
 }
-.tool-card::before{
-  content:'';position:absolute;inset:0;
-  background-color:var(--ink);
-  opacity:0;transition:opacity .6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.tool-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.18);border-color:var(--ink);}
-.tool-card:hover::before{opacity:1;}
-.tool-card>*{position:relative;z-index:1;}
-.tool-icon{font-size:2.5rem;margin-bottom:1rem;display:block;transition:transform .3s;}
-.tool-card:hover .tool-icon{transform:scale(1.1);}
-.tool-title{font-weight:800;font-size:1rem;color:var(--ink);margin-bottom:.4rem;transition:color .3s;}
+.tool-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.18);border-color:var(--red);}
+.tool-icon{font-size:2.5rem;margin-bottom:1rem;display:block;}
+.tool-title{font-weight:800;font-size:1rem;color:var(--ink);margin-bottom:.4rem;}
 .tool-card:hover .tool-title{color:var(--red);}
-.tool-desc{font-size:.82rem;color:var(--ink-mid);line-height:1.55;flex:1;transition:color .3s;}
-.tool-card:hover .tool-desc{color:var(--ink-mid);}
-.tool-tag{display:inline-block;font-size:.66rem;font-weight:700;padding:.15rem .5rem;border-radius:50px;margin-top:.5rem;transition:background .3s,color .3s;}
+.tool-desc{font-size:.82rem;color:var(--ink-mid);line-height:1.55;flex:1;}
+.tool-tag{display:inline-block;font-size:.66rem;font-weight:700;padding:.15rem .5rem;border-radius:50px;margin-top:.5rem;}
 .tag-free{background:rgba(126,172,181,.15);color:var(--teal);}
 .tag-ai{background:rgba(191,70,70,.08);color:var(--red);}
-.tool-card:hover .tool-tag{background:rgba(255,255,255,.12);color:var(--ink-mid);}
 .tool-arrow{
   display:flex;align-items:center;gap:.4rem;
   margin-top:1.25rem;font-size:.82rem;font-weight:800;
   color:var(--red);letter-spacing:.02em;
-  transition:color .3s,gap .2s;
 }
-.tool-card:hover .tool-arrow{color:#fff;gap:.65rem;}
 
 /* ── RESOURCES SECTION ── */
 .resources-wrap{max-width:900px;margin:0 auto;padding:0 1.5rem 5rem;}
@@ -240,33 +228,28 @@
     <h2>{{ t('skills.toolsHeading') }}</h2>
     <p>{{ t('skills.toolsSub') }}</p>
   </div>
-
-  <div class="tools-grid">
-
-    <a href="{{ url_for('interview') }}" class="tool-card">
-      <div class="tool-icon">💪</div>
-      <div class="tool-title">{{ t('skills.mockTitle') }}</div>
-      <div class="tool-desc">{{ t('skills.mockDesc') }}</div>
-      <span class="tool-tag tag-ai">{{ t('skills.tagAI') }}</span>
-      <span class="tool-tag tag-free">{{ t('skills.tagFree') }}</span>
-    </a>
-
-    <a href="{{ url_for('cv_builder_page') }}" class="tool-card">
-      <div class="tool-icon">✍️</div>
-      <div class="tool-title">{{ t('skills.cvBuildTitle') }}</div>
-      <div class="tool-desc">{{ t('skills.cvBuildDesc') }}</div>
-      <span class="tool-tag tag-ai">{{ t('skills.tagAI') }}</span>
-      <span class="tool-tag tag-free">{{ t('skills.tagFree') }}</span>
-    </a>
-
-    <a href="{{ url_for('resources') }}" class="tool-card">
-      <div class="tool-icon">⚖️</div>
-      <div class="tool-title">{{ t('skills.resourcesTitle') }}</div>
-      <div class="tool-desc">{{ t('skills.resourcesDesc') }}</div>
-      <span class="tool-tag tag-free">{{ t('skills.tagFree') }}</span>
-    </a>
-
-  </div>
+</div>
+<div class="tools-grid">
+  <a href="{{ url_for('interview') }}" class="tool-card">
+    <div class="tool-icon">💪</div>
+    <div class="tool-title">{{ t('skills.mockTitle') }}</div>
+    <div class="tool-desc">{{ t('skills.mockDesc') }}</div>
+    <span class="tool-tag tag-ai">{{ t('skills.tagAI') }}</span>
+    <span class="tool-tag tag-free">{{ t('skills.tagFree') }}</span>
+  </a>
+  <a href="{{ url_for('cv_builder_page') }}" class="tool-card">
+    <div class="tool-icon">✍️</div>
+    <div class="tool-title">{{ t('skills.cvBuildTitle') }}</div>
+    <div class="tool-desc">{{ t('skills.cvBuildDesc') }}</div>
+    <span class="tool-tag tag-ai">{{ t('skills.tagAI') }}</span>
+    <span class="tool-tag tag-free">{{ t('skills.tagFree') }}</span>
+  </a>
+  <a href="{{ url_for('resources') }}" class="tool-card">
+    <div class="tool-icon">⚖️</div>
+    <div class="tool-title">{{ t('skills.resourcesTitle') }}</div>
+    <div class="tool-desc">{{ t('skills.resourcesDesc') }}</div>
+    <span class="tool-tag tag-free">{{ t('skills.tagFree') }}</span>
+  </a>
 </div>
 
 <!-- resources section moved to /resources page -->

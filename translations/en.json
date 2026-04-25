@@ -1,6 +1,6 @@
 {
   "nav": {
-    "explore": "Explore Careers",
+    "explore": "Explore",
     "skillup": "Skill Up",
     "getHired": "Get Hired",
     "forHer": "🌸 For Her",
@@ -140,6 +140,9 @@
     "testi2Quote": "NAIK's CV builder turned my market stall experience into something I was proud to send to employers. I got called back within a week.",
     "testi2Name": "Siti Nor, 26",
     "testi2Role": "Retail Executive · Penang",
+    "testi3Quote": "I hadn't worked in four years after my second child. NAIK's 'For Her' section showed me flexible jobs near my area and helped me write my first CV. Now I tutor during school hours.",
+    "testi3Name": "Farah, 31",
+    "testi3Role": "Home Tutor · Johor Bahru",
     "teamLabel": "Our Team",
     "teamHeading": "Built by Malaysians, for Malaysians",
     "teamDesc": "A small team of students and professionals who believe everyone deserves a fair chance at economic dignity.",
@@ -256,7 +259,7 @@
     "privacy": "Privacy Policy",
     "contact": "Contact Us",
     "partner": "Partner with us",
-    "madeIn": "Made with  in Malaysia",
+    "madeIn": "Made with ❤️ in Malaysia",
     "rights": "All rights reserved.",
     "tagline": "a free, community-driven platform helping Malaysians find work, build skills, and know their rights."
   }
