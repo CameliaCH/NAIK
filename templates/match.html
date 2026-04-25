@@ -1,0 +1,817 @@
+{% extends "base.html" %}
+{% from '_nav.html' import naik_nav with context %}
+
+{% block title %}Ibu Mentor Match — NAIK{% endblock %}
+{% block head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <style>
+    /* ── PAGE HERO ────────────────────────────────────────── */
+    .mentor-hero {
+      background: var(--rose-lt);
+      border-bottom: 1px solid var(--border);
+      padding: clamp(6rem,12vw,9rem) clamp(1.5rem,5vw,5rem) clamp(3rem,5vw,4rem);
+      text-align: center;
+    }
+    .mentor-hero h1 { font-size: clamp(2.2rem,5vw,4rem); margin-bottom: .75rem; }
+    .mentor-hero .sub { font-size: 1rem; color: var(--ink-lt); max-width: 500px; margin: 0 auto; line-height: 1.7; }
+
+    /* ── HOW IT WORKS ────────────────────────────────────── */
+    .how-mentor {
+      max-width: 900px; margin: 0 auto;
+      padding: clamp(3rem,6vw,5rem) clamp(1.5rem,5vw,2rem);
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 1.25rem;
+    }
+    .how-m-card {
+      border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 1.5rem; background: var(--cream);
+      text-align: center;
+    }
+    .how-m-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .how-m-title { font-weight: 800; font-size: .95rem; color: var(--ink); margin-bottom: .35rem; }
+    .how-m-desc  { font-size: .8rem; color: var(--ink-lt); line-height: 1.6; }
+
+    /* ── TABS ────────────────────────────────────────────── */
+    .mentor-tabs {
+      display: flex; gap: 0; border-bottom: 1.5px solid var(--border);
+      max-width: 760px; margin: 0 auto;
+      padding: 0 clamp(1.5rem,5vw,2rem);
+    }
+    .mentor-tab {
+      flex: 1; padding: 1rem .5rem; text-align: center;
+      font-weight: 700; font-size: .88rem; color: var(--ink-lt);
+      cursor: pointer; border-bottom: 2.5px solid transparent;
+      transition: color .15s, border-color .15s;
+      background: none; border-top: none; border-left: none; border-right: none;
+    }
+    .mentor-tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+    /* ── FORM PANEL ──────────────────────────────────────── */
+    .mentor-panel { display: none; }
+    .mentor-panel.active { display: block; }
+
+    .mentor-form-wrap {
+      max-width: 680px; margin: 0 auto;
+      padding: clamp(2.5rem,5vw,4rem) clamp(1.5rem,5vw,2rem);
+    }
+
+    .form-section-title {
+      font-size: .7rem; font-weight: 800; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--red);
+      margin-bottom: 1.5rem; margin-top: 2.5rem;
+      padding-bottom: .5rem; border-bottom: 1px solid var(--border);
+    }
+    .form-section-title:first-child { margin-top: 0; }
+
+    .frow { margin-bottom: 1.25rem; }
+    .frow label {
+      display: block; font-size: .8rem; font-weight: 700;
+      color: var(--ink); margin-bottom: .4rem;
+    }
+    .frow .hint { font-size: .74rem; color: var(--ink-lt); margin-bottom: .4rem; }
+    .frow input, .frow select, .frow textarea {
+      width: 100%; border: 1.5px solid var(--border);
+      border-radius: 10px; padding: .7rem 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .88rem; color: var(--ink);
+      background: var(--cream);
+      transition: border-color .15s;
+      outline: none;
+    }
+    .frow input:focus, .frow select:focus, .frow textarea:focus {
+      border-color: var(--red);
+    }
+    .frow textarea { min-height: 90px; resize: vertical; }
+
+    /* chip selector inside form */
+    .form-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .form-chip {
+      border: 1.5px solid var(--border); border-radius: 50px;
+      padding: .35rem .85rem; font-size: .8rem; font-weight: 600;
+      color: var(--ink-mid); background: var(--cream); cursor: pointer;
+      transition: all .15s;
+    }
+    .form-chip.selected { border-color: var(--rose); background: var(--rose-lt); color: var(--ink); }
+
+    /* radio-style cards for availability */
+    .radio-cards { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .radio-card {
+      border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 1rem; cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .radio-card.selected { border-color: var(--rose); background: var(--rose-lt); }
+    .rc-icon { font-size: 1.25rem; margin-bottom: .35rem; }
+    .rc-label { font-size: .82rem; font-weight: 700; color: var(--ink); }
+    .rc-sub   { font-size: .73rem; color: var(--ink-lt); margin-top: .15rem; }
+
+    .form-submit {
+      width: 100%; padding: .9rem; border: none; border-radius: 12px;
+      background: var(--rose); color: #fff; font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem;
+      cursor: pointer; margin-top: 2rem;
+      transition: background .15s, transform .15s;
+    }
+    .form-submit:hover { background: var(--red-dk); transform: translateY(-1px); }
+
+    /* ── MENTOR PROFILE CARDS ───────────────────────────── */
+    .mentor-browser-wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: clamp(2.5rem,5vw,4rem) clamp(1.5rem,5vw,2rem);
+    }
+    .filter-bar {
+      display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .filter-chip {
+      border: 1.5px solid var(--border); border-radius: 50px;
+      padding: .35rem .9rem; font-size: .78rem; font-weight: 600;
+      color: var(--ink-mid); background: var(--cream); cursor: pointer;
+      transition: all .15s;
+    }
+    .filter-chip.active { border-color: var(--rose); background: var(--rose-lt); color: var(--ink); }
+
+    .mentor-grid {
+      display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
+      gap: 1.25rem;
+    }
+    .mentor-card {
+      border: 1.5px solid var(--border); border-radius: 16px;
+      background: var(--cream); overflow: hidden;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .mentor-card:hover { border-color: var(--rose); box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+
+    .mc-top {
+      background: var(--rose-lt); padding: 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .mc-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--rose); display: flex; align-items: center;
+      justify-content: center; font-size: 1.4rem; font-weight: 800;
+      color: #fff; flex-shrink: 0; font-family: 'Playfair Display',serif;
+    }
+    .mc-name  { font-weight: 800; font-size: .95rem; color: var(--ink); }
+    .mc-title { font-size: .75rem; color: var(--ink-lt); margin-top: .2rem; }
+
+    .mc-body { padding: 1.25rem; }
+    .mc-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .85rem; }
+    .mc-tag {
+      font-size: .68rem; font-weight: 700; padding: .18rem .55rem;
+      border-radius: 50px; background: var(--border); color: var(--ink-mid);
+    }
+    .mc-tag.highlight { background: var(--rose-lt); color: var(--rose); }
+    .mc-bio { font-size: .8rem; color: var(--ink-lt); line-height: 1.65; margin-bottom: 1rem; }
+
+    .mc-stats { display: flex; gap: 1.25rem; margin-bottom: 1rem; }
+    .mc-stat { text-align: center; }
+    .mc-stat .n { font-size: .9rem; font-weight: 800; color: var(--ink); }
+    .mc-stat .d { font-size: .68rem; color: var(--ink-lt); }
+
+    .mc-btn {
+      display: block; width: 100%; padding: .6rem;
+      border: 1.5px solid var(--rose); border-radius: 8px;
+      color: var(--rose); background: none; font-weight: 700;
+      font-size: .82rem; cursor: pointer; text-align: center;
+      transition: all .15s; text-decoration: none;
+    }
+    .mc-btn:hover { background: var(--rose); color: #fff; }
+
+    /* ── SUCCESS STATE ──────────────────────────────────── */
+    .form-success {
+      display: none; text-align: center;
+      padding: 4rem 2rem;
+    }
+    .form-success .tick {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--rose-lt); display: flex; align-items: center;
+      justify-content: center; font-size: 1.75rem;
+      margin: 0 auto 1.5rem;
+    }
+    .form-success h3 {
+      font-size: 1.5rem; margin-bottom: .75rem; color: var(--ink);
+    }
+    .form-success p { color: var(--ink-lt); line-height: 1.7; }
+
+    /* mobile */
+    @media (max-width: 520px) {
+      .radio-cards { grid-template-columns: 1fr; }
+      .mentor-tabs { overflow-x: auto; }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+{{ naik_nav(active='forher') }}
+
+<!-- ── HERO ── -->
+<section class="mentor-hero">
+  <span class="section-label" style="color:var(--rose);">For Her · Ibu Mentor Match</span>
+  <h1>You don't have to<br><em style="font-style:normal;color:var(--red);">figure it out alone.</em></h1>
+  <p class="sub">
+    Connect with a mother who has already made the career transition you're planning.
+    Real advice. Real experience. Real sisterhood.
+  </p>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<div class="how-mentor">
+  <div class="how-m-card">
+    <div class="how-m-icon">📝</div>
+    <div class="how-m-title">Tell us what you need</div>
+    <div class="how-m-desc">Fill in a short form — career goal, your situation, preferred contact style.</div>
+  </div>
+  <div class="how-m-card">
+    <div class="how-m-icon">🔍</div>
+    <div class="how-m-title">We find your match</div>
+    <div class="how-m-desc">We match you with a mentor who made the same transition — same field, similar family situation.</div>
+  </div>
+  <div class="how-m-card">
+    <div class="how-m-icon">💬</div>
+    <div class="how-m-title">Connect & grow</div>
+    <div class="how-m-desc">Chat via WhatsApp or video call. Ask anything. No judgement, just support.</div>
+  </div>
+  <div class="how-m-card">
+    <div class="how-m-icon">🌸</div>
+    <div class="how-m-title">Pay it forward</div>
+    <div class="how-m-desc">Once you've made your own transition, become a mentor for the next ibu.</div>
+  </div>
+</div>
+
+<!-- ── TABS ── -->
+<div style="background:var(--cream); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding-top:1px;">
+  <div class="mentor-tabs">
+    <button class="mentor-tab active" onclick="switchTab('find')">🔍 Find a Mentor</button>
+    <button class="mentor-tab" onclick="switchTab('become')">🌸 Become a Mentor</button>
+    <button class="mentor-tab" onclick="switchTab('browse')">👩 Meet Our Mentors</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 1: FIND A MENTOR
+     ══════════════════════════════════════════════════════════ -->
+<div class="mentor-panel active" id="panel-find">
+  <div class="mentor-form-wrap">
+
+    <div id="find-form">
+      <p class="form-section-title">About you</p>
+
+      <div class="frow">
+        <label>Your name <span style="color:var(--ink-lt);font-weight:400;">(first name only is fine)</span></label>
+        <input type="text" id="f-name" placeholder="e.g. Nurul" />
+      </div>
+
+      <div class="frow">
+        <label>Your age range</label>
+        <select id="f-age">
+          <option value="">Select…</option>
+          <option value="u25">Under 25</option>
+          <option value="25-35">25 – 35</option>
+          <option value="35-45">35 – 45</option>
+          <option value="45plus">45 and above</option>
+        </select>
+      </div>
+
+      <div class="frow">
+        <label>How long have you been away from work?</label>
+        <select id="f-gap">
+          <option value="">Select…</option>
+          <option value="u1">Less than 1 year</option>
+          <option value="1-3">1 – 3 years</option>
+          <option value="3-5">3 – 5 years</option>
+          <option value="5plus">More than 5 years</option>
+          <option value="never">Never worked — first job</option>
+        </select>
+      </div>
+
+      <p class="form-section-title">Your career goal</p>
+
+      <div class="frow">
+        <label>What field are you returning to (or entering)?</label>
+        <div class="hint">Choose the closest match.</div>
+        <select id="f-field">
+          <option value="">Select a field…</option>
+          <optgroup label="Education">
+            <option value="teaching_primary">Primary school teacher</option>
+            <option value="teaching_secondary">Secondary school teacher</option>
+            <option value="early_childhood">Early childhood / TASKA / kindergarten</option>
+            <option value="tutoring">Private tutoring</option>
+            <option value="corporate_training">Corporate training / L&D</option>
+          </optgroup>
+          <optgroup label="Business & Sales">
+            <option value="admin">Admin / clerical</option>
+            <option value="sales">Sales / business development</option>
+            <option value="customer_service">Customer service</option>
+            <option value="insurance">Insurance / financial advisory</option>
+            <option value="property">Property agent (REN)</option>
+            <option value="retail">Retail / merchandising</option>
+          </optgroup>
+          <optgroup label="F&B & Hospitality">
+            <option value="hospitality">Hotel / resort</option>
+            <option value="fb_supervisor">F&B supervisor / café management</option>
+            <option value="hawker">Hawker / home-based food business</option>
+          </optgroup>
+          <optgroup label="Care & Health">
+            <option value="nursing">Nursing / clinical</option>
+            <option value="childcare">Childcare worker</option>
+            <option value="eldercare">Elderly care</option>
+            <option value="beauty">Beauty therapy / spa</option>
+          </optgroup>
+          <optgroup label="Digital & Tech">
+            <option value="digital_marketing">Digital marketing / social media</option>
+            <option value="content_writing">Content writing / copywriting</option>
+            <option value="graphic_design">Graphic design</option>
+            <option value="it_support">IT support</option>
+            <option value="data_entry">Data entry / data analyst</option>
+            <option value="ecommerce">E-commerce (Shopee/Lazada seller)</option>
+          </optgroup>
+          <optgroup label="Trades & Services">
+            <option value="tailoring">Tailoring / fashion</option>
+            <option value="photography">Photography / videography</option>
+            <option value="event">Event management</option>
+            <option value="hairdressing">Hairdressing / beauty salon</option>
+          </optgroup>
+          <optgroup label="Own Business">
+            <option value="home_baking">Home baking / food business</option>
+            <option value="craft_sell">Craft / handmade / Etsy-style</option>
+            <option value="mlm_direct_avoid">I want honest advice about MLM</option>
+            <option value="other_biz">Other business idea</option>
+          </optgroup>
+          <option value="not_sure">Not sure yet — need guidance</option>
+        </select>
+      </div>
+
+      <div class="frow">
+        <label>What's your biggest worry about returning?</label>
+        <div class="form-chips" id="worry-chips">
+          <div class="form-chip" data-val="confidence">Confidence / imposter syndrome</div>
+          <div class="form-chip" data-val="skills_gap">Skills gap / outdated knowledge</div>
+          <div class="form-chip" data-val="childcare">Who will watch the kids?</div>
+          <div class="form-chip" data-val="husband">Family / husband not supportive</div>
+          <div class="form-chip" data-val="resume">No idea how to write a CV</div>
+          <div class="form-chip" data-val="low_income">Fear of low starting salary</div>
+          <div class="form-chip" data-val="rejection">Fear of rejection / ageism</div>
+          <div class="form-chip" data-val="network">No professional network</div>
+          <div class="form-chip" data-val="where_start">Don't know where to start</div>
+        </div>
+      </div>
+
+      <p class="form-section-title">Your availability</p>
+
+      <div class="frow">
+        <label>When can you connect with a mentor?</label>
+        <div class="radio-cards" id="avail-cards">
+          <div class="radio-card" data-val="morning">
+            <div class="rc-icon">🌅</div>
+            <div class="rc-label">School hours</div>
+            <div class="rc-sub">8am – 2pm weekdays</div>
+          </div>
+          <div class="radio-card" data-val="evening">
+            <div class="rc-icon">🌙</div>
+            <div class="rc-label">Evenings / weekends</div>
+            <div class="rc-sub">After school hours</div>
+          </div>
+          <div class="radio-card" data-val="flexible">
+            <div class="rc-icon">🕐</div>
+            <div class="rc-label">Flexible</div>
+            <div class="rc-sub">I can adjust my schedule</div>
+          </div>
+          <div class="radio-card" data-val="async">
+            <div class="rc-icon">💬</div>
+            <div class="rc-label">WhatsApp only</div>
+            <div class="rc-sub">No calls — text at my pace</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="frow">
+        <label>Your WhatsApp or email <span style="color:var(--ink-lt);font-weight:400;">(so we can send your match)</span></label>
+        <input type="text" id="f-contact" placeholder="e.g. 0123456789 or email@gmail.com" />
+      </div>
+
+      <div class="frow">
+        <label>Anything else you'd like your mentor to know? <span style="color:var(--ink-lt);font-weight:400;">(optional)</span></label>
+        <textarea id="f-note" placeholder="e.g. I was a teacher 8 years ago, left when my twins were born. Looking for someone who understands the school system now…"></textarea>
+      </div>
+
+      <button class="form-submit" onclick="submitFind()">Find my mentor match →</button>
+      <p style="text-align:center;font-size:.75rem;color:var(--ink-lt);margin-top:1rem;">
+        We'll review your request and send your mentor's contact within 2–3 working days.
+        All data is kept private and never shared with third parties.
+      </p>
+    </div><!-- /find-form -->
+
+    <div class="form-success" id="find-success">
+      <div class="tick">✅</div>
+      <h3>We've got your request!</h3>
+      <p>We'll match you with a mentor in <strong>2–3 working days</strong>.<br>
+         Watch your WhatsApp or email for a message from NAIK.</p>
+      <p style="margin-top:1.5rem;">While you wait — browse our mentors below 👇</p>
+      <button class="btn btn-rose btn-lg" style="margin-top:1.5rem;" onclick="switchTab('browse')">
+        Meet our mentors
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 2: BECOME A MENTOR
+     ══════════════════════════════════════════════════════════ -->
+<div class="mentor-panel" id="panel-become">
+  <div class="mentor-form-wrap">
+
+    <div id="become-form">
+      <p style="color:var(--ink-lt);font-size:.88rem;line-height:1.7;margin-bottom:2rem;">
+        You've already made the leap — and your story matters.
+        Mentors commit to <strong>1–2 hours per month</strong> maximum.
+        You choose how many mentees you take on.
+      </p>
+
+      <p class="form-section-title">About you</p>
+
+      <div class="frow">
+        <label>Your name</label>
+        <input type="text" id="b-name" placeholder="e.g. Azura binti Ahmad" />
+      </div>
+
+      <div class="frow">
+        <label>Your current job / role</label>
+        <input type="text" id="b-role" placeholder="e.g. Kindergarten Principal at Taska Murni" />
+      </div>
+
+      <div class="frow">
+        <label>How long were you out of the workforce before returning?</label>
+        <select id="b-gap">
+          <option value="">Select…</option>
+          <option value="u1">Less than 1 year</option>
+          <option value="1-3">1 – 3 years</option>
+          <option value="3-5">3 – 5 years</option>
+          <option value="5plus">More than 5 years</option>
+        </select>
+      </div>
+
+      <div class="frow">
+        <label>What field did you return to?</label>
+        <select id="b-field">
+          <option value="">Select…</option>
+          <option value="teaching_primary">Primary school teacher</option>
+          <option value="teaching_secondary">Secondary school teacher</option>
+          <option value="early_childhood">Early childhood / TASKA / kindergarten</option>
+          <option value="tutoring">Private tutoring</option>
+          <option value="admin">Admin / office</option>
+          <option value="sales">Sales / business development</option>
+          <option value="customer_service">Customer service</option>
+          <option value="insurance">Insurance / financial advisory</option>
+          <option value="property">Property (REN)</option>
+          <option value="hospitality">Hotel / F&B</option>
+          <option value="nursing">Nursing / clinical</option>
+          <option value="childcare">Childcare / eldercare</option>
+          <option value="beauty">Beauty therapy / spa</option>
+          <option value="digital_marketing">Digital marketing</option>
+          <option value="content_writing">Content writing / copywriting</option>
+          <option value="graphic_design">Graphic design</option>
+          <option value="ecommerce">E-commerce (Shopee/Lazada)</option>
+          <option value="home_baking">Home food business</option>
+          <option value="hairdressing">Hairdressing / beauty salon</option>
+          <option value="tailoring">Tailoring / fashion</option>
+          <option value="photography">Photography / events</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <p class="form-section-title">Your mentorship style</p>
+
+      <div class="frow">
+        <label>How do you prefer to connect?</label>
+        <div class="form-chips" id="style-chips">
+          <div class="form-chip" data-val="whatsapp">WhatsApp chat</div>
+          <div class="form-chip" data-val="voice">Voice call</div>
+          <div class="form-chip" data-val="video">Video call</div>
+          <div class="form-chip" data-val="coffee">Coffee meetup (local)</div>
+          <div class="form-chip" data-val="any_style">Any — I'm flexible</div>
+        </div>
+      </div>
+
+      <div class="frow">
+        <label>Maximum mentees at one time</label>
+        <select id="b-capacity">
+          <option value="1">1 — I want to focus deeply</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">Up to 5</option>
+        </select>
+      </div>
+
+      <div class="frow">
+        <label>In a sentence or two — what would you tell a mother who's afraid to return to work?</label>
+        <textarea id="b-message" placeholder="e.g. The gap on your CV matters far less than you think. Companies want reliability and maturity — and you have both."></textarea>
+      </div>
+
+      <div class="frow">
+        <label>Your WhatsApp or email</label>
+        <input type="text" id="b-contact" placeholder="e.g. 0123456789" />
+      </div>
+
+      <div class="frow">
+        <label>Profile photo (optional)</label>
+        <div class="hint">A warm photo makes mentees feel more comfortable reaching out. Send via WhatsApp to our NAIK number after registering.</div>
+        <input type="text" placeholder="Leave blank — we'll follow up after you register" disabled style="opacity:.5;cursor:not-allowed;" />
+      </div>
+
+      <button class="form-submit" style="background:var(--red);" onclick="submitBecome()">Register as a mentor →</button>
+      <p style="text-align:center;font-size:.75rem;color:var(--ink-lt);margin-top:1rem;">
+        Your profile will be reviewed by our team before going live. We'll contact you within 3 working days.
+      </p>
+    </div><!-- /become-form -->
+
+    <div class="form-success" id="become-success">
+      <div class="tick">💐</div>
+      <h3>Terima kasih, Ibu!</h3>
+      <p>Your mentor registration is received. Our team will review your profile and get in touch in <strong>3 working days</strong>.</p>
+      <p style="margin-top:1rem;">Your story is exactly what another mother needs to hear. 🌸</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 3: BROWSE MENTORS (static showcase)
+     ══════════════════════════════════════════════════════════ -->
+<div class="mentor-panel" id="panel-browse">
+  <div class="mentor-browser-wrap">
+
+    <p style="color:var(--ink-lt);font-size:.85rem;margin-bottom:1.5rem;line-height:1.7;">
+      Browse our verified mentors. Click any card to request a match through the <strong>Find a Mentor</strong> tab.
+    </p>
+
+    <!-- filter chips -->
+    <div class="filter-bar">
+      <div class="filter-chip active" data-filter="all" onclick="filterMentors(this,'all')">All</div>
+      <div class="filter-chip" data-filter="teaching_primary" onclick="filterMentors(this,'teaching_primary')">Teaching</div>
+      <div class="filter-chip" data-filter="early_childhood" onclick="filterMentors(this,'early_childhood')">Childcare / TASKA</div>
+      <div class="filter-chip" data-filter="digital_marketing" onclick="filterMentors(this,'digital_marketing')">Digital / Content</div>
+      <div class="filter-chip" data-filter="ecommerce" onclick="filterMentors(this,'ecommerce')">E-commerce</div>
+      <div class="filter-chip" data-filter="nursing" onclick="filterMentors(this,'nursing')">Healthcare</div>
+      <div class="filter-chip" data-filter="insurance" onclick="filterMentors(this,'insurance')">Sales / Finance</div>
+      <div class="filter-chip" data-filter="home_baking" onclick="filterMentors(this,'home_baking')">Home Business</div>
+      <div class="filter-chip" data-filter="property" onclick="filterMentors(this,'property')">Property</div>
+    </div>
+
+    <div class="mentor-grid" id="mentor-grid">
+      <!-- cards rendered by JS -->
+    </div>
+
+    <div style="text-align:center;margin-top:3rem;padding:2rem;border:1.5px dashed var(--border);border-radius:16px;">
+      <p style="color:var(--ink-lt);font-size:.85rem;line-height:1.7;">
+        Don't see your field? <br>
+        We add new mentors every week. 
+        <button onclick="switchTab('find')" style="background:none;border:none;color:var(--red);font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem;">
+          Submit a mentee request →
+        </button>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   MENTOR DATA  (static showcase — replace with Supabase query)
+   ══════════════════════════════════════════════════════════ */
+const MENTORS = [
+  {
+    name: 'Azura Binti Razali',
+    initial: 'A',
+    title: 'Kindergarten Principal · Subang Jaya',
+    field: 'early_childhood',
+    gapYears: '5 years',
+    tags: ['Early Childhood','TASKA','School hours'],
+    highlight: 'Teaching / TASKA',
+    bio: 'Left my Montessori teacher role when my twins were born. Returned part-time 5 years later and now run my own TASKA with 32 children enrolled. CECE helped me level up fast.',
+    stats: [{ n: '3', d: 'mentees helped' }, { n: '5 yrs', d: 'career gap' }, { n: 'Subang', d: 'base location' }],
+    style: ['WhatsApp','Voice call'],
+    avail: 'School hours',
+  },
+  {
+    name: 'Priya Selvam',
+    initial: 'P',
+    title: 'Social Media Manager · Remote',
+    field: 'digital_marketing',
+    gapYears: '3 years',
+    tags: ['Digital Marketing','Freelance','Remote work'],
+    highlight: 'Digital / Content',
+    bio: 'Quit my PR job for motherhood. Upskilled via Google Digital Garage during naptimes and landed a remote role within 8 months. Now I work school hours only.',
+    stats: [{ n: '5', d: 'mentees helped' }, { n: '3 yrs', d: 'career gap' }, { n: 'WFH', d: 'work style' }],
+    style: ['WhatsApp','Video call'],
+    avail: 'Flexible',
+  },
+  {
+    name: 'Hafizah Othman',
+    initial: 'H',
+    title: 'Shopee Top Seller (Home Baking) · Klang',
+    field: 'home_baking',
+    gapYears: '8 years',
+    tags: ['Home Business','Shopee','Baking','SSM'],
+    highlight: 'Home Business',
+    bio: 'Was a bank teller before having 3 kids. Started selling kek batik and nasi lemak frozen packs during MCO. Now RM12,000/month gross from home. Started with RM200.',
+    stats: [{ n: '7', d: 'mentees helped' }, { n: '8 yrs', d: 'career gap' }, { n: 'Klang', d: 'base' }],
+    style: ['WhatsApp','Coffee meetup'],
+    avail: 'Evenings & weekends',
+  },
+  {
+    name: 'Sheena Tan',
+    initial: 'S',
+    title: 'Staff Nurse · Pantai Hospital KL',
+    field: 'nursing',
+    gapYears: '4 years',
+    tags: ['Nursing','Healthcare','Shift work'],
+    highlight: 'Healthcare',
+    bio: 'Left nursing when my son was diagnosed with autism. Returned part-time after 4 years via a private hospital\'s returning-nurse programme. The gap didn\'t cost me my career.',
+    stats: [{ n: '4', d: 'mentees helped' }, { n: '4 yrs', d: 'career gap' }, { n: 'KL', d: 'base' }],
+    style: ['WhatsApp','Voice call'],
+    avail: 'School hours (AM shifts)',
+  },
+  {
+    name: 'Noraini Abdul Hamid',
+    initial: 'N',
+    title: 'Primary School Teacher · Petaling Jaya',
+    field: 'teaching_primary',
+    gapYears: '6 years',
+    tags: ['Teaching','Primary','Government school'],
+    highlight: 'Teaching',
+    bio: 'Took voluntary retirement to care for my children. Re-entered as relief teacher after 6 years, then passed the guru sandaran exam. Now teaching Pendidikan Islam full-time.',
+    stats: [{ n: '6', d: 'mentees helped' }, { n: '6 yrs', d: 'career gap' }, { n: 'PJ', d: 'base' }],
+    style: ['WhatsApp','Video call'],
+    avail: 'School hours',
+  },
+  {
+    name: 'Jenny Liew',
+    initial: 'J',
+    title: 'Senior REN (Property) · Penang',
+    field: 'property',
+    gapYears: '2 years',
+    tags: ['Property','REN','Commission income','Penang'],
+    highlight: 'Property',
+    bio: 'Took maternity break after second child. Got my REN tag while breastfeeding and made my first sale 3 months after rejoining. Commission income fits a mother\'s schedule perfectly.',
+    stats: [{ n: '3', d: 'mentees helped' }, { n: '2 yrs', d: 'career gap' }, { n: 'Penang', d: 'base' }],
+    style: ['WhatsApp','Coffee meetup'],
+    avail: 'Flexible',
+  },
+  {
+    name: 'Rohani Ismail',
+    initial: 'R',
+    title: 'Unit Trust Consultant · Johor Bahru',
+    field: 'insurance',
+    gapYears: '7 years',
+    tags: ['Insurance','Unit Trust','B40 community'],
+    highlight: 'Sales / Finance',
+    bio: 'Was a housewife for 7 years. Joined PNB as a consultant at 38 and made RM4,500 first month. Flexible hours meant I never missed a school event.',
+    stats: [{ n: '5', d: 'mentees helped' }, { n: '7 yrs', d: 'career gap' }, { n: 'JB', d: 'base' }],
+    style: ['WhatsApp','Voice call'],
+    avail: 'Flexible',
+  },
+  {
+    name: 'Siti Mariam Daud',
+    initial: 'S',
+    title: 'TikTok Content Creator & Shopee Seller · Kedah',
+    field: 'ecommerce',
+    gapYears: '10 years',
+    tags: ['E-commerce','TikTok','Content','Rural'],
+    highlight: 'Digital / E-commerce',
+    bio: 'Never had a formal job. Started selling tudung on TikTok LIVE from my kampung at 35 after my children started school. Now RM8,000+/month and I never left home.',
+    stats: [{ n: '9', d: 'mentees helped' }, { n: '10 yrs', d: 'never worked' }, { n: 'Kedah', d: 'base' }],
+    style: ['WhatsApp'],
+    avail: 'WhatsApp only',
+  },
+];
+
+/* ── RENDER MENTOR CARDS ─────────────────────────────────── */
+function renderMentors(filter) {
+  const data = filter === 'all' ? MENTORS : MENTORS.filter(m => m.field === filter);
+  const grid = document.getElementById('mentor-grid');
+
+  if (!data.length) {
+    grid.innerHTML = `<p style="color:var(--ink-lt);font-size:.85rem;grid-column:1/-1;padding:2rem 0;">
+      No mentors in this field yet — new mentors are added every week!
+    </p>`;
+    return;
+  }
+
+  grid.innerHTML = data.map(m => `
+    <div class="mentor-card">
+      <div class="mc-top">
+        <div class="mc-avatar">${m.initial}</div>
+        <div>
+          <div class="mc-name">${m.name}</div>
+          <div class="mc-title">${m.title}</div>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-tags">
+          ${m.tags.map((t,i) => `<span class="mc-tag ${i===0?'highlight':''}">${t}</span>`).join('')}
+        </div>
+        <div class="mc-bio">"${m.bio}"</div>
+        <div class="mc-stats">
+          ${m.stats.map(s => `<div class="mc-stat"><div class="n">${s.n}</div><div class="d">${s.d}</div></div>`).join('')}
+        </div>
+        <div style="font-size:.74rem;color:var(--ink-lt);margin-bottom:.75rem;">
+          📅 ${m.avail} &nbsp;·&nbsp; 💬 ${m.style.join(', ')}
+        </div>
+        <button class="mc-btn" onclick="requestMentor('${m.name}','${m.field}')">
+          Request this mentor
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterMentors(el, filter) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderMentors(filter);
+}
+
+function requestMentor(name, field) {
+  // Pre-fill the Find tab and switch to it
+  switchTab('find');
+  const sel = document.getElementById('f-field');
+  if (sel) sel.value = field;
+  // Smooth to top of form
+  document.getElementById('panel-find').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Note in textarea
+  const note = document.getElementById('f-note');
+  if (note && !note.value) note.value = `I'd love to connect with ${name} if possible.`;
+}
+
+/* ── TAB SWITCHING ──────────────────────────────────────── */
+function switchTab(tab) {
+  ['find','become','browse'].forEach(t => {
+    document.getElementById(`panel-${t}`).classList.toggle('active', t === tab);
+  });
+  document.querySelectorAll('.mentor-tab').forEach((btn, i) => {
+    const tabs = ['find','become','browse'];
+    btn.classList.toggle('active', tabs[i] === tab);
+  });
+  if (tab === 'browse') renderMentors('all');
+}
+
+/* ── CHIP TOGGLE (shared helper) ────────────────────────── */
+function initChips(containerId) {
+  document.getElementById(containerId)?.querySelectorAll('.form-chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('selected'));
+  });
+}
+function initRadioCards(containerId) {
+  document.getElementById(containerId)?.querySelectorAll('.radio-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.getElementById(containerId).querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+}
+
+/* ── FORM SUBMISSIONS (demo — wire to Supabase / Flask) ─── */
+function submitFind() {
+  const name = document.getElementById('f-name').value.trim();
+  const contact = document.getElementById('f-contact').value.trim();
+  if (!name || !contact) {
+    alert('Please fill in your name and contact details so we can reach you.');
+    return;
+  }
+  /* TODO: POST to /api/mentor-request with form data */
+  document.getElementById('find-form').style.display = 'none';
+  document.getElementById('find-success').style.display = 'block';
+  document.getElementById('find-success').scrollIntoView({ behavior: 'smooth' });
+}
+
+function submitBecome() {
+  const name = document.getElementById('b-name').value.trim();
+  const contact = document.getElementById('b-contact').value.trim();
+  const field = document.getElementById('b-field').value;
+  if (!name || !contact || !field) {
+    alert('Please fill in your name, field, and contact details.');
+    return;
+  }
+  /* TODO: POST to /api/mentor-register with form data */
+  document.getElementById('become-form').style.display = 'none';
+  document.getElementById('become-success').style.display = 'block';
+  document.getElementById('become-success').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ── INIT ──────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  initChips('worry-chips');
+  initChips('style-chips');
+  initRadioCards('avail-cards');
+  renderMentors('all');
+});
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='naik.js') }}"></script>
+{% endblock %}

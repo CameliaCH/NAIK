@@ -137,6 +137,13 @@ def _score_job(job, quiz_result):
     if not job.get('physically_demanding') and q_outdoor >= 4:
         score -= 1  # minor penalty — outdoor-lover might get bored
 
+    # 9. School-hours availability filter/boost
+    availability = quiz_result.get('availability', 'anytime')
+    if availability == 'school_hours':
+        if job.get('school_hours_ok'):
+            score += 8   # strong boost for compatible jobs
+        else:
+            score -= 10  # heavy penalty — job won't fit her schedule
 
     return score
 
@@ -213,6 +220,10 @@ def _generate_why_fit_dynamic(job, quiz_result, lang):
         elif q_flexible < 2 and job.get('work_type') == 'full-time':
             reasons.append(f"you prefer structure — this is a fixed full-time role with clear working hours")
 
+        # School-hours availability — highly relevant for mothers
+        if quiz_result.get('availability') == 'school_hours' and job.get('school_hours_ok'):
+            reasons.append(f"{title} fits within school hours — you can be home for your children after 2 pm")
+
         if q_leadership >= 3 and 'leadership' in job_affinities:
             reasons.append(f"you're growth-oriented — the {title} path has a clear leadership/management track")
 
@@ -283,6 +294,8 @@ def _generate_why_fit_dynamic(job, quiz_result, lang):
             reasons.append(f"kreativiti anda sangat dihargai dalam {title_bm}")
         if q_flexible >= 3 and job.get('work_type') in ('part-time', 'freelance'):
             reasons.append(f"anda perlukan fleksibiliti — {title_bm} adalah {job.get('work_type', 'fleksibel')}")
+        if quiz_result.get('availability') == 'school_hours' and job.get('school_hours_ok'):
+            reasons.append(f"{title_bm} sesuai dalam waktu sekolah — anda boleh pulang untuk anak-anak selepas pukul 2 petang")
         if q_growth >= 3:
             reasons.append(f"anda bersedia belajar — laluan ini boleh capai RM{target_max:,}/bulan dalam {timeline} tahun")
         if income_mode == 'immediate':
@@ -440,6 +453,7 @@ def save_quiz():
         'income_mode': profile.get('income_mode'),
         'education':   profile.get('education'),
         'skills':      profile.get('skills') or [],
+        'availability': profile.get('availability', 'anytime'),
         # Slider answers (q_digital and q_ambition removed from quiz)
         'q_people':    profile.get('q_people'),
         'q_outdoor':   profile.get('q_outdoor'),
@@ -448,10 +462,11 @@ def save_quiz():
         'q_growth':    profile.get('q_growth'),
         'q_leadership':profile.get('q_leadership'),
         'profile_summary': {
-            'interest':    profile.get('interest'),
-            'income_mode': profile.get('income_mode'),
-            'education':   profile.get('education'),
-            'lang':        lang,
+            'interest':      profile.get('interest'),
+            'income_mode':   profile.get('income_mode'),
+            'education':     profile.get('education'),
+            'availability':  profile.get('availability', 'anytime'),
+            'lang':          lang,
         }
     }
 
@@ -531,13 +546,20 @@ def get_recommendations():
                         jobs.append(j)
 
         # 3. Filter by eligibility
+        availability = quiz_result.get('availability', 'anytime')
         eligible = [
             j for j in jobs
             if _education_ok(j.get('education_min', 'primary'), user_edu)
             and _age_ok(j.get('min_age', 16), user_age)
+            and (availability != 'school_hours' or j.get('school_hours_ok', False))
         ]
         if not eligible:
-            eligible = jobs
+            # Relax school_hours filter if no matches, but keep edu/age
+            eligible = [
+                j for j in jobs
+                if _education_ok(j.get('education_min', 'primary'), user_edu)
+                and _age_ok(j.get('min_age', 16), user_age)
+            ] or jobs
 
         # 4. Score & rank
         scored = sorted(eligible, key=lambda j: _score_job(j, quiz_result), reverse=True)
@@ -770,11 +792,12 @@ def generate_roadmap():
             if qr_res.ok and qr_res.json():
                 qr = qr_res.json()[0]
                 profile.update({
-                    'age':        qr.get('age', '18-22'),
-                    'education':  qr.get('education', 'spm'),
-                    'interest':   qr.get('interest', 'biz'),
-                    'skills':     qr.get('skills') or [],
-                    'income_mode':qr.get('income_mode', 'immediate'),
+                    'age':          qr.get('age', '18-22'),
+                    'education':    qr.get('education', 'spm'),
+                    'interest':     qr.get('interest', 'biz'),
+                    'skills':       qr.get('skills') or [],
+                    'income_mode':  qr.get('income_mode', 'immediate'),
+                    'availability': qr.get('availability', 'anytime'),
                 })
             user_url = f"{SUPABASE}/rest/v1/users?id=eq.{user_id}&select=name&limit=1"
             user_res = req_lib.get(user_url, headers=_supabase_headers(), timeout=8)
@@ -808,11 +831,20 @@ def generate_roadmap():
         if job_id:
             top3 = jobs[:1]
         else:
+            availability = profile.get('availability', 'anytime')
             eligible = [
                 j for j in jobs
                 if _education_ok(j.get('education_min', 'primary'), user_edu)
                 and _age_ok(j.get('min_age', 16), user_age)
+                and (availability != 'school_hours' or j.get('school_hours_ok', False))
             ]
+            if not eligible:
+                # Relax school_hours filter, keep edu/age requirements
+                eligible = [
+                    j for j in jobs
+                    if _education_ok(j.get('education_min', 'primary'), user_edu)
+                    and _age_ok(j.get('min_age', 16), user_age)
+                ] or jobs
             scored = sorted(eligible or jobs, key=lambda j: _score_job(j, profile), reverse=True)
             top3 = scored[:3]
 

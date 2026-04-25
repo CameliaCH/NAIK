@@ -136,6 +136,34 @@
       border-radius: 50%; animation: mspin .8s linear infinite;
     }
     .grid-loading p { font-size: .88rem; }
+
+    /* ── SCHOOL HOURS FILTER CHIP ── */
+    .filter-chip--school {
+      background: rgba(191, 70, 70, 0.07);
+      border-color: rgba(191, 70, 70, 0.25) !important;
+      color: var(--red, #BF4646) !important;
+    }
+    .filter-chip--school.active,
+    .filter-chip--school:hover {
+      background: var(--red, #BF4646) !important;
+      border-color: var(--red, #BF4646) !important;
+      color: #fff !important;
+    }
+
+    /* ── SCHOOL HOURS BADGE on job cards ── */
+    .school-hours-badge {
+      position: absolute;
+      top: 0.55rem; left: 0.55rem;
+      background: rgba(191,70,70,0.88);
+      color: #fff;
+      font-size: .6rem; font-weight: 800; letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: .2rem .55rem;
+      border-radius: 50px;
+      backdrop-filter: blur(6px);
+      pointer-events: none;
+      z-index: 5;
+    }
   </style>
 {% endblock %}
 
@@ -179,6 +207,7 @@
         <button class="filter-chip" data-filter="part-time">{{ t('explore.filterPartTime') }}</button>
         <button class="filter-chip" data-filter="remote">{{ t('explore.filterRemote') }}</button>
         <button class="filter-chip" data-filter="freelance">{{ t('explore.filterFreelance') }}</button>
+        <button class="filter-chip filter-chip--school" data-filter="school-hours" title="Jobs that fit within school hours (approx. 8 am – 2 pm)">🏫 School hours</button>
         <button class="filter-chip" data-filter="salary-low">RM &lt; 2,000</button>
         <button class="filter-chip" data-filter="salary-mid">RM 2,000–4,000</button>
         <button class="filter-chip" data-filter="salary-high">RM 4,000+</button>
@@ -475,11 +504,15 @@
     const salary   = salaryLabel(job);
     const descText = job.tagline_en || '';
     const imgUrl   = jobPhotoUrl(job);
+    const schoolBadge = job.school_hours_ok
+      ? `<span class="school-hours-badge">🏫 School hours</span>`
+      : '';
 
     card.innerHTML = `
       <div class="job-thumb" style="background-image:url('${imgUrl}');background-size:cover;background-position:center;"></div>
       <div class="job-gradient"></div>
       <span class="job-type-badge ${job.work_type || 'full-time'}">${workType}</span>
+      ${schoolBadge}
       <div class="rank-number">—</div>
       <button class="heart-btn${isSaved ? ' saved' : ''}" aria-label="Save job" data-id="${jobIdStr}">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -602,8 +635,9 @@
 
     const workBadges = document.getElementById('modal-work-badges');
     workBadges.innerHTML = '';
-    if (job.work_type)     workBadges.innerHTML += `<span class="modal-work-badge">${job.work_type.replace('-',' ')}</span>`;
-    if (job.location_type) workBadges.innerHTML += `<span class="modal-work-badge">${job.location_type}</span>`;
+    if (job.work_type)       workBadges.innerHTML += `<span class="modal-work-badge">${job.work_type.replace('-',' ')}</span>`;
+    if (job.location_type)   workBadges.innerHTML += `<span class="modal-work-badge">${job.location_type}</span>`;
+    if (job.school_hours_ok) workBadges.innerHTML += `<span class="modal-work-badge" style="background:rgba(191,70,70,.12);color:#BF4646;">🏫 School hours</span>`;
 
     document.getElementById('modal-duties').textContent = job.duties_en || job.description_en || '—';
 
@@ -703,6 +737,8 @@
         jobs = jobs.filter(j => (j.work_type || '') === activeFilter);
       } else if (activeFilter === 'remote') {
         jobs = jobs.filter(j => j.work_type === 'remote' || j.location_type === 'remote');
+      } else if (activeFilter === 'school-hours') {
+        jobs = jobs.filter(j => j.school_hours_ok === true);
       } else {
         jobs = jobs.filter(j => salaryBracket(j) === activeFilter);
       }

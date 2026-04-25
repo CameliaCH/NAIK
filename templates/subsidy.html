@@ -1,0 +1,964 @@
+{% extends "base.html" %}
+{% from '_nav.html' import naik_nav with context %}
+
+{% block title %}Subsidy & Grant Finder — NAIK{% endblock %}
+{% block head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='naik.css') }}">
+  <style>
+    /* ── WIZARD LAYOUT ─────────────────────────────────────── */
+    .wizard-hero {
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+      padding: clamp(6rem,12vw,9rem) clamp(1.5rem,5vw,5rem) clamp(3rem,5vw,4rem);
+      text-align: center;
+    }
+    .wizard-hero h1 { font-size: clamp(2rem,5vw,3.8rem); margin-bottom: .75rem; }
+    .wizard-hero p  { font-size: 1rem; color: var(--ink-lt); max-width: 480px; margin: 0 auto; }
+
+    /* progress bar */
+    .wiz-progress {
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; margin-top: 2.5rem;
+    }
+    .wiz-pip {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border); transition: background .3s, transform .3s;
+    }
+    .wiz-pip.active { background: var(--red); transform: scale(1.4); }
+    .wiz-pip.done   { background: var(--red-dk); }
+
+    /* step card */
+    .wizard-wrap {
+      max-width: 680px; margin: 0 auto;
+      padding: clamp(3rem,6vw,5rem) clamp(1.5rem,5vw,2rem);
+    }
+    .wiz-step {
+      display: none;
+      animation: fadeUp .35s ease both;
+    }
+    .wiz-step.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .wiz-q {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem,3vw,2rem); font-weight: 700;
+      color: var(--ink); margin-bottom: .5rem; line-height: 1.2;
+    }
+    .wiz-hint { font-size: .82rem; color: var(--ink-lt); margin-bottom: 2rem; }
+
+    /* option chips */
+    .wiz-options {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+      gap: .75rem; margin-bottom: 2rem;
+    }
+    .wiz-opt {
+      border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 1rem 1.25rem;
+      cursor: pointer; background: var(--cream);
+      transition: border-color .15s, background .15s, transform .15s;
+      display: flex; flex-direction: column; gap: .25rem;
+    }
+    .wiz-opt:hover { border-color: var(--red); transform: translateY(-2px); }
+    .wiz-opt.selected {
+      border-color: var(--red); background: var(--rose-lt);
+    }
+    .wiz-opt-icon { font-size: 1.5rem; }
+    .wiz-opt-label {
+      font-weight: 700; font-size: .88rem; color: var(--ink); line-height: 1.3;
+    }
+    .wiz-opt-sub { font-size: .75rem; color: var(--ink-lt); }
+
+    /* multi-select chips (Q3) */
+    .wiz-chips {
+      display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2rem;
+    }
+    .wiz-chip {
+      border: 1.5px solid var(--border);
+      border-radius: 50px; padding: .4rem 1rem;
+      cursor: pointer; font-size: .82rem; font-weight: 600;
+      color: var(--ink-mid); background: var(--cream);
+      transition: border-color .15s, background .15s;
+    }
+    .wiz-chip.selected { border-color: var(--red); background: var(--rose-lt); color: var(--ink); }
+
+    /* nav buttons */
+    .wiz-nav { display: flex; gap: .75rem; margin-top: 1.5rem; }
+    .wiz-back {
+      background: none; border: 1.5px solid var(--border);
+      border-radius: 10px; padding: .7rem 1.5rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600; font-size: .88rem; color: var(--ink-lt);
+      cursor: pointer; transition: all .15s;
+    }
+    .wiz-back:hover { border-color: var(--ink); color: var(--ink); }
+    .wiz-next {
+      flex: 1; background: var(--red); color: #fff;
+      border: none; border-radius: 10px; padding: .85rem 2rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700; font-size: .95rem;
+      cursor: pointer; transition: background .15s, transform .15s;
+    }
+    .wiz-next:hover { background: var(--red-dk); transform: translateY(-1px); }
+    .wiz-next:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+
+    /* ── RESULTS ───────────────────────────────────────────── */
+    #results-section { display: none; }
+    .results-header {
+      text-align: center;
+      padding: clamp(3rem,6vw,5rem) clamp(1.5rem,5vw,2rem) 2rem;
+    }
+    .results-header h2 { margin-bottom: .5rem; }
+    .results-count {
+      display: inline-block;
+      background: var(--red); color: #fff;
+      border-radius: 50px; padding: .3rem .9rem;
+      font-size: .8rem; font-weight: 700; margin-bottom: 1rem;
+    }
+
+    .results-grid {
+      max-width: 900px; margin: 0 auto;
+      padding: 0 clamp(1.5rem,5vw,2rem) clamp(3rem,6vw,5rem);
+      display: grid; gap: 1rem;
+    }
+
+    .subsidy-card {
+      border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 1.5rem;
+      background: var(--cream);
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 1rem; align-items: start;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .subsidy-card:hover { border-color: var(--red); box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+    .subsidy-card.highlight { border-color: var(--red); border-width: 2px; }
+
+    .sub-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--rose-lt); display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .sub-body { min-width: 0; }
+    .sub-name {
+      font-weight: 800; font-size: 1rem; color: var(--ink);
+      margin-bottom: .25rem; line-height: 1.3;
+    }
+    .sub-desc { font-size: .82rem; color: var(--ink-lt); line-height: 1.6; margin-bottom: .75rem; }
+    .sub-tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .sub-tag {
+      font-size: .7rem; font-weight: 700; padding: .2rem .6rem;
+      border-radius: 50px; background: var(--border); color: var(--ink-mid);
+    }
+    .sub-tag.match { background: var(--rose-lt); color: var(--red); }
+    .sub-amount {
+      text-align: right; flex-shrink: 0;
+    }
+    .sub-amount .amt {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700; color: var(--red);
+      white-space: nowrap;
+    }
+    .sub-amount .per { font-size: .72rem; color: var(--ink-lt); }
+    .sub-link {
+      display: inline-block; margin-top: .75rem;
+      font-size: .8rem; font-weight: 600; color: var(--red);
+      text-decoration: none; border-bottom: 1px solid var(--red);
+      transition: opacity .15s;
+    }
+    .sub-link:hover { opacity: .7; }
+
+    .no-match {
+      text-align: center; padding: 3rem 2rem;
+      color: var(--ink-lt); font-size: .9rem;
+    }
+
+    .restart-btn {
+      display: block; width: fit-content; margin: 2rem auto;
+      background: none; border: 1.5px solid var(--border);
+      border-radius: 10px; padding: .7rem 2rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600; font-size: .9rem;
+      color: var(--ink-mid); cursor: pointer;
+      transition: all .15s;
+    }
+    .restart-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    /* mobile */
+    @media (max-width: 600px) {
+      .subsidy-card { grid-template-columns: auto 1fr; }
+      .sub-amount   { grid-column: 2; }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+{{ naik_nav(active='') }}
+
+<!-- ── WIZARD HERO ── -->
+<section class="wizard-hero">
+  <span class="section-label">Subsidy & Grant Finder</span>
+  <h1>Money waiting<br><em style="font-style:normal;color:var(--red);">for you.</em></h1>
+  <p>Answer 3 quick questions. See every government subsidy and grant you qualify for — right now.</p>
+  <div class="wiz-progress" id="progress-bar">
+    <div class="wiz-pip active" id="pip-0"></div>
+    <div class="wiz-pip" id="pip-1"></div>
+    <div class="wiz-pip" id="pip-2"></div>
+  </div>
+</section>
+
+<!-- ── WIZARD STEPS ── -->
+<div class="wizard-wrap" id="wizard-section">
+
+  <!-- STEP 1: Household -->
+  <div class="wiz-step active" data-step="0">
+    <p class="wiz-q">What best describes your household?</p>
+    <p class="wiz-hint">Select one.</p>
+    <div class="wiz-options">
+      <div class="wiz-opt" data-val="single">
+        <span class="wiz-opt-icon">👤</span>
+        <span class="wiz-opt-label">Single / no dependants</span>
+        <span class="wiz-opt-sub">Living alone or with family</span>
+      </div>
+      <div class="wiz-opt" data-val="married_no_kids">
+        <span class="wiz-opt-icon">💑</span>
+        <span class="wiz-opt-label">Married, no children</span>
+        <span class="wiz-opt-sub"></span>
+      </div>
+      <div class="wiz-opt" data-val="married_kids">
+        <span class="wiz-opt-icon">👨‍👩‍👧</span>
+        <span class="wiz-opt-label">Married with children</span>
+        <span class="wiz-opt-sub">Any number of kids</span>
+      </div>
+      <div class="wiz-opt" data-val="single_parent">
+        <span class="wiz-opt-icon">🤱</span>
+        <span class="wiz-opt-label">Single parent</span>
+        <span class="wiz-opt-sub">Raising children alone</span>
+      </div>
+      <div class="wiz-opt" data-val="homemaker">
+        <span class="wiz-opt-icon">🏠</span>
+        <span class="wiz-opt-label">Homemaker / not working</span>
+        <span class="wiz-opt-sub">Full-time caregiver</span>
+      </div>
+      <div class="wiz-opt" data-val="elderly_caregiver">
+        <span class="wiz-opt-icon">👴</span>
+        <span class="wiz-opt-label">Caring for elderly parent</span>
+        <span class="wiz-opt-sub">Caregiver role</span>
+      </div>
+    </div>
+    <div class="wiz-nav">
+      <button class="wiz-next" id="next-0" disabled onclick="nextStep(0)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Monthly household income -->
+  <div class="wiz-step" data-step="1">
+    <p class="wiz-q">What is your household's monthly income?</p>
+    <p class="wiz-hint">Combined earnings from all household members.</p>
+    <div class="wiz-options">
+      <div class="wiz-opt" data-val="0">
+        <span class="wiz-opt-icon">💸</span>
+        <span class="wiz-opt-label">No income / unpaid</span>
+        <span class="wiz-opt-sub">RM 0</span>
+      </div>
+      <div class="wiz-opt" data-val="u2500">
+        <span class="wiz-opt-icon">💰</span>
+        <span class="wiz-opt-label">Below RM 2,500</span>
+        <span class="wiz-opt-sub">B40 household</span>
+      </div>
+      <div class="wiz-opt" data-val="u5000">
+        <span class="wiz-opt-icon">💵</span>
+        <span class="wiz-opt-label">RM 2,500 – RM 5,000</span>
+        <span class="wiz-opt-sub">Lower M40</span>
+      </div>
+      <div class="wiz-opt" data-val="u10000">
+        <span class="wiz-opt-icon">🏦</span>
+        <span class="wiz-opt-label">RM 5,000 – RM 10,000</span>
+        <span class="wiz-opt-sub">Upper M40</span>
+      </div>
+      <div class="wiz-opt" data-val="above10000">
+        <span class="wiz-opt-icon">📈</span>
+        <span class="wiz-opt-label">Above RM 10,000</span>
+        <span class="wiz-opt-sub">T20 household</span>
+      </div>
+    </div>
+    <div class="wiz-nav">
+      <button class="wiz-back" onclick="prevStep(1)">← Back</button>
+      <button class="wiz-next" id="next-1" disabled onclick="nextStep(1)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Your situation tags -->
+  <div class="wiz-step" data-step="2">
+    <p class="wiz-q">Which of these apply to you?</p>
+    <p class="wiz-hint">Select all that apply. Skip if none.</p>
+    <div class="wiz-chips" id="chips-container">
+      <div class="wiz-chip" data-val="woman">👩 Woman / Ibu</div>
+      <div class="wiz-chip" data-val="bumiputera">🇲🇾 Bumiputera</div>
+      <div class="wiz-chip" data-val="orang_asli">🌿 Orang Asli</div>
+      <div class="wiz-chip" data-val="youth">🧑 Youth (18–30)</div>
+      <div class="wiz-chip" data-val="oku">♿ OKU / Disability</div>
+      <div class="wiz-chip" data-val="student">📚 Full-time student</div>
+      <div class="wiz-chip" data-val="entrepreneur">💼 Starting a business</div>
+      <div class="wiz-chip" data-val="farmer">🌾 Farmer / Fisherfolk</div>
+      <div class="wiz-chip" data-val="returning">🔄 Returning to workforce</div>
+      <div class="wiz-chip" data-val="pensioner">🏅 Retired / Pensioner</div>
+      <div class="wiz-chip" data-val="pwdi">🤝 Caring for PWD family member</div>
+    </div>
+    <div class="wiz-nav">
+      <button class="wiz-back" onclick="prevStep(2)">← Back</button>
+      <button class="wiz-next" id="next-2" onclick="showResults()">See my grants →</button>
+    </div>
+  </div>
+
+</div><!-- /wizard-wrap -->
+
+<!-- ── RESULTS ── -->
+<div id="results-section">
+  <div class="results-header">
+    <span class="section-label">Your Results</span>
+    <h2>You may qualify for</h2>
+    <div class="results-count" id="results-count">— subsidies & grants</div>
+    <p style="color:var(--ink-lt);font-size:.85rem;margin-top:.5rem;">
+      Check each programme's official site to confirm eligibility before applying.
+    </p>
+  </div>
+  <div class="results-grid" id="results-grid"></div>
+  <button class="restart-btn" onclick="restart()">← Start again</button>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   SUBSIDY DATABASE
+   Each entry: { id, name, desc, amount, per, icon, url,
+                 household: [], income: [], tags: [] }
+   
+   Matching: show if AT LEAST ONE of the user's values
+   matches each applicable array (or if array is empty = any).
+   income array uses shorthand keys from Q2.
+   ══════════════════════════════════════════════════════════ */
+const SUBSIDIES = [
+
+  /* ── CHILDCARE ─────────────────────────────── */
+  {
+    id: 'taska',
+    name: 'TASKA Childcare Subsidy',
+    desc: 'Subsidised childcare fees for children aged 0–4 at registered TASKA centres. Up to RM180/child/month. Apply through JKM (Jabatan Kebajikan Masyarakat).',
+    amount: 'RM 180',
+    per: 'per child / month',
+    icon: '🍼',
+    url: 'https://www.jkm.gov.my/jkm/index.php?r=portal/left&id=RlBJR0ZSRHlrMzZBd3VmYkFTR2N3dz09',
+    highlight: true,
+    household: ['married_kids','single_parent'],
+    income: ['0','u2500','u5000'],
+    tags: ['woman'],
+  },
+  {
+    id: 'permata',
+    name: 'PERMATA Early Childcare',
+    desc: 'Government-subsidised early childhood education and care programme. Priority for B40 families with children under 4.',
+    amount: 'Subsidised',
+    per: 'fees',
+    icon: '🌟',
+    url: 'https://www.perkeso.gov.my',
+    household: ['married_kids','single_parent'],
+    income: ['0','u2500','u5000'],
+    tags: [],
+  },
+
+  /* ── RETIREMENT / SAVINGS ──────────────────── */
+  {
+    id: 'isaraan',
+    name: 'i-Saraan (EPF)',
+    desc: 'EPF matches 15% of your voluntary contribution (up to RM250/year) for self-employed workers and homemakers not covered by EPF. Open to all Malaysians aged 55 and below.',
+    amount: 'RM 250',
+    per: 'matched / year',
+    icon: '💎',
+    url: 'https://www.kwsp.gov.my/en/member/i-saraan',
+    highlight: true,
+    household: ['homemaker','single','married_no_kids','married_kids','single_parent'],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['woman','returning','homemaker'],
+  },
+  {
+    id: 'iwoqaf',
+    name: 'i-Woqaf (EPF)',
+    desc: 'EPF scheme allowing Muslim members to channel EPF savings to waqf institutions for social good while building savings.',
+    amount: 'Voluntary',
+    per: 'contribution',
+    icon: '🕌',
+    url: 'https://www.kwsp.gov.my',
+    household: [],
+    income: [],
+    tags: ['bumiputera'],
+  },
+
+  /* ── CASH TRANSFERS ────────────────────────── */
+  {
+    id: 'str',
+    name: 'Sumbangan Tunai Rahmah (STR)',
+    desc: 'Annual cash assistance replacing BSH/BPR. B40 households, single individuals aged 21+, and OKU recipients. Amount varies by household category — up to RM3,300/year for married with 4+ children.',
+    amount: 'Up to RM 3,300',
+    per: 'per year',
+    icon: '💵',
+    url: 'https://str.hasil.gov.my',
+    highlight: true,
+    household: ['single','married_no_kids','married_kids','single_parent','homemaker','elderly_caregiver'],
+    income: ['0','u2500','u5000'],
+    tags: [],
+  },
+  {
+    id: 'emadani',
+    name: 'eMadani (e-Penjana)',
+    desc: 'Credit top-up scheme for eligible Malaysians. Applied via Touch n\' Go or MAE app. Typically RM100–RM200 per cycle for B40/M40 recipients.',
+    amount: 'RM 100–200',
+    per: 'per cycle',
+    icon: '📱',
+    url: 'https://www.touchngo.com.my/emadani',
+    highlight: true,
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: [],
+  },
+  {
+    id: 'ebeliarahmah',
+    name: 'eBeliaRahmah',
+    desc: 'RM150 credit for youths aged 18–25 to spend on digital devices, online learning, or e-commerce. Claimable via myBeliaPortal.',
+    amount: 'RM 150',
+    per: 'one-off credit',
+    icon: '🧑',
+    url: 'https://www.belia.com.my',
+    highlight: true,
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['youth'],
+  },
+  {
+    id: 'budi_madani',
+    name: 'BUDI MADANI',
+    desc: 'Cash incentive for B40 households who use e-payment more than cash. Spend RM50 on cashless transactions → receive RM5 reward. Stackable up to RM100/year.',
+    amount: 'Up to RM 100',
+    per: 'per year',
+    icon: '💳',
+    url: 'https://www.budidigital.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: [],
+  },
+
+  /* ── FOOD / HOUSEHOLD ──────────────────────── */
+  {
+    id: 'mykasih',
+    name: 'MyKasih (Kad Mesra Rakyat)',
+    desc: 'Monthly grocery credit (RM80–RM200) loaded onto a card usable at Mydin, Giant, Econsave, and partner stores. For B40 households registered with JKM.',
+    amount: 'RM 80–200',
+    per: 'per month',
+    icon: '🛒',
+    url: 'https://www.mykasih.com',
+    highlight: true,
+    household: ['single','married_no_kids','married_kids','single_parent','homemaker','elderly_caregiver'],
+    income: ['0','u2500'],
+    tags: [],
+  },
+  {
+    id: 'rahmah_menu',
+    name: 'Menu Rahmah',
+    desc: 'Subsidised meals at RM5 or below at participating restaurants and food courts nationwide. No registration needed — just look for the Rahmah logo.',
+    amount: 'RM 5',
+    per: 'per meal max',
+    icon: '🍽️',
+    url: 'https://kpdn.gov.my/menurahmah',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: [],
+  },
+  {
+    id: 'petrol_subsidy',
+    name: 'Petrol Subsidy (Targeted RON95)',
+    desc: 'Targeted petrol subsidy for B40 vehicle owners. Registered via PADU. Discount applied at pump with MyKad linked to vehicle registration.',
+    amount: 'Subsidy',
+    per: 'per litre',
+    icon: '⛽',
+    url: 'https://www.padu.gov.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: [],
+  },
+
+  /* ── EDUCATION / SCHOLARSHIPS ──────────────── */
+  {
+    id: 'yayasan_peneraju',
+    name: 'Yayasan Peneraju (Women\'s Programme)',
+    desc: 'Fully-funded scholarships and training grants for Bumiputera women to upskill in STEM, entrepreneurship, and digital skills. Applications via peneraju.edu.my.',
+    amount: 'Up to RM 20,000',
+    per: 'scholarship',
+    icon: '🎓',
+    url: 'https://www.peneraju.edu.my',
+    highlight: true,
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['woman','bumiputera'],
+  },
+  {
+    id: 'ptptn',
+    name: 'PTPTN Study Loan',
+    desc: 'Education loan for Diploma and Degree students. B40 students may receive full grant (no repayment). Top performers get 20% discount on repayment.',
+    amount: 'Up to RM 33,400',
+    per: 'per programme',
+    icon: '📚',
+    url: 'https://www.ptptn.gov.my',
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['student','youth'],
+  },
+  {
+    id: 'jpa_scholarship',
+    name: 'JPA Public Service Scholarship',
+    desc: 'Merit + need-based scholarship for SPM and A-Level leavers. Full tuition + living allowance for local and overseas study. Apply annually via biasiswa.jpa.gov.my.',
+    amount: 'Full',
+    per: 'tuition + allowance',
+    icon: '🏛️',
+    url: 'https://biasiswa.jpa.gov.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: ['student','bumiputera','youth'],
+  },
+  {
+    id: 'yayasan_khazanah',
+    name: 'Yayasan Khazanah Scholarship',
+    desc: 'Merit scholarship for outstanding SPM students from lower-income households. Covers local diploma/degree programmes at partner universities.',
+    amount: 'Full',
+    per: 'scholarship',
+    icon: '✨',
+    url: 'https://yk.com.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: ['student','youth'],
+  },
+  {
+    id: 'mara_scholarship',
+    name: 'MARA Education Loan / Grant',
+    desc: 'Soft loans and scholarships for Bumiputera students for diploma through post-graduate study. Priority for B40 families. Also covers vocational and skills training.',
+    amount: 'Up to RM 60,000',
+    per: 'loan or grant',
+    icon: '📖',
+    url: 'https://www.mara.gov.my',
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['student','bumiputera','youth'],
+  },
+
+  /* ── ENTREPRENEURSHIP ──────────────────────── */
+  {
+    id: 'tekun',
+    name: 'TEKUN Nasional Micro Loan',
+    desc: 'Micro-financing up to RM100,000 for Bumiputera and Indian entrepreneurs. No collateral needed for smaller amounts. Priority for women and youth entrepreneurs.',
+    amount: 'Up to RM 100,000',
+    per: 'micro loan',
+    icon: '💼',
+    url: 'https://www.tekun.gov.my',
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['entrepreneur','woman','bumiputera','youth'],
+  },
+  {
+    id: 'smecorp_grant',
+    name: 'SME Corp Malaysia Grant',
+    desc: 'Various grants for SME owners including Business Accelerator Programme (BAP) grant up to RM500,000. Covers equipment, digital transformation, market access.',
+    amount: 'Up to RM 500,000',
+    per: 'grant',
+    icon: '🏭',
+    url: 'https://www.smecorp.gov.my',
+    household: [],
+    income: [],
+    tags: ['entrepreneur'],
+  },
+  {
+    id: 'geran_pemerkasaan',
+    name: 'Geran Pemerkasaan Usahawan Wanita',
+    desc: 'Grant up to RM10,000 specifically for women entrepreneurs from B40 and M40 households. Covers equipment, training, and operating costs. Apply through TEKUN.',
+    amount: 'Up to RM 10,000',
+    per: 'grant',
+    icon: '👩‍💼',
+    url: 'https://www.tekun.gov.my',
+    highlight: true,
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['entrepreneur','woman'],
+  },
+  {
+    id: 'dana_niaga',
+    name: 'Skim Dana Niaga (BSN)',
+    desc: 'BSN micro loan for first-time SME entrepreneurs. Up to RM50,000 at low interest (3.5%). No guarantor required for amounts below RM10,000.',
+    amount: 'Up to RM 50,000',
+    per: 'loan',
+    icon: '🏦',
+    url: 'https://www.bsn.com.my',
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['entrepreneur'],
+  },
+  {
+    id: 'mdec_grant',
+    name: 'MDEC Digital Economy Grant',
+    desc: 'Grants for digital businesses, e-commerce sellers, and freelancers. Covers website, digital marketing, and software subscriptions. Apply via madani.gov.my/digital.',
+    amount: 'Up to RM 5,000',
+    per: 'grant',
+    icon: '💻',
+    url: 'https://www.mdec.my',
+    household: [],
+    income: ['0','u2500','u5000','u10000'],
+    tags: ['entrepreneur','youth','woman','returning'],
+  },
+  {
+    id: 'skim_latihan',
+    name: 'Skim Latihan Usahawan (SLU)',
+    desc: 'Free entrepreneurship training by MARA for Bumiputera. Covers digital marketing, accounting basics, and business planning. Certificate upon completion.',
+    amount: 'Free',
+    per: 'training',
+    icon: '🎓',
+    url: 'https://www.mara.gov.my',
+    household: [],
+    income: [],
+    tags: ['entrepreneur','bumiputera'],
+  },
+
+  /* ── AGRICULTURE ───────────────────────────── */
+  {
+    id: 'baja_subsidy',
+    name: 'Fertiliser & Pesticide Subsidy',
+    desc: 'Government subsidy on fertilisers and pesticides for registered smallholder farmers. Register with Jabatan Pertanian (DoA) to access subsidised inputs.',
+    amount: 'Subsidised',
+    per: 'farm inputs',
+    icon: '🌾',
+    url: 'https://www.doa.gov.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: ['farmer'],
+  },
+  {
+    id: 'lkim_fisher',
+    name: 'LKIM Fisheries Assistance',
+    desc: 'Multiple assistance programmes for registered fishermen including boat fuel subsidy (RM200–RM1,000/month), net and equipment grants, and insurance coverage.',
+    amount: 'Up to RM 1,000',
+    per: 'per month + grants',
+    icon: '🐟',
+    url: 'https://www.lkim.gov.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: ['farmer'],
+  },
+  {
+    id: 'agrobank',
+    name: 'Agrobank Agri Micro Loan',
+    desc: 'Micro loans for smallholder farmers, livestock breeders, and fisherfolk. RM1,000–RM50,000 at 2–4% interest. No land title needed as collateral for smaller amounts.',
+    amount: 'Up to RM 50,000',
+    per: 'loan',
+    icon: '🚜',
+    url: 'https://www.agrobank.com.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: ['farmer','entrepreneur'],
+  },
+
+  /* ── OKU / DISABILITY ──────────────────────── */
+  {
+    id: 'oku_elaun',
+    name: 'OKU Elaun Bulanan',
+    desc: 'Monthly allowance for registered OKU (persons with disabilities) from B40 households. Amount varies by disability category — up to RM500/month. Apply via JKM.',
+    amount: 'Up to RM 500',
+    per: 'per month',
+    icon: '♿',
+    url: 'https://www.jkm.gov.my',
+    highlight: true,
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: ['oku'],
+  },
+  {
+    id: 'oku_employer',
+    name: 'OKU Employer Tax Incentive',
+    desc: 'If you employ OKU workers, your company gets double deduction on wages paid to OKU employees. Also: RM600/month OKU Employment Incentive for employers.',
+    amount: '2× deduction',
+    per: 'employer tax benefit',
+    icon: '🤝',
+    url: 'https://www.jkm.gov.my',
+    household: [],
+    income: [],
+    tags: ['oku'],
+  },
+  {
+    id: 'caregiver_elaun',
+    name: 'Elaun Penjaga OKU/Warga Emas',
+    desc: 'Monthly caregiver allowance for those caring for severely disabled or elderly family members. Up to RM500/month. Apply through JKM district office.',
+    amount: 'Up to RM 500',
+    per: 'per month',
+    icon: '❤️',
+    url: 'https://www.jkm.gov.my',
+    household: ['elderly_caregiver'],
+    income: ['0','u2500','u5000'],
+    tags: ['pwdi'],
+  },
+
+  /* ── HOUSING ───────────────────────────────── */
+  {
+    id: 'pr1ma',
+    name: 'PR1MA Affordable Housing',
+    desc: 'Subsidised home ownership for households earning RM2,500–RM15,000/month. Reduced price homes in strategic locations. Apply at pr1ma.com.my.',
+    amount: 'Subsidised',
+    per: 'home price',
+    icon: '🏠',
+    url: 'https://www.pr1ma.my',
+    household: ['married_kids','married_no_kids','single_parent'],
+    income: ['u2500','u5000','u10000'],
+    tags: [],
+  },
+  {
+    id: 'pprt',
+    name: 'PPRT (Rental Public Housing)',
+    desc: 'Government low-cost rental housing. RM124/month max rent. Priority for B40 households with children. Apply at local JKM office.',
+    amount: 'RM 124',
+    per: 'per month rent',
+    icon: '🏢',
+    url: 'https://www.kpkt.gov.my',
+    household: ['married_kids','single_parent'],
+    income: ['0','u2500'],
+    tags: [],
+  },
+  {
+    id: 'rumawip',
+    name: 'RUMAWIP (WP Affordable Housing)',
+    desc: 'Affordable housing programme for Kuala Lumpur and Putrajaya residents. Income ceiling RM10,000/month for couples. Discounted price vs. market.',
+    amount: 'Below market',
+    per: 'home price',
+    icon: '🌆',
+    url: 'https://www.rumawip.com.my',
+    household: ['married_kids','married_no_kids'],
+    income: ['u5000','u10000'],
+    tags: [],
+  },
+
+  /* ── ORANG ASLI ────────────────────────────── */
+  {
+    id: 'jakoa',
+    name: 'JAKOA Orang Asli Assistance',
+    desc: 'Multiple programmes from Jabatan Kemajuan Orang Asli (JAKOA): educational grants, agricultural assistance, housing upgrades, and monthly food aid for Orang Asli communities.',
+    amount: 'Various',
+    per: 'multiple programmes',
+    icon: '🌿',
+    url: 'https://www.jakoa.gov.my',
+    highlight: true,
+    household: [],
+    income: [],
+    tags: ['orang_asli'],
+  },
+
+  /* ── PENSIONER / ELDERLY ───────────────────── */
+  {
+    id: 'bantuan_warga_emas',
+    name: 'Bantuan Warga Emas',
+    desc: 'Monthly cash assistance for Malaysians aged 60+ from B40 households without a pension. RM300/month via JKM. Apply at nearest Pejabat Kebajikan Masyarakat.',
+    amount: 'RM 300',
+    per: 'per month',
+    icon: '🏅',
+    url: 'https://www.jkm.gov.my',
+    household: [],
+    income: ['0','u2500'],
+    tags: ['pensioner'],
+  },
+
+  /* ── HEALTH ────────────────────────────────── */
+  {
+    id: 'peka_b40',
+    name: 'PeKa B40 Health Screening',
+    desc: 'Free health screening and treatment for B40 heads of household aged 40+. Covers cancer screening, heart disease, kidney function. Also: RM500 incentive for bypass/dialysis patients.',
+    amount: 'Free',
+    per: 'health screening',
+    icon: '🏥',
+    url: 'https://www.peka.com.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: [],
+  },
+
+  /* ── SKILLS / TRAINING ─────────────────────── */
+  {
+    id: 'hrdc_grant',
+    name: 'HRD Corp Training Levy Claim',
+    desc: 'If your employer pays HRD Corp levy, you can claim fully-funded training. Employees can also apply via e-LATiH portal for approved courses. TVET and digital skills included.',
+    amount: 'Fully funded',
+    per: 'training',
+    icon: '🎓',
+    url: 'https://www.hrdcorp.gov.my',
+    household: [],
+    income: [],
+    tags: ['returning','woman','entrepreneur'],
+  },
+  {
+    id: 'jkkm_skills',
+    name: 'JTKSM Free Skills Training',
+    desc: 'Free short courses (1–6 months) via Jabatan Tenaga Kerja. Cooking, baking, tailoring, digital marketing, beauty therapy, automotive. With monthly allowance during training.',
+    amount: 'Free + allowance',
+    per: 'during training',
+    icon: '🔧',
+    url: 'https://www.jtksm.mohr.gov.my',
+    highlight: true,
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: ['woman','youth','returning','bumiputera'],
+  },
+  {
+    id: 'superb',
+    name: 'SUpskilling & REskilling B40 (SuREB)',
+    desc: 'Fully funded online courses for B40 workers and job seekers via HRDF/HRD Corp. Certificates in digital marketing, data analytics, coding, and more. Apply via mySkills.gov.my.',
+    amount: 'Free',
+    per: 'online courses',
+    icon: '💡',
+    url: 'https://www.myskills.gov.my',
+    household: [],
+    income: ['0','u2500','u5000'],
+    tags: ['returning','youth','woman'],
+  },
+];
+
+/* ══════════════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════════════ */
+let answers = { household: null, income: null, tags: [] };
+
+/* ── STEP NAVIGATION ──────────────────────── */
+function nextStep(step) {
+  document.querySelector(`[data-step="${step}"]`).classList.remove('active');
+  document.querySelector(`[data-step="${step+1}"]`).classList.add('active');
+  updateProgress(step + 1);
+}
+function prevStep(step) {
+  document.querySelector(`[data-step="${step}"]`).classList.remove('active');
+  document.querySelector(`[data-step="${step-1}"]`).classList.add('active');
+  updateProgress(step - 1);
+}
+function updateProgress(current) {
+  [0,1,2].forEach(i => {
+    const pip = document.getElementById(`pip-${i}`);
+    pip.classList.remove('active','done');
+    if (i < current) pip.classList.add('done');
+    if (i === current) pip.classList.add('active');
+  });
+}
+
+/* ── OPTION SELECTION (Q1 & Q2) ─────────────────────────── */
+document.querySelectorAll('.wiz-options').forEach((group, idx) => {
+  group.querySelectorAll('.wiz-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      group.querySelectorAll('.wiz-opt').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      const val = opt.dataset.val;
+      if (idx === 0) answers.household = val;
+      if (idx === 1) answers.income = val;
+      document.getElementById(`next-${idx}`).disabled = false;
+    });
+  });
+});
+
+/* ── CHIP MULTI-SELECT (Q3) ─────────────────────────────── */
+document.querySelectorAll('.wiz-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('selected');
+    const val = chip.dataset.val;
+    if (answers.tags.includes(val)) {
+      answers.tags = answers.tags.filter(t => t !== val);
+    } else {
+      answers.tags.push(val);
+    }
+  });
+});
+
+/* ── MATCHING LOGIC ────────────────────────────────────── */
+function matches(subsidy) {
+  // household match (empty = any)
+  const hOk = !subsidy.household.length ||
+               subsidy.household.includes(answers.household);
+  // income match (empty = any)
+  const iOk = !subsidy.income.length ||
+               subsidy.income.includes(answers.income);
+  // tags: if subsidy.tags has entries, user must have at least one
+  const tOk = !subsidy.tags.length ||
+               subsidy.tags.some(t => answers.tags.includes(t));
+  return hOk && iOk && tOk;
+}
+
+/* ── RENDER RESULTS ────────────────────────────────────── */
+function showResults() {
+  document.getElementById('wizard-section').style.display = 'none';
+  document.querySelector('.wizard-hero').style.display = 'none';
+  const resultsSection = document.getElementById('results-section');
+  resultsSection.style.display = 'block';
+  resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+  const matched = SUBSIDIES.filter(matches);
+
+  document.getElementById('results-count').textContent =
+    `${matched.length} subsidies & grants`;
+
+  const grid = document.getElementById('results-grid');
+
+  if (!matched.length) {
+    grid.innerHTML = `<div class="no-match">
+      <p style="font-size:2rem;margin-bottom:1rem;">🔍</p>
+      <p>Based on your answers, you may not qualify for targeted subsidies — but some universal programmes (like eMadani and PeKa B40) may still apply.</p>
+      <p style="margin-top:.5rem;"><a href="https://www.str.hasil.gov.my" target="_blank" rel="noopener" style="color:var(--red)">Check STR eligibility directly →</a></p>
+    </div>`;
+    return;
+  }
+
+  // Highlighted cards first
+  const sorted = [...matched].sort((a,b) => (b.highlight?1:0)-(a.highlight?1:0));
+
+  grid.innerHTML = sorted.map(s => `
+    <div class="subsidy-card ${s.highlight ? 'highlight' : ''}">
+      <div class="sub-icon">${s.icon}</div>
+      <div class="sub-body">
+        <div class="sub-name">${s.name}</div>
+        <div class="sub-desc">${s.desc}</div>
+        <div class="sub-tags">
+          ${s.tags.map(t => `<span class="sub-tag match">${t.replace('_',' ')}</span>`).join('')}
+          ${s.income.includes(answers.income) && s.income.length ? '<span class="sub-tag match">income match</span>' : ''}
+        </div>
+        <a class="sub-link" href="${s.url}" target="_blank" rel="noopener">Apply / learn more →</a>
+      </div>
+      <div class="sub-amount">
+        <div class="amt">${s.amount}</div>
+        <div class="per">${s.per}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function restart() {
+  answers = { household: null, income: null, tags: [] };
+  document.querySelectorAll('.wiz-opt').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.wiz-chip').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('[id^="next-"]').forEach(b => { if (b.id !== 'next-2') b.disabled = true; });
+
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('wizard-section').style.display = 'block';
+  document.querySelector('.wizard-hero').style.display = '';
+
+  document.querySelectorAll('.wiz-step').forEach((s,i) => {
+    s.classList.toggle('active', i === 0);
+  });
+  updateProgress(0);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='naik.js') }}"></script>
+{% endblock %}

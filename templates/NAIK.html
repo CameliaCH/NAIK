@@ -269,6 +269,35 @@
 </section>
 
 
+
+
+<!-- TOOLS GRID: Subsidy Finder + Mentor Match -->
+<section style="background:var(--cream); border-top:1px solid var(--border); padding:clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem);">
+  <div class="section-header center" style="margin-bottom:3rem;">
+    <span class="section-label">More Tools</span>
+    <h2>Free resources<br><em style="font-style:normal;color:var(--red);">built for you.</em></h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; max-width:800px; margin:0 auto;">
+
+    <div style="background:#fff; border:1px solid var(--border); border-radius:16px; padding:2rem; display:flex; flex-direction:column; gap:1rem;">
+      <div style="font-size:2rem;">💰</div>
+      <span class="section-label" style="margin:0;">Subsidy & Grant Finder</span>
+      <h3 style="font-size:1.2rem; font-weight:800; color:var(--ink); margin:0; letter-spacing:-.02em;">Find government aid you qualify for.</h3>
+      <p style="font-size:.85rem; color:var(--ink-lt); line-height:1.6; margin:0;">Answer 5 questions. Get a personalised list of subsidies, grants, and welfare programmes — in BM, English, or Mandarin.</p>
+      <a href="{{ url_for('subsidy') }}" class="btn btn-primary" style="margin-top:auto;">Find My Subsidies</a>
+    </div>
+
+    <div style="background:#fff; border:1px solid var(--border); border-radius:16px; padding:2rem; display:flex; flex-direction:column; gap:1rem;">
+      <div style="font-size:2rem;">🤝</div>
+      <span class="section-label" style="margin:0;">Mentor Match</span>
+      <h3 style="font-size:1.2rem; font-weight:800; color:var(--ink); margin:0; letter-spacing:-.02em;">Get guided by someone who's been there.</h3>
+      <p style="font-size:.85rem; color:var(--ink-lt); line-height:1.6; margin:0;">Connect with volunteer mentors from your industry. Ask questions, get advice, and navigate your career with real support.</p>
+      <a href="{{ url_for('match') }}" class="btn btn-teal" style="margin-top:auto;">Find a Mentor</a>
+    </div>
+
+  </div>
+</section>
+
 <!-- ══════════════════════════════════════════════════════════
      CTA BANNER
      ══════════════════════════════════════════════════════════ -->

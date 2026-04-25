@@ -222,6 +222,13 @@ def signIn():
 def cv_builder_page():
     return render_template("cv_builder.html")
 
+@app.route("/subsidy")
+def subsidy():
+    return render_template("subsidy.html")
+
+@app.route("/match")
+def match():
+    return render_template("match.html")
 
 # ══════════════════════════════════════════════════════════════
 #  PROFILE PAGE
@@ -736,5 +743,49 @@ def cv_build():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
+
+# flask --app app run --debug --port 5001
+
+# ══════════════════════════════════════════════════════════════
+#  MENTOR REQUESTS API
+# ══════════════════════════════════════════════════════════════
+
+@app.route("/api/mentor/request", methods=["POST"])
+def mentor_request_create():
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"success": False, "error": "Not logged in"}), 401
+    data = request.json or {}
+    required = {"mentor_name", "mentor_contact", "topic"}
+    if not required.issubset(data):
+        return jsonify({"success": False, "error": "Missing fields"}), 400
+    try:
+        supabase.table("mentor_requests").insert({
+            "user_id":        uid,
+            "mentor_name":    data["mentor_name"],
+            "mentor_contact": data["mentor_contact"],
+            "topic":          data["topic"],
+            "message":        data.get("message", ""),
+            "status":         "pending",
+        }).execute()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/mentor/requests", methods=["GET"])
+def mentor_requests_list():
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"requests": []}), 200
+    try:
+        res = supabase.table("mentor_requests") \
+            .select("*") \
+            .eq("user_id", uid) \
+            .order("created_at", desc=True) \
+            .execute()
+        return jsonify({"requests": res.data or []})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # flask --app app run --debug --port 5001

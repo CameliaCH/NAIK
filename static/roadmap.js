@@ -219,6 +219,25 @@ function getSteps() {
       ]
     },
     {
+      id: 'availability', type: 'options',
+      label: { en: 'When are you available to work?', bm: 'Bilakah anda boleh bekerja?' },
+      hint: { en: 'We\'ll match jobs to your schedule — no judgment', bm: 'Kami akan padankan kerja mengikut jadual anda' },
+      options: [
+        {
+          val: 'anytime',
+          icon: '🕐',
+          label: { en: 'Any time', bm: 'Bila-bila masa' },
+          sub:   { en: 'Full-time, shifts, evenings — I\'m flexible', bm: 'Sepenuh masa, syif, malam — saya fleksibel' }
+        },
+        {
+          val: 'school_hours',
+          icon: '🏫',
+          label: { en: 'School hours only', bm: 'Waktu sekolah sahaja' },
+          sub:   { en: 'Roughly 8 am – 2 pm on school days — I have kids at home', bm: 'Lebih kurang 8 pagi – 2 petang hari sekolah — saya ada anak di rumah' }
+        }
+      ]
+    },
+    {
       id: 'income_mode', type: 'mode',
       label: { en: 'What\'s your current situation?', bm: 'Apakah situasi anda sekarang?' },
       hint: { en: 'This shapes your entire roadmap — be honest', bm: 'Ini membentuk seluruh peta jalan anda — jujurlah' }
@@ -873,11 +892,12 @@ async function saveRoadmapToSupabase() {
 
   try {
     const payload = {
-      name:          profile.name    || '',
-      age:           profile.age     || '',
-      location:      profile.location|| '',
-      interest:      profile.interest|| '',
-      income_mode:   profile.income_mode || '',
+      name:          profile.name         || '',
+      age:           profile.age          || '',
+      location:      profile.location     || '',
+      interest:      profile.interest     || '',
+      income_mode:   profile.income_mode  || '',
+      availability:  profile.availability || 'anytime',
       lang:          lang,
       selected_path: selectedPath,
       career_paths:  roadmapData.careerPaths,
@@ -951,7 +971,7 @@ async function loadSavedRoadmap(id) {
     if (!row) throw new Error('Not found');
 
     // Restore state
-    profile       = { name: row.name, age: row.age, location: row.location, interest: row.interest, income_mode: row.income_mode };
+    profile       = { name: row.name, age: row.age, location: row.location, interest: row.interest, income_mode: row.income_mode, availability: row.availability || 'anytime' };
     lang          = row.lang || 'en';
     roadmapData   = { careerPaths: row.career_paths };
     selectedPath  = row.selected_path || 0;

@@ -160,7 +160,7 @@
   <!-- ─── STEP 1: Field of interest ─── -->
   <div class="step-wrap active" id="step-1">
     <div class="step-header">
-      <div class="step-num">Step 1 of 6</div>
+      <div class="step-num">Step 1 of 7</div>
       <div class="step-q">What kind of work excites you most?</div>
       <div class="step-sub">Pick the one that feels most like you</div>
     </div>
@@ -182,7 +182,7 @@
   <!-- ─── STEP 2: Income goal ─── -->
   <div class="step-wrap" id="step-2">
     <div class="step-header">
-      <div class="step-num">Step 2 of 6</div>
+      <div class="step-num">Step 2 of 7</div>
       <div class="step-q">What's your income goal right now?</div>
       <div class="step-sub">Both are good — be honest with yourself</div>
     </div>
@@ -207,7 +207,7 @@
   <!-- ─── STEP 3: Education level ─── -->
   <div class="step-wrap" id="step-3">
     <div class="step-header">
-      <div class="step-num">Step 3 of 6</div>
+      <div class="step-num">Step 3 of 7</div>
       <div class="step-q">What's your highest education level?</div>
       <div class="step-sub">This helps us show jobs that are right for where you are now</div>
     </div>
@@ -238,7 +238,7 @@
   <!-- ─── STEP 4: Skills ─── -->
   <div class="step-wrap" id="step-4">
     <div class="step-header">
-      <div class="step-num">Step 4 of 6</div>
+      <div class="step-num">Step 4 of 7</div>
       <div class="step-q">What can you already do?</div>
       <div class="step-sub">Tap all that apply — or skip if none</div>
     </div>
@@ -264,7 +264,7 @@
   <!-- ─── STEP 5: Work style sliders ─── -->
   <div class="step-wrap" id="step-5">
     <div class="step-header">
-      <div class="step-num">Step 5 of 6</div>
+      <div class="step-num">Step 5 of 7</div>
       <div class="step-q">How do you like to work?</div>
       <div class="step-sub">Move each slider to show how much you agree</div>
     </div>
@@ -275,17 +275,42 @@
     </div>
   </div>
 
-  <!-- ─── STEP 6: Goals sliders ─── -->
+  <!-- ─── STEP 6: Availability ─── -->
   <div class="step-wrap" id="step-6">
     <div class="step-header">
-      <div class="step-num">Step 6 of 6</div>
+      <div class="step-num">Step 6 of 7</div>
+      <div class="step-q">When are you available to work?</div>
+      <div class="step-sub">We'll match jobs to your schedule — no judgment</div>
+    </div>
+    <div class="cards-grid cards-grid-2" id="availability-cards">
+      <div class="sel-card" data-val="anytime">
+        <div class="card-emoji">🕐</div>
+        <div class="card-label">Any time</div>
+        <div class="card-sub">Full-time, shifts, evenings — I'm flexible</div>
+      </div>
+      <div class="sel-card" data-val="school_hours">
+        <div class="card-emoji">🏫</div>
+        <div class="card-label">School hours only</div>
+        <div class="card-sub">Roughly 8 am – 2 pm on school days — I have kids at home</div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back-q" onclick="goStep(5)">← Back</button>
+      <button class="btn-next" id="next-6" disabled onclick="goStep(7)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 7: Goals sliders ─── -->
+  <div class="step-wrap" id="step-7">
+    <div class="step-header">
+      <div class="step-num">Step 7 of 7</div>
       <div class="step-q">What are your goals?</div>
       <div class="step-sub">Last step — almost there!</div>
     </div>
-    <div class="slider-questions" id="slider-q6"></div>
+    <div class="slider-questions" id="slider-q7"></div>
     <div class="step-nav">
-      <button class="btn-back-q" onclick="goStep(5)">← Back</button>
-      <button class="btn-next" id="next-6" disabled onclick="submitQuiz()">See My Jobs →</button>
+      <button class="btn-back-q" onclick="goStep(6)">← Back</button>
+      <button class="btn-next" id="next-7" disabled onclick="submitQuiz()">See My Jobs →</button>
     </div>
   </div>
 
@@ -318,14 +343,15 @@ if (jobParam) {
     .then(r => r.json()).then(data => { roadmapData = data; renderPathSelection(); showScreen('roadmap'); });
 }
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 let currentStep = 1;
 
 const answers = {
-  interest:    null,
-  income_mode: null,
-  education:   null,
-  skills:      [],
+  interest:     null,
+  income_mode:  null,
+  education:    null,
+  skills:       [],
+  availability: null,
   // Sliders
   q_people:    null,
   q_outdoor:   null,
@@ -345,8 +371,8 @@ const STEP5_SLIDERS = [
   { id: 'q_flexible', text: 'I need flexible or part-time hours (e.g. family responsibilities).' },
 ];
 
-// Step 6: goals (removed q_ambition)
-const STEP6_SLIDERS = [
+// Step 7: goals (removed q_ambition)
+const STEP7_SLIDERS = [
   { id: 'q_growth',    text: 'I am willing to learn a completely new skill if it leads to better pay.' },
   { id: 'q_leadership',text: 'I would feel comfortable managing or leading a small team in the future.' },
 ];
@@ -392,7 +418,7 @@ function buildSliders(containerId, sliderDefs, stepNum) {
 }
 
 function checkSliderStep(stepNum) {
-  const defs = stepNum === 5 ? STEP5_SLIDERS : STEP6_SLIDERS;
+  const defs = stepNum === 5 ? STEP5_SLIDERS : STEP7_SLIDERS;
   const allDone = defs.every(s => answers[s.id] !== null);
   document.getElementById('next-' + stepNum).disabled = !allDone;
 }
@@ -461,6 +487,7 @@ async function submitQuiz() {
     income_mode:  answers.income_mode || 'immediate',
     education:    answers.education   || 'spm',
     skills:       answers.skills      || [],
+    availability: answers.availability || 'anytime',
     q_people:     answers.q_people    ?? 2,
     q_outdoor:    answers.q_outdoor   ?? 2,
     q_creative:   answers.q_creative  ?? 2,
@@ -483,7 +510,7 @@ async function submitQuiz() {
     showToast('⚠️ Could not save — please try again');
     document.getElementById('quiz-section').style.display = 'block';
     document.getElementById('submitting-wrap').classList.remove('active');
-    goStep(6);
+    goStep(7);
   }
 }
 
@@ -503,16 +530,17 @@ function showToast(msg) {
 //  INIT
 // ════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  setupCardSelect('interest-cards', 'interest',    'next-1');
-  setupCardSelect('income-cards',   'income_mode', 'next-2');
-  setupCardSelect('edu-cards',      'education',   'next-3');
-  setupChipSelect('skills-chips',   'skills');
+  setupCardSelect('interest-cards',     'interest',    'next-1');
+  setupCardSelect('income-cards',       'income_mode', 'next-2');
+  setupCardSelect('edu-cards',          'education',   'next-3');
+  setupChipSelect('skills-chips',       'skills');
+  setupCardSelect('availability-cards', 'availability','next-6');
 
   // Step 4 (skills) — next button always enabled (optional step)
   document.getElementById('next-4').disabled = false;
 
   buildSliders('slider-q5', STEP5_SLIDERS, 5);
-  buildSliders('slider-q6', STEP6_SLIDERS, 6);
+  buildSliders('slider-q7', STEP7_SLIDERS, 7);
 
   updateDots();
 });
