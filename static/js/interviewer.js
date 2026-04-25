@@ -232,6 +232,18 @@ function speakResponse(text, lang) {
 }
 
 // ── INTERVIEW CONTROL ──
+// Start session with a specific practice question pre-loaded
+function startWithQuestion(question) {
+  beginInterview().then(() => {
+    // After session initialises, inject the chosen question as the first user message
+    setTimeout(() => {
+      addToTranscript('user', question);
+      setStatus('thinking');
+      getAIResponse(question, manualLanguage || 'en');
+    }, 1200);
+  });
+}
+
 async function beginInterview() {
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('interview-active').style.display = 'block';

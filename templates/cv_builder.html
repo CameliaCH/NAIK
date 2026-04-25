@@ -272,6 +272,10 @@
 .history-item .h-text{font-size:.88rem;color:var(--ink);line-height:1.5;flex:1;}
 .history-item .h-copy{flex-shrink:0;padding:.3rem .7rem;background:var(--peach);border:none;border-radius:6px;font-size:.75rem;font-weight:600;color:var(--ink-mid);cursor:pointer;transition:background .2s;}
 .history-item .h-copy:hover{background:var(--teal);color:#fff;}
+.example-card.caregiv{border-color:rgba(220,38,38,.2);}
+.example-card.caregiv:hover{border-color:var(--red);}
+.example-card.caregiv .example-after::before{content:'CV bullet points:';color:var(--red);}
+.example-card.caregiv .example-after{white-space:pre-line;}
 
 </style>
 {% endblock %}
@@ -490,23 +494,23 @@
 <div id="mode-polish" class="pm-wrap" style="display:none;">
 
   <div class="polish-tip">
-    <strong>💡 How it works:</strong> Type what you actually do or did — in English or Bahasa Melayu.
-    Don't worry about sounding professional. That's the AI's job.
+    <strong>💡 How it works:</strong> Type your work experience or your caregiving years — in English or Bahasa Melayu.
+    Don't worry about sounding professional. The AI will turn it into strong CV language.
   </div>
 
   <div class="translator-card">
-    <label for="raw-input">Describe your experience in your own words</label>
-    <textarea id="raw-input" placeholder="e.g. I helped my aunt at her food stall every weekend, taking orders and handling money..."></textarea>
+    <label for="raw-input">Your experience or caregiving years — in your own words</label>
+    <textarea id="raw-input" placeholder="e.g. I helped my aunt at her food stall every weekend... or: I took 4 years off to raise my children and manage the household..."></textarea>
     <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
       <button class="translate-btn" id="translate-btn" onclick="translateCV()">
         <div class="btn-spinner" id="pol-spinner" style="display:none;"></div>
         <span id="btn-text">✨ Make it Professional</span>
       </button>
-      <span id="char-count" style="font-size:.78rem;color:var(--ink-lt);">0 / 300</span>
+      <span id="char-count" style="font-size:.78rem;color:var(--ink-lt);">0 / 500</span>
     </div>
     <div class="error-box" id="error-box"></div>
     <div class="result-box" id="result-box">
-      <span class="result-label">✅ Your CV line</span>
+      <span class="result-label" id="result-label">✅ Your CV line</span>
       <p class="result-text" id="result-text"></p>
       <div class="result-actions">
         <button class="copy-btn" id="copy-btn" onclick="copyResult()">📋 Copy to clipboard</button>
@@ -517,16 +521,13 @@
 
   <div class="examples-section">
     <h2>Not sure what to write?</h2>
-    <p>Click any example below to try it instantly.</p>
+    <p>Click any example below to load it instantly — then hit the button.</p>
+
+    <div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-lt);margin-bottom:.75rem;">Everyday work &amp; side jobs</div>
     <div class="examples-grid">
       <div class="example-card" onclick="useExample(this)">
         <p class="example-before">I helped my aunt at her nasi lemak stall every weekend, cooking and serving customers</p>
         <p class="example-after">Assisted in daily food stall operations serving 80+ customers, managing food preparation and cash transactions simultaneously.</p>
-        <span class="example-hint">Click to try →</span>
-      </div>
-      <div class="example-card" onclick="useExample(this)">
-        <p class="example-before">I look after my younger siblings while my parents work, cooking and making sure they do homework</p>
-        <p class="example-after">Managed household responsibilities including meal preparation and academic supervision for two dependants, demonstrating reliability and multitasking.</p>
         <span class="example-hint">Click to try →</span>
       </div>
       <div class="example-card" onclick="useExample(this)">
@@ -544,9 +545,30 @@
         <p class="example-after">Operated as a freelance ride-hailing driver, maintaining a 4.9/5.0 passenger rating through consistent punctuality and professional service.</p>
         <span class="example-hint">Click to try →</span>
       </div>
-      <div class="example-card" onclick="useExample(this)">
-        <p class="example-before">I volunteered at my school canteen and handled the cash register during recess</p>
-        <p class="example-after">Volunteered in school canteen operations, managing point-of-sale transactions and customer service during high-traffic periods.</p>
+    </div>
+
+    <div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-top:1.75rem;margin-bottom:.5rem;">♡ Career break &amp; caregiving years</div>
+    <p style="font-size:.82rem;color:var(--ink-lt);margin-bottom:.75rem;">These examples use a specialised prompt that frames caregiving as professional, transferable skills.</p>
+    <div class="examples-grid">
+      <div class="example-card caregiv" onclick="useCaregivExample(this)">
+        <p class="example-before">I stayed home for 6 years to raise my three children, managing the house, their school runs, and all their medical appointments.</p>
+        <p class="example-after">• Managed full household operations and scheduling for family of 5 over 6 years
+• Coordinated medical, educational and extracurricular appointments across multiple stakeholders
+• Maintained household budget and procurement</p>
+        <span class="example-hint">Click to try →</span>
+      </div>
+      <div class="example-card caregiv" onclick="useCaregivExample(this)">
+        <p class="example-before">I cared for my elderly mother-in-law full time for 4 years, managing her medication, attending hospital visits, and liaising with doctors and social workers.</p>
+        <p class="example-after">• Provided full-time care coordination for elderly dependent over 4 years
+• Managed complex medication schedules and regular specialist appointments
+• Liaised with healthcare professionals and social services as primary advocate</p>
+        <span class="example-hint">Click to try →</span>
+      </div>
+      <div class="example-card caregiv" onclick="useCaregivExample(this)">
+        <p class="example-before">Saya berhenti kerja untuk jaga anak saya yang ada masalah pembelajaran khas selama 3 tahun, mengurus terapi, sekolah khas, dan hal-hal kewangan keluarga.</p>
+        <p class="example-after">• Menguruskan program sokongan pembelajaran khas untuk anak selama 3 tahun
+• Menyelaraskan sesi terapi, komunikasi dengan guru dan keperluan perubatan
+• Mengurus belanjawan keluarga dan pentadbiran harian</p>
         <span class="example-hint">Click to try →</span>
       </div>
     </div>
@@ -558,6 +580,8 @@
   </div>
 
 </div><!-- /mode-polish -->
+
+
 {% endblock %}
 
 {% block scripts %}
@@ -572,8 +596,8 @@ const sessionHistory = [];
 
 // ── Mode switching ──
 function switchMode(mode) {
-  document.getElementById('mode-build').style.display   = mode === 'build'  ? '' : 'none';
-  document.getElementById('mode-polish').style.display  = mode === 'polish' ? '' : 'none';
+  document.getElementById('mode-build').style.display  = mode === 'build'  ? '' : 'none';
+  document.getElementById('mode-polish').style.display = mode === 'polish' ? '' : 'none';
   document.getElementById('tab-build').classList.toggle('active',  mode === 'build');
   document.getElementById('tab-polish').classList.toggle('active', mode === 'polish');
 }
@@ -944,24 +968,28 @@ function restartBuild() {
 // ──────────────────────────────────────────
 const rawInput  = document.getElementById('raw-input');
 const charCount = document.getElementById('char-count');
-const MAX_CHARS = 300;
+const MAX_CHARS = 500;
+let isCaregivingMode = false;
 
 rawInput.addEventListener('input', () => {
   const len = rawInput.value.length;
   charCount.textContent = `${len} / ${MAX_CHARS}`;
   charCount.style.color = len > MAX_CHARS ? 'var(--red)' : 'var(--ink-lt)';
+  isCaregivingMode = false;
 });
 
 async function translateCV() {
   const text = rawInput.value.trim();
   if (!text) { rawInput.focus(); return; }
-  if (text.length > MAX_CHARS) { showError('Please keep your input under 300 characters.'); return; }
+  if (text.length > MAX_CHARS) { showError(`Please keep your input under ${MAX_CHARS} characters.`); return; }
 
   setPolishLoading(true);
   hideResult(); hideError();
 
+  const endpoint = isCaregivingMode ? '/cv-builder/translate-caregiving' : '/cv-builder/translate';
+
   try {
-    const res  = await fetch('/cv-builder/translate', {
+    const res  = await fetch(endpoint, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
     });
@@ -992,6 +1020,16 @@ function useExample(card) {
   const before = card.querySelector('.example-before').textContent;
   rawInput.value = before;
   charCount.textContent = `${before.length} / ${MAX_CHARS}`;
+  isCaregivingMode = false;
+  rawInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  rawInput.focus();
+}
+
+function useCaregivExample(card) {
+  const before = card.querySelector('.example-before').textContent;
+  rawInput.value = before;
+  charCount.textContent = `${before.length} / ${MAX_CHARS}`;
+  isCaregivingMode = true;
   rawInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
   rawInput.focus();
 }
@@ -1018,7 +1056,10 @@ function setPolishLoading(on) {
 }
 
 function showResult(text) {
-  document.getElementById('result-text').textContent = text;
+  const el = document.getElementById('result-text');
+  el.textContent = text;
+  el.style.whiteSpace = isCaregivingMode ? 'pre-line' : 'normal';
+  document.getElementById('result-label').textContent = isCaregivingMode ? '✅ Your CV bullet points' : '✅ Your CV line';
   document.getElementById('result-box').style.display = 'block';
 }
 function hideResult()  { document.getElementById('result-box').style.display = 'none'; }
@@ -1033,5 +1074,6 @@ rawInput.addEventListener('keydown', e => {
 // Pre-populate one experience and one education item on load
 addExperienceItem();
 addEducationItem();
+
 </script>
 {% endblock %}

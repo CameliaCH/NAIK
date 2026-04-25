@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from '_nav.html' import naik_nav with context %}
 
-{% block title %}{{ t('interview.pageTitle') }}{% endblock %}
+{% block title %}Confidence Builder — NAIK{% endblock %}
 
 {% block head %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,13 +55,33 @@
   /* ── TIP BANNER ── */
   .interview-tip {
     display: flex; align-items: flex-start; gap: 0.75rem;
-    background: var(--card-bg); border: 1px solid var(--border);
-    border-left: 4px solid var(--teal);
+    background: var(--red-lt); border: 1px solid rgba(220,38,38,0.2);
+    border-left: 4px solid var(--red);
     border-radius: 12px; padding: 0.9rem 1.2rem;
     font-size: 0.88rem; line-height: 1.6; color: var(--ink-mid);
     margin-bottom: 2rem;
   }
   .interview-tip strong { color: var(--ink); }
+
+  /* ── PRACTICE QUESTIONS ── */
+  .practice-qs {
+    margin-bottom: 1.75rem;
+  }
+  .practice-qs-label {
+    font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem;
+    display: block;
+  }
+  .practice-qs-grid {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+  }
+  .practice-q-btn {
+    padding: 0.5rem 1rem; background: #fff; border: 1.5px solid var(--border);
+    border-radius: 50px; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600; color: var(--ink-mid);
+    cursor: pointer; transition: all 0.18s; text-align: left;
+  }
+  .practice-q-btn:hover { border-color: var(--red); color: var(--ink); background: var(--red-lt); }
 
   /* ── TOOLBAR ── */
   .interview-controls {
@@ -131,7 +151,7 @@
     font-size: 0.88rem; color: var(--ink-mid);
     box-shadow: 0 1px 6px rgba(0,0,0,0.04);
   }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
   .status-dot.active { animation: blink 1.2s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
@@ -175,7 +195,7 @@
     font-size: 0.9rem; max-width: 82%; line-height: 1.55;
   }
   .msg-user { background: var(--peach); color: var(--ink); align-self: flex-end; border-bottom-right-radius: 4px; }
-  .msg-ai { background: var(--card-bg); color: var(--ink-mid); align-self: flex-start; border-bottom-left-radius: 4px; border-left: 3px solid var(--teal); }
+  .msg-ai { background: var(--red-lt); color: var(--ink-mid); align-self: flex-start; border-bottom-left-radius: 4px; border-left: 3px solid var(--red); }
 </style>
 {% endblock %}
 
@@ -184,9 +204,9 @@
 
 <!-- HERO -->
 <div class="interview-page-hero">
-  <span class="section-label">{{ t('interview.heroLabel') }}</span>
-  <h1>{{ t('interview.heroHeading') }}</h1>
-  <p>{{ t('interview.heroParagraph') }}</p>
+  <span class="section-label">Skill Up</span>
+  <h1>Confidence <em>Builder</em></h1>
+  <p>Practise answering the employment gap questions every returning woman fears — and learn to answer them powerfully.</p>
 </div>
 
 
@@ -195,28 +215,41 @@
 
   <div class="interview-tip">
     <span>💡</span>
-    <span><strong>Tip:</strong> {{ t('interview.tip') }}</span>
+    <span><strong>How it works:</strong> Your coach will ask the hard questions employers ask about career gaps. Answer out loud or type your response, then get coaching on how to reframe it confidently.</span>
   </div>
 
-  <!-- TOOLBAR (language + action buttons) -->
+  <!-- TOOLBAR -->
   <div class="interview-controls">
-    <label>{{ t('interview.langLabel') }}</label>
+    <label>Language</label>
     <select id="lang-select" onchange="setManualLanguage(this.value)">
-      <option value="auto">{{ t('interview.langAuto') }}</option>
+      <option value="auto">Auto-detect</option>
       <option value="en">English</option>
       <option value="ms">Bahasa Melayu</option>
       <option value="zh">Mandarin 普通话</option>
     </select>
-    <button id="stop-btn" class="btn btn-outline danger" onclick="stopInterview()" style="display:none;">{{ t('interview.stopBtn') }}</button>
-    <button id="reset-btn" class="btn btn-outline" onclick="resetInterview()" style="display:none;">{{ t('interview.restartBtn') }}</button>
+    <button id="stop-btn" class="btn btn-outline danger" onclick="stopInterview()" style="display:none;">Stop</button>
+    <button id="reset-btn" class="btn btn-outline" onclick="resetInterview()" style="display:none;">Start over</button>
   </div>
 
   <!-- START SCREEN -->
   <div id="start-screen">
-    <div class="start-icon">🎙️</div>
-    <h2>{{ t('interview.startTitle') }}</h2>
-    <p>{{ t('interview.startSub') | safe }}</p>
-    <button id="start-btn" class="btn btn-primary btn-lg" onclick="beginInterview()">{{ t('interview.startBtn') }}</button>
+    <div class="start-icon">💪</div>
+    <h2>Your Employment Gap Coach</h2>
+    <p>Practise the questions that make returning women nervous — and learn to reframe your caregiving years as the real skills they are.</p>
+
+    <!-- Practice question shortcuts -->
+    <div class="practice-qs" style="margin: 1.5rem 0;">
+      <span class="practice-qs-label">Common questions to practise</span>
+      <div class="practice-qs-grid">
+        <button class="practice-q-btn" onclick="startWithQuestion('Why have you not worked for several years?')">Why haven't you worked for X years?</button>
+        <button class="practice-q-btn" onclick="startWithQuestion('What have you been doing since you last worked?')">What have you been doing since [year]?</button>
+        <button class="practice-q-btn" onclick="startWithQuestion('Are your skills still up to date after your career break?')">Are your skills still current?</button>
+        <button class="practice-q-btn" onclick="startWithQuestion('How will you manage childcare and work at the same time?')">How will you manage childcare?</button>
+        <button class="practice-q-btn" onclick="startWithQuestion('Why should we hire you over someone with no career gap?')">Why hire you over others?</button>
+      </div>
+    </div>
+
+    <button id="start-btn" class="btn btn-primary btn-lg" onclick="beginInterview()">Start Practice Session →</button>
   </div>
 
   <!-- ACTIVE INTERVIEW -->
@@ -225,14 +258,14 @@
     <div id="avatar-container">
       <video id="avatar-video" autoplay playsinline></video>
       <div id="avatar-placeholder">
-        <div class="avatar-icon-ring">🤖</div>
-        <p>{{ t('interview.avatarLabel') }}</p>
+        <div class="avatar-icon-ring">💬</div>
+        <p>Your Employment Gap Coach</p>
       </div>
     </div>
 
     <div id="status-bar">
       <span class="status-dot active" id="status-dot"></span>
-      <span id="status-text">Starting interview…</span>
+      <span id="status-text">Starting session…</span>
     </div>
 
     <div class="mic-container">
@@ -245,8 +278,8 @@
   <!-- TRANSCRIPT -->
   <div id="transcript">
     <div class="transcript-header">
-      <h3>{{ t('interview.transcriptTitle') }}</h3>
-      <span>{{ t('interview.transcriptPrivacy') }}</span>
+      <h3>Your Practice Session</h3>
+      <span>Private — not stored</span>
     </div>
     <div id="transcript-log"></div>
   </div>

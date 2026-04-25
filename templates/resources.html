@@ -75,6 +75,22 @@
 .link-badge{display:inline-block;font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:50px;}
 .badge-free{background:rgba(126,172,181,.15);color:var(--teal);}
 .badge-govt{background:rgba(26,26,46,.08);color:var(--ink-mid);}
+
+/* ── RIGHTS LAW REFERENCE ── */
+.rights-law{font-size:.68rem;font-weight:700;color:var(--ink-lt);margin-top:.65rem;letter-spacing:.03em;border-top:1px solid var(--border);padding-top:.5rem;}
+
+/* ── GIG WORK ── */
+.gig-intro{font-size:.84rem;color:var(--ink-mid);line-height:1.6;margin-bottom:1.25rem;background:var(--cream);border-radius:10px;padding:.85rem 1rem;}
+.gig-alert{border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;}
+.gig-alert.danger{background:rgba(191,70,70,.07);border:1.5px solid rgba(191,70,70,.25);}
+.gig-alert.info{background:rgba(126,172,181,.08);border:1.5px solid rgba(126,172,181,.3);}
+.gig-alert-title{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--red);margin-bottom:.75rem;}
+.gig-alert.info .gig-alert-title{color:var(--ink-mid);}
+.gig-flags{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.5rem;}
+.gig-flags li{font-size:.84rem;color:var(--ink);line-height:1.45;}
+.gig-steps{display:flex;flex-direction:column;gap:.6rem;}
+.gig-step{display:flex;gap:.75rem;align-items:flex-start;font-size:.84rem;color:var(--ink);line-height:1.5;}
+.gig-step-num{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem;}
 </style>
 {% endblock %}
 
@@ -84,9 +100,9 @@
 <!-- Hero -->
 <div class="res-hero">
   <a href="{{ url_for('skills') }}" class="back-link">← Back to Skill Up</a>
-  <span class="res-eyebrow">📚 General Resources</span>
-  <h1>Everything you need to<br><em>apply with confidence</em></h1>
-  <p>Free templates, checklists, your rights as a worker, and trusted links — all in one place.</p>
+  <span class="res-eyebrow">👩 For Women Re-entering Work</span>
+  <h1>Resources to help you<br><em>return with confidence</em></h1>
+  <p>Templates, your legal rights as a woman, safe gig work tips, and trusted links — all free, all in one place.</p>
 </div>
 
 <div class="resources-wrap">
@@ -95,8 +111,9 @@
   <div class="res-tabs">
     <button class="res-tab active" onclick="switchResTab('res-wa', this)">📱 WhatsApp Templates</button>
     <button class="res-tab" onclick="switchResTab('res-checklist', this)">✅ Job-Hunt Checklist</button>
-    <button class="res-tab" onclick="switchResTab('res-rights', this)">⚖️ Your Rights</button>
+    <button class="res-tab" onclick="switchResTab('res-rights', this)">👩 Women's Rights</button>
     <button class="res-tab" onclick="switchResTab('res-links', this)">🔗 Useful Links</button>
+    <button class="res-tab" onclick="switchResTab('res-gig', this)">🛡️ Safe Gig Work</button>
   </div>
 
   <!-- ── TAB 1: WhatsApp Templates ── -->
@@ -176,56 +193,65 @@
     <button class="checklist-reset" onclick="resetChecklist()">↺ Reset all</button>
   </div>
 
-  <!-- ── TAB 3: Your Rights ── -->
+  <!-- ── TAB 3: Women's Rights ── -->
   <div class="res-panel" id="res-rights">
+
+    <p style="font-size:.84rem;color:var(--ink-mid);line-height:1.6;margin-bottom:1.25rem;">These rights are yours under Malaysian law. You do not need to ask for them — your employer is <strong>legally required</strong> to provide them.</p>
+
     <div class="rights-grid">
-
-      <div class="rights-card">
-        <div class="rights-icon">💰</div>
-        <div class="rights-title">Minimum Wage</div>
-        <div class="rights-value">RM 1,700 / month</div>
-        <div class="rights-detail">As of February 2023 for all employers with 5 or more workers. RM 1,500/month for employers with fewer than 5 workers.</div>
-      </div>
-
-      <div class="rights-card">
-        <div class="rights-icon">🕐</div>
-        <div class="rights-title">Working Hours</div>
-        <div class="rights-value">Max 48 hrs / week</div>
-        <div class="rights-detail">No more than 8 hours a day, 6 days a week. Overtime must be paid — 1.5× on weekdays, 2× on rest days, 3× on public holidays.</div>
-      </div>
-
-      <div class="rights-card">
-        <div class="rights-icon">🌴</div>
-        <div class="rights-title">Annual Leave</div>
-        <div class="rights-value">8 – 16 days</div>
-        <div class="rights-detail">Less than 2 years: 8 days. 2–5 years: 12 days. More than 5 years: 16 days. Your employer cannot take this away.</div>
-      </div>
-
-      <div class="rights-card">
-        <div class="rights-icon">🤒</div>
-        <div class="rights-title">Sick Leave</div>
-        <div class="rights-value">14 – 22 days</div>
-        <div class="rights-detail">Less than 2 years: 14 days. 2–5 years: 18 days. More than 5 years: 22 days. Hospitalisation adds up to 60 days on top.</div>
-      </div>
-
-      <div class="rights-card">
-        <div class="rights-icon">🛡️</div>
-        <div class="rights-title">EPF & SOCSO</div>
-        <div class="rights-value">Mandatory contributions</div>
-        <div class="rights-detail">Your employer must contribute to EPF (KWSP) and SOCSO (PERKESO) on your behalf. If they don't, this is illegal. Check your EPF via i-Akaun app.</div>
-      </div>
 
       <div class="rights-card">
         <div class="rights-icon">🤱</div>
         <div class="rights-title">Maternity Leave</div>
-        <div class="rights-value">98 days (paid)</div>
-        <div class="rights-detail">For the first 5 children. You cannot be dismissed while on maternity leave. Breastfeeding breaks must be allowed for up to 2 years.</div>
+        <div class="rights-value">98 days paid</div>
+        <div class="rights-detail">For each of your first 5 children. You must be paid at your full normal rate. Your employer cannot dismiss you, force a resignation, or demote you while you are pregnant or on leave.</div>
+        <div class="rights-law">Employment Act 1955, s.37</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">🚫</div>
+        <div class="rights-title">No Pregnancy Dismissal</div>
+        <div class="rights-value">Illegal to fire you</div>
+        <div class="rights-detail">It is illegal to terminate your employment, force you to resign, or change your job scope/pay because you are pregnant, had a miscarriage, or gave birth. Lodge a complaint with JTKSM.</div>
+        <div class="rights-law">Employment Act 1955, s.37B</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">🍼</div>
+        <div class="rights-title">Breastfeeding Breaks</div>
+        <div class="rights-value">Up to 2 years</div>
+        <div class="rights-detail">Your employer must allow nursing breaks at work for up to 2 years after childbirth. You cannot be penalised, docked pay, or disciplined for requesting these breaks.</div>
+        <div class="rights-law">Employment Act 1955, s.37A</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">🛑</div>
+        <div class="rights-title">Anti-Sexual Harassment</div>
+        <div class="rights-value">Zero tolerance</div>
+        <div class="rights-detail">Unwanted verbal, non-verbal, or physical conduct of a sexual nature in the workplace is illegal. You can lodge a confidential complaint with the Anti-Sexual Harassment Tribunal — no fee required.</div>
+        <div class="rights-law">Anti-Sexual Harassment Act 2022 (ASHA)</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">💊</div>
+        <div class="rights-title">SOCSO Maternity Benefit</div>
+        <div class="rights-value">Medical coverage + EIS</div>
+        <div class="rights-detail">SOCSO covers medical expenses related to childbirth. If you lose your job while pregnant or after returning, the Employment Insurance System (EIS) provides a job loss benefit. Check via the PERKESO Assist app.</div>
+        <div class="rights-law">SOCSO / EIS — PERKESO</div>
+      </div>
+
+      <div class="rights-card">
+        <div class="rights-icon">👶</div>
+        <div class="rights-title">TASKA Childcare Subsidy</div>
+        <div class="rights-value">Up to RM 300 / month</div>
+        <div class="rights-detail">Working mothers can apply for monthly childcare subsidies at JKM-registered TASKA (Taman Asuhan Kanak-Kanak) centres. Subsidies are means-tested and available nationwide. Apply at your nearest JKM office.</div>
+        <div class="rights-law">Jabatan Kebajikan Masyarakat (JKM)</div>
       </div>
 
     </div>
 
     <div class="rights-tip">
-      <strong>🚨 If your employer breaks these rules</strong> — contact the Department of Labour (JTKSM) free hotline: <a href="tel:1800885751">1800-88-5751</a> or lodge a complaint at <a href="https://e-aduan.jtksm.gov.my" target="_blank" rel="noopener">e-aduan.jtksm.gov.my</a>. Your complaint is confidential.
+      <strong>🚨 If any of these rights are violated</strong> — contact the Department of Labour (JTKSM) free hotline: <a href="tel:1800885751">1800-88-5751</a> or lodge a complaint at <a href="https://e-aduan.jtksm.gov.my" target="_blank" rel="noopener">e-aduan.jtksm.gov.my</a>. For sexual harassment, contact the Anti-Sexual Harassment Tribunal via <a href="https://www.suhakam.org.my" target="_blank" rel="noopener">SUHAKAM</a>. All complaints are confidential.
     </div>
   </div>
 
@@ -299,6 +325,64 @@
     </div>
 
   </div><!-- /res-links -->
+
+  <!-- ── TAB 5: Safe Gig Work ── -->
+  <div class="res-panel" id="res-gig">
+
+    <div class="gig-intro">
+      Before you take on freelance or gig work, run through this checklist. These steps protect your time, money, and safety — especially as a woman working independently.
+    </div>
+
+    <!-- Vetting a client -->
+    <div class="checklist-group">
+      <div class="checklist-group-title">Vetting a new client or employer</div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Search the company on <strong>SSM BizSearch</strong> — confirm they are a registered business</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Request a <strong>written contract or agreement</strong> before starting any work</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Payment terms confirmed in writing — amount, method, and due date</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Verified they have a real website, physical address, or office number</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Checked Google or Glassdoor reviews for the company</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Know your direct contact's full name and official email</div></div>
+    </div>
+
+    <!-- Red flags -->
+    <div class="gig-alert danger">
+      <div class="gig-alert-title">🚩 Walk away immediately if they...</div>
+      <ul class="gig-flags">
+        <li>Ask you to pay a registration fee, training deposit, or any upfront cost</li>
+        <li>Refuse to provide a written contract or agreement</li>
+        <li>Communicate via WhatsApp only — no company email or official channel</li>
+        <li>Keep changing the job description after you agree</li>
+        <li>Ask you to work unpaid "as a trial" for more than 1–2 days</li>
+        <li>Pressure you to start immediately before you have signed anything</li>
+        <li>Offer unusually high pay with vague or secretive duties</li>
+        <li>Ask you to meet alone in a private location for "training" or "orientation"</li>
+      </ul>
+    </div>
+
+    <!-- Payment protection -->
+    <div class="checklist-group">
+      <div class="checklist-group-title">Payment protection</div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">For freelance projects: requested <strong>30–50% payment upfront</strong> before starting</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Issued a written invoice — kept a copy as evidence</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Payment due date agreed and written down</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">For gig platforms (Grab, Lalamove, etc.): read the payment release policy before accepting</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Never shared banking login details or TAC codes with a client</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Using bank transfer or platform payment — not cash where possible</div></div>
+    </div>
+
+    <!-- If not paid -->
+    <div class="gig-alert info">
+      <div class="gig-alert-title">💰 If you are not paid on time...</div>
+      <div class="gig-steps">
+        <div class="gig-step"><div class="gig-step-num">1</div><div>Send a <strong>formal written demand</strong> via WhatsApp or email. State the amount owed, the original due date, and give 7 days to pay.</div></div>
+        <div class="gig-step"><div class="gig-step-num">2</div><div>If no response, file a claim at the <strong>Tribunal Tuntutan Pengguna Malaysia</strong> (consumer claims tribunal) for amounts up to RM 50,000 — fee is only RM 5.</div></div>
+        <div class="gig-step"><div class="gig-step-num">3</div><div>For employment disputes, contact <strong>JTKSM: 1800-88-5751</strong> (free hotline). Keep all WhatsApp messages and invoices as evidence.</div></div>
+      </div>
+    </div>
+
+    <button class="checklist-reset" onclick="resetChecklist()">↺ Reset checklist</button>
+
+  </div><!-- /res-gig -->
 
 </div><!-- /resources-wrap -->
 {% endblock %}

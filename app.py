@@ -24,7 +24,7 @@ app.register_blueprint(interview_bp, url_prefix='/interview')
 from roadmap_backend import roadmap_bp
 app.register_blueprint(roadmap_bp)
 
-from services.cv_translator_service import translate_to_cv
+from services.cv_translator_service import translate_to_cv, translate_caregiving_to_cv
 from services.cv_builder_service import build_cv
 
 
@@ -707,6 +707,17 @@ def cv_translate():
         return jsonify({"error": "No text provided"}), 400
     try:
         result = translate_to_cv(data["text"])
+        return jsonify({"result": result})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/cv-builder/translate-caregiving", methods=["POST"])
+def cv_translate_caregiving():
+    data = request.get_json()
+    if not data or "text" not in data:
+        return jsonify({"error": "No text provided"}), 400
+    try:
+        result = translate_caregiving_to_cv(data["text"])
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
