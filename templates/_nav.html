@@ -17,8 +17,7 @@
   <ul class="nav-links">
     <li><a href="{{ url_for('explore') }}" class="{{ 'nav-active' if active == 'explore' }}">{{ t('nav.explore') }}</a></li>
     <li><a href="{{ url_for('skills') }}"  class="{{ 'nav-active' if active == 'skills' }}">{{ t('nav.skillup') }}</a></li>
-    <li><a href="{{ url_for('connect') }}" class="{{ 'nav-active' if active == 'connect' }}">Connect</a></li>
-    <!--<li class="her-link"><a href="{{ url_for('home') }}#forher" class="{{ 'nav-active' if active == 'forher' }}">{{ t('nav.forHer') }}</a></li>-->
+    <li><a href="{{ url_for('connect') }}" class="{{ 'nav-active' if active == 'connect' }}">Kongsi Cerita</a></li>
     
   </ul>
 
@@ -95,8 +94,7 @@
   <a href="{{ url_for('home') }}">{{ t('nav.home') }}</a>
   <a href="{{ url_for('explore') }}">{{ t('nav.explore') }}</a>
   <a href="{{ url_for('skills') }}">{{ t('nav.skillup') }}</a>
-  <a href="{{ url_for('home') }}#forher" class="her">{{ t('nav.forHer') }}</a>
-  <a href="{{ url_for('connect') }}">Connect</a>
+  <a href="{{ url_for('connect') }}">Kongsi Cerita</a>
   {% if session.get('user_id') %}
     <a href="{{ url_for('profile') }}">{{ t('nav.myProfile') }}</a>
     <a href="{{ url_for('auth_logout') }}">{{ t('nav.signOut') }}</a>
