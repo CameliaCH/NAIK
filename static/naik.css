@@ -349,7 +349,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 /* ── HERO ────────────────────────────────────────────────── */
 .hero {
   position: relative; overflow: hidden;
-  padding: clamp(4rem,10vw,8rem) clamp(1.5rem,5vw,4rem) clamp(3rem,6vw,5rem);
+  padding: clamp(2rem,7vw,8rem) clamp(1.5rem,5vw,4rem) clamp(3rem,6vw,5rem);
   min-height: 92vh; display: flex; align-items: center;
   background-color: var(--cream);
 }

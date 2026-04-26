@@ -21,30 +21,18 @@
     display: block;
     line-height: 1.12;
     min-height: 1.15em;
+    position: relative;
   }
   .wc-word {
     display: inline;
     color: var(--red);
     font-style: italic;
-    opacity: 0;
-    will-change: filter, opacity, transform;
+    opacity: 0;          /* hidden – canvas draws over it */
   }
-  .wc-word.wc-active {
-    filter: url(#wc-filter);
-    animation: wc-reveal 3.8s ease-in-out forwards;
-  }
-  @keyframes wc-reveal {
-    0%   { opacity: 0;    transform: scale(1.07) translateY(7px);
-           text-shadow: 0 0 30px rgba(191,70,70,0.7), 0 0 60px rgba(212,115,138,0.45); }
-    22%  { opacity: 0.88; transform: scale(1.01) translateY(2px);
-           text-shadow: 0 0 12px rgba(191,70,70,0.4), 0 0 24px rgba(212,115,138,0.28); }
-    32%  { opacity: 1;    transform: scale(1) translateY(0);
-           text-shadow: 0 0 4px rgba(191,70,70,0.12); }
-    76%  { opacity: 1;    transform: scale(1); text-shadow: none; }
-    90%  { opacity: 0.3;  transform: scale(0.98) translateY(-3px);
-           text-shadow: 0 0 10px rgba(191,70,70,0.35); }
-    100% { opacity: 0;    transform: scale(0.94) translateY(-7px);
-           text-shadow: 0 0 24px rgba(191,70,70,0.5); }
+  .wc-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    pointer-events: none;
   }
 
   /* ── HOW IT WORKS ────────────────────────────────────── */
@@ -278,15 +266,6 @@
 
 <!-- Batik overlay + watercolor SVG filter -->
 <div id="batik-mount" data-svg-url="{{ url_for('static', filename='batik.svg') }}"></div>
-<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
-  <defs>
-    <filter id="wc-filter" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
-      <feTurbulence id="wc-turb" type="turbulence" baseFrequency="0.038 0.048" numOctaves="4" seed="2" result="noise"/>
-      <feDisplacementMap id="wc-disp" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
-      <feGaussianBlur id="wc-gblur" in="displaced" stdDeviation="0"/>
-    </filter>
-  </defs>
-</svg>
 
 <!-- ══ HERO ══ -->
 <section class="hero" id="home">
@@ -505,71 +484,189 @@
   <script>
   (function () {
     var WORDS = ['Rise.', 'Lead.', 'Excel.', 'Thrive.', 'Build.', 'Shine.', 'Grow.'];
-    var SEEDS = [2, 7, 13, 5, 18, 9, 3];
     var idx   = 0;
     var rafId = null;
 
-    var el     = document.getElementById('wc-hero-word');
-    var feDisp = document.getElementById('wc-disp');
-    var feBlur = document.getElementById('wc-gblur');
-    var feTurb = document.getElementById('wc-turb');
-    if (!el || !feDisp || !feBlur || !feTurb) return;
+    var el = document.getElementById('wc-hero-word');
+    if (!el) return;
 
-    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-    function easeInQuad(t)   { return t * t; }
+    /* canvas is created once and reused for every word */
+    var outer = el.parentElement;
+    var cv    = document.createElement('canvas');
+    cv.className = 'wc-canvas';
+    outer.appendChild(cv);
+    var ctx = cv.getContext('2d');
 
-    function runFilter() {
-      if (rafId) cancelAnimationFrame(rafId);
-      var start  = performance.now();
-      var PHASE1 = 900;
-      var PHASE2 = 3000;
-      var TOTAL  = 3800;
+    var blobs      = [];
+    var startTime  = 0;
+    var cachedFont = '';
+    var cachedClr  = '';
 
-      function tick(now) {
-        var elapsed = now - start;
-        var scale, blur;
+    /* Each blob has its own expansion duration; blobs start staggered. */
+    var BLOB_DUR  = 2800;
+    var MAX_DELAY = 700;
+    var ALL_DONE  = BLOB_DUR + MAX_DELAY;   /* 3500 ms – fully painted */
+    var HOLD      = 1000;
+    var EXIT      = 500;
+    var TOTAL     = ALL_DONE + HOLD + EXIT; /* 5000 ms */
 
-        if (elapsed <= PHASE1) {
-          var t = easeOutCubic(elapsed / PHASE1);
-          scale = 32 * (1 - t);
-          blur  = 3.5 * (1 - t);
-        } else if (elapsed <= PHASE2) {
-          scale = 0; blur = 0;
-        } else if (elapsed <= TOTAL) {
-          var t = easeInQuad((elapsed - PHASE2) / (TOTAL - PHASE2));
-          scale = 26 * t;
-          blur  = 2.5 * t;
-        } else {
-          feDisp.setAttribute('scale', '0');
-          feBlur.setAttribute('stdDeviation', '0');
-          return;
+    function rand(a, b) { return a + Math.random() * (b - a); }
+
+    function resize() {
+      var er = el.getBoundingClientRect();
+      var or = outer.getBoundingClientRect();
+      cv.width  = Math.ceil(er.width)  || 200;
+      cv.height = Math.ceil(er.height) || 80;
+      cv.style.left   = (er.left - or.left) + 'px';
+      cv.style.top    = (er.top  - or.top)  + 'px';
+      cv.style.width  = cv.width  + 'px';
+      cv.style.height = cv.height + 'px';
+    }
+
+    function spawnBlobs() {
+      blobs = [];
+      var w = cv.width, h = cv.height;
+      var maxR = Math.sqrt(w * w + h * h);
+      var n = 2 + Math.floor(Math.random() * 3);   /* 2–4 blobs */
+
+      for (var i = 0; i < n; i++) {
+        /* Pre-compute spatter dots scattered radially around the blob centre */
+        var spatter = [];
+        for (var j = 0; j < 32; j++) {
+          var a = rand(0, Math.PI * 2);
+          var d = rand(0.04, 1.02) * maxR;
+          spatter.push({
+            dx: Math.cos(a) * d, dy: Math.sin(a) * d,
+            dist: d, r: rand(1.5, 5.5), a: rand(0.28, 0.82)
+          });
         }
-
-        feDisp.setAttribute('scale', scale.toFixed(2));
-        feBlur.setAttribute('stdDeviation', blur.toFixed(2));
-        rafId = requestAnimationFrame(tick);
+        /*
+         * Each blob lives in its own horizontal strip so they always appear
+         * visually separate.  Strip i spans [i/n … (i+1)/n] of the canvas width.
+         * We keep the blob centre within ±30 % of the strip width around the
+         * strip midpoint, guaranteeing a clear gap between adjacent blobs.
+         */
+        var stripW   = w / n;
+        var xMid     = (i + 0.5) * stripW;
+        var halfSpan = stripW * 0.30;
+        blobs.push({
+          x:       rand(Math.max(w * 0.04, xMid - halfSpan),
+                        Math.min(w * 0.96, xMid + halfSpan)),
+          y:       rand(0.1, 0.9) * h,
+          /* speed ≥ 1.15 guarantees final radius > maxR → full canvas covered */
+          speed:   rand(1.15, 1.6),
+          delay:   i === 0 ? 0 : rand(80, MAX_DELAY),
+          spatter: spatter
+        });
       }
-      rafId = requestAnimationFrame(tick);
+    }
+
+    function drawBlob(b, r) {
+      if (r < 1) return;
+      var feather = Math.max(14, r * 0.22);
+
+      /* Soft radial gradient gives the blurry/grainy edge */
+      var g = ctx.createRadialGradient(b.x, b.y, Math.max(0, r - feather), b.x, b.y, r);
+      g.addColorStop(0, 'rgba(0,0,0,1)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      /* Spatter dots appear as the blob front sweeps past each one */
+      for (var j = 0; j < b.spatter.length; j++) {
+        var sp = b.spatter[j];
+        if (sp.dist > r * 1.18) continue;
+        var fade = Math.min(1, Math.max(0, (r - sp.dist * 0.88) / (0.18 * r + 4)));
+        ctx.fillStyle = 'rgba(0,0,0,' + (fade * sp.a) + ')';
+        ctx.beginPath();
+        ctx.arc(b.x + sp.dx, b.y + sp.dy, sp.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    /* ease-in-out: slow start → faster middle → slow finish, mimics paint spreading */
+    function easeInOut(t) { return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; }
+
+    function frame(now) {
+      var elapsed = now - startTime;
+      var w = cv.width, h = cv.height;
+      var maxR = Math.sqrt(w * w + h * h);
+      ctx.clearRect(0, 0, w, h);
+
+      /*
+       * Step 1 – draw blob UNION as an alpha mask.
+       * globalAlpha ramps 0.5 → 1.0 over ALL_DONE so the colour builds up
+       * gradually, like pigment soaking into paper.
+       */
+      var fillProgress = Math.min(elapsed / ALL_DONE, 1);
+      var blobAlpha    = 0.5 + 0.5 * fillProgress;
+
+      if (elapsed < ALL_DONE + HOLD) {
+        ctx.globalAlpha = blobAlpha;
+        for (var i = 0; i < blobs.length; i++) {
+          var b = blobs[i];
+          var t = Math.min(Math.max(elapsed - b.delay, 0) / BLOB_DUR, 1);
+          drawBlob(b, easeInOut(t) * maxR * b.speed);
+        }
+        ctx.globalAlpha = 1;
+      } else {
+        /* All blobs fully grown – solid mask so text stays fully visible */
+        ctx.fillStyle = 'rgba(0,0,0,1)';
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      /*
+       * Step 2 – paint text through the mask.
+       * source-in: text colour appears only where the blob mask has alpha > 0.
+       * The gradient feather on each blob edge produces the grainy boundary.
+       */
+      ctx.save();
+      ctx.globalCompositeOperation = 'source-in';
+      ctx.fillStyle    = cachedClr;
+      ctx.font         = cachedFont;
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(WORDS[idx], w / 2, h / 2);
+      ctx.restore();
+
+      /* Step 3 – fade out */
+      if (elapsed > ALL_DONE + HOLD) {
+        var exitT = Math.min((elapsed - ALL_DONE - HOLD) / EXIT, 1);
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0,0,0,' + exitT + ')';
+        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
+      }
+
+      if (elapsed < TOTAL) rafId = requestAnimationFrame(frame);
     }
 
     function activate() {
-      feTurb.setAttribute('seed', SEEDS[idx]);
-      el.classList.remove('wc-active');
-      void el.offsetWidth;
-      el.classList.add('wc-active');
-      runFilter();
+      resize();
+      var cs     = getComputedStyle(el);
+      cachedFont = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      cachedClr  = getComputedStyle(document.documentElement).getPropertyValue('--red').trim() || '#bf4646';
+      spawnBlobs();
+      startTime = performance.now();
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(frame);
     }
 
     function nextWord() {
-      el.classList.remove('wc-active');
-      void el.offsetWidth;
       idx = (idx + 1) % WORDS.length;
       el.textContent = WORDS[idx];
       activate();
     }
 
-    activate();
-    setInterval(nextWord, 3800);
+    window.addEventListener('resize', resize);
+
+    document.fonts.ready.then(function () {
+      activate();
+      setInterval(nextWord, TOTAL);
+    });
   }());
   </script>
 
