@@ -832,4 +832,207 @@ def mentor_requests_list():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+# ══════════════════════════════════════════════════════════════
+#  CONNECT / COMMUNITY API
+# ══════════════════════════════════════════════════════════════
+
+def _author_from_user(user):
+    full_name = f"{user.get('name', '')} {user.get('surname', '')}".strip() or "Community Member"
+    return {
+        "name":       full_name,
+        "initial":    (full_name[0] if full_name else "C").upper(),
+        "role":       user.get("headline") or "NAIK Member",
+        "avatar_url": user.get("avatar_url") or None,
+        "url":        f"/u/{user['id']}" if user.get("id") else "#",
+    }
+
+
+@app.route("/api/connect/posts", methods=["GET"])
+def connect_posts_list():
+    uid = session.get("user_id")
+    try:
+        res = supabase.table("community_posts") \
+            .select("*") \
+            .order("created_at", desc=True) \
+            .limit(50) \
+            .execute()
+        posts = res.data or []
+
+        if not posts:
+            return jsonify({"posts": [], "likedIds": []})
+
+        # Fetch author info in one query
+        user_ids = list({p["user_id"] for p in posts})
+        users_res = supabase.table("users") \
+            .select("id, name, surname, headline, avatar_url") \
+            .in_("id", user_ids) \
+            .execute()
+        users_by_id = {u["id"]: u for u in (users_res.data or [])}
+
+        # Current user's liked post IDs
+        liked_ids = set()
+        if uid:
+            lr = supabase.table("community_likes").select("post_id").eq("user_id", uid).execute()
+            liked_ids = {row["post_id"] for row in (lr.data or [])}
+
+        # Reply counts in one query
+        post_ids = [p["id"] for p in posts]
+        reply_counts = {}
+        rc = supabase.table("community_replies").select("post_id").in_("post_id", post_ids).execute()
+        for row in (rc.data or []):
+            reply_counts[row["post_id"]] = reply_counts.get(row["post_id"], 0) + 1
+
+        shaped = []
+        for p in posts:
+            user = users_by_id.get(p["user_id"]) or {}
+            shaped.append({
+                "id":          p["id"],
+                "author":      _author_from_user(user),
+                "content":     p["content"],
+                "image":       p.get("image_url"),
+                "tags":        p.get("tags") or [],
+                "timestamp":   p["created_at"],
+                "likes":       p.get("likes_count", 0),
+                "liked":       p["id"] in liked_ids,
+                "reply_count": reply_counts.get(p["id"], 0),
+            })
+
+        return jsonify({"posts": shaped, "likedIds": list(liked_ids)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/connect/posts", methods=["POST"])
+def connect_posts_create():
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"success": False, "error": "Sign in to post"}), 401
+    data = request.json or {}
+    content = (data.get("content") or "").strip()
+    if not content:
+        return jsonify({"success": False, "error": "Content required"}), 400
+    try:
+        res = supabase.table("community_posts").insert({
+            "user_id":   uid,
+            "content":   content,
+            "image_url": data.get("image_url") or None,
+            "tags":      data.get("tags") or [],
+        }).execute()
+        post = res.data[0] if res.data else {}
+        return jsonify({"success": True, "post_id": post.get("id")})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/connect/posts/<int:post_id>/like", methods=["POST"])
+def connect_posts_like(post_id):
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"success": False, "error": "Sign in to like"}), 401
+    try:
+        existing = supabase.table("community_likes") \
+            .select("post_id").eq("post_id", post_id).eq("user_id", uid).execute()
+        post_res = supabase.table("community_posts") \
+            .select("likes_count").eq("id", post_id).single().execute()
+        current = (post_res.data or {}).get("likes_count", 0)
+
+        if existing.data:
+            supabase.table("community_likes").delete().eq("post_id", post_id).eq("user_id", uid).execute()
+            new_count = max(0, current - 1)
+            liked = False
+        else:
+            supabase.table("community_likes").insert({"post_id": post_id, "user_id": uid}).execute()
+            new_count = current + 1
+            liked = True
+
+        supabase.table("community_posts").update({"likes_count": new_count}).eq("id", post_id).execute()
+        return jsonify({"success": True, "liked": liked, "likes": new_count})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/connect/posts/<int:post_id>/replies", methods=["GET"])
+def connect_posts_replies_list(post_id):
+    try:
+        res = supabase.table("community_replies") \
+            .select("*") \
+            .eq("post_id", post_id) \
+            .order("created_at", desc=False) \
+            .execute()
+        replies = res.data or []
+
+        if not replies:
+            return jsonify({"replies": []})
+
+        user_ids = list({r["user_id"] for r in replies})
+        users_res = supabase.table("users") \
+            .select("id, name, surname, headline, avatar_url") \
+            .in_("id", user_ids) \
+            .execute()
+        users_by_id = {u["id"]: u for u in (users_res.data or [])}
+
+        shaped = []
+        for r in replies:
+            user = users_by_id.get(r["user_id"]) or {}
+            shaped.append({
+                "id":        r["id"],
+                "author":    _author_from_user(user),
+                "content":   r["content"],
+                "timestamp": r["created_at"],
+            })
+        return jsonify({"replies": shaped})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/connect/posts/<int:post_id>/replies", methods=["POST"])
+def connect_posts_replies_create(post_id):
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"success": False, "error": "Sign in to reply"}), 401
+    data = request.json or {}
+    content = (data.get("content") or "").strip()
+    if not content:
+        return jsonify({"success": False, "error": "Reply content required"}), 400
+    try:
+        res = supabase.table("community_replies").insert({
+            "post_id": post_id,
+            "user_id": uid,
+            "content": content,
+        }).execute()
+        reply = res.data[0] if res.data else {}
+        return jsonify({"success": True, "reply_id": reply.get("id")})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/connect/image", methods=["POST"])
+def connect_upload_image():
+    uid = session.get("user_id")
+    if not uid:
+        return jsonify({"success": False, "error": "Sign in to upload images"}), 401
+    if "image" not in request.files:
+        return jsonify({"success": False, "error": "No file provided"}), 400
+    file = request.files["image"]
+    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else "jpg"
+    if ext not in {"jpg", "jpeg", "png", "webp", "gif"}:
+        return jsonify({"success": False, "error": "Invalid file type"}), 400
+    import uuid
+    file_name = f"posts/{uid}_{uuid.uuid4().hex[:8]}.{ext}"
+    file_bytes = file.read()
+    if len(file_bytes) > 5 * 1024 * 1024:
+        return jsonify({"success": False, "error": "Image too large (max 5 MB)"}), 400
+    try:
+        supabase.storage.from_("post-images").upload(
+            path=file_name,
+            file=file_bytes,
+            file_options={"content-type": file.content_type, "upsert": "true"},
+        )
+        public_url = supabase.storage.from_("post-images").get_public_url(file_name)
+        return jsonify({"success": True, "image_url": public_url})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 # flask --app app run --debug --port 5001

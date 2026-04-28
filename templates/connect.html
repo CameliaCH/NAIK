@@ -376,7 +376,7 @@
 
 <!-- ── HERO ── -->
 <section class="connect-hero">
-  <span class="section-label">Community</span>
+  <span class="section-label">Connect</span>
   <h1>Kongsi <em>Cerita.</em></h1>
   <p>Share your wins — first job back, first paycheck, first promotion. Your story lifts the next woman up.</p>
 </section>
@@ -450,13 +450,13 @@
      data-avatar="{{ session.get('avatar_url') or '' }}"
      data-initial="{{ (session.get('user_name', 'Y')[0]).upper() if session.get('user_name') else 'Y' }}"
      data-name="{{ session.get('user_name', 'You') }}"
+     data-userid="{{ session.get('user_id') or '' }}"
      hidden></div>
 
 <script>
-/* ══════════════════════════════════════════════════════════
-   CONNECT — Demo social feed
-   All data is static for the demo. Backend integration TBD.
-   ══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   CONNECT — Community feed with Supabase backend
+   ══════════════════════════════════════════════════════════════ */
 
 /* ── SESSION CONSTANTS ──────────────────────────────────── */
 const _cd           = document.getElementById('connect-data');
@@ -464,6 +464,7 @@ const MY_AVATAR_URL = _cd.dataset.avatar || null;
 const MY_INITIAL    = _cd.dataset.initial || 'Y';
 const MY_NAME       = _cd.dataset.name    || 'You';
 const MY_USER_URL   = '/profile';
+const IS_LOGGED_IN  = !!_cd.dataset.userid;
 
 /* ── AVATAR COLOURS ─────────────────────────────────────── */
 const AVATAR_COLOURS = [
@@ -496,10 +497,10 @@ function fullTime(isoStr) {
   });
 }
 
-/* ── DEMO POST DATA ─────────────────────────────────────── */
+/* ── DEMO POST DATA (negative IDs to never collide with DB) */
 const DEMO_POSTS = [
   {
-    id: 1,
+    id: -1,
     author: {
       name: 'Nurul Asyikin Binti Razali',
       initial: 'N',
@@ -536,7 +537,7 @@ To every mama out there who thinks she's "too rusty" — you are not. Your years
     ],
   },
   {
-    id: 2,
+    id: -2,
     author: {
       name: 'Nurul Huda Binti Rahmat',
       initial: 'N',
@@ -575,7 +576,7 @@ Got 3 callbacks in 2 weeks after doing this. You can do it too. 💪`,
     ],
   },
   {
-    id: 3,
+    id: -3,
     author: {
       name: 'Rohani Bt Abdullah',
       initial: 'R',
@@ -607,7 +608,7 @@ I start as a customer service coordinator next Monday. RM 2,200/month. If you're
     ],
   },
   {
-    id: 4,
+    id: -4,
     author: {
       name: 'Priya Selvam',
       initial: 'P',
@@ -643,7 +644,7 @@ What job boards do you all use? Drop in the comments 👇`,
     ],
   },
   {
-    id: 5,
+    id: -5,
     author: {
       name: 'Zubaidah Binti Mustafa',
       initial: 'Z',
@@ -682,38 +683,32 @@ If your employer can't see the value you bring after a career break, they're not
 ];
 
 /* ── STATE ──────────────────────────────────────────────── */
-let likedPosts   = new Set();
-let openReplies  = new Set();
-let posts        = [...DEMO_POSTS];
-let nextId       = 100;
+let likedPosts         = new Set();
+let openReplies        = new Set();
+let posts              = [];
+let replyCache         = {};      // { [postId]: [reply, ...] } for real posts
 let composerImageDataUrl = null;
+let composerImageUrl   = null;    // URL after server upload
 
-/* ── MAP DEMO AUTHORS TO /u/<id> URLS ───────────────────── */
-const DEMO_USER_IDS = {
-  'Nurul Asyikin Binti Razali': 1001,
-  'Nurul Huda Binti Rahmat':    1002,
-  'Priya Selvam':               1003,
-  'Rohani Bt Abdullah':         1004,
-  'Zubaidah Binti Mustafa':     1005,
-  'Lee Mei Fong':               1006,
-  'Siti Norzahra':              1007,
-  'Tan Hui Ling':               1008,
-  'Fauziah Hamid':              1009,
-  'Wong Li Shan':               1010,
-  'Azura Binti Zainudin':       1011,
-  'Wan Aishah':                 1012,
-  'Hafizah Binti Othman':       1013,
-};
-DEMO_POSTS.forEach(post => {
-  const pid = DEMO_USER_IDS[post.author.name];
-  post.author.url = pid ? `/u/${pid}` : '#';
-  (post.replies || []).forEach(r => {
-    const rid = DEMO_USER_IDS[r.author.name];
-    r.author.url = rid ? `/u/${rid}` : '#';
-  });
-});
+/* ── LOAD POSTS FROM API ────────────────────────────────── */
+async function loadPosts() {
+  try {
+    const res = await fetch('/api/connect/posts');
+    if (res.ok) {
+      const data = await res.json();
+      const apiPosts = (data.posts || []).map(p => ({ ...p, isReal: true }));
+      (data.likedIds || []).forEach(id => likedPosts.add(id));
+      posts = [...apiPosts, ...DEMO_POSTS.map(p => ({ ...p, isReal: false }))];
+    } else {
+      posts = DEMO_POSTS.map(p => ({ ...p, isReal: false }));
+    }
+  } catch {
+    posts = DEMO_POSTS.map(p => ({ ...p, isReal: false }));
+  }
+  renderFeed();
+}
 
-/* ── AVATAR ELEMENT HELPER ──────────────────────────────── */
+/* ── AVATAR ELEMENT HELPERS ─────────────────────────────── */
 function avatarEl(author, cls) {
   const colour = avatarColour(author.name);
   const ini    = author.initial || (author.name || 'U')[0].toUpperCase();
@@ -724,6 +719,15 @@ function avatarEl(author, cls) {
            `onerror="this.parentElement.innerHTML='${ini}'"></a>`;
   }
   return `<a href="${author.url}" class="${cls}" style="background:${colour};" title="${author.name}">${ini}</a>`;
+}
+
+function buildMyReplyAvatar() {
+  return MY_AVATAR_URL
+    ? `<div class="reply-avatar" style="background:${avatarColour(MY_NAME)};padding:0;">` +
+      `<img src="${MY_AVATAR_URL}" alt="${MY_INITIAL}" ` +
+      `style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" ` +
+      `onerror="this.parentElement.innerHTML='${MY_INITIAL}'"></div>`
+    : `<div class="reply-avatar" style="background:${avatarColour(MY_NAME)};">${MY_INITIAL}</div>`;
 }
 
 /* ── RENDER FEED ────────────────────────────────────────── */
@@ -740,19 +744,27 @@ function renderFeed() {
   feed.innerHTML = posts.map(post => renderPost(post)).join('');
 }
 
+function getReplyCount(post) {
+  if (post.isReal) {
+    if (replyCache[post.id]) return replyCache[post.id].length;
+    return post.reply_count || 0;
+  }
+  return (post.replies || []).length;
+}
+
 function renderPost(post, isNew = false) {
   const isLiked      = likedPosts.has(post.id);
   const repliesOpen  = openReplies.has(post.id);
-  const colour       = avatarColour(post.author.name);
-  const likeCount    = post.likes + (isLiked ? 1 : 0);
-  const replyCount   = post.replies ? post.replies.length : 0;
+  // For real posts the server count already includes this user's like from the DB
+  const displayLikes = post.isReal ? post.likes : (post.likes + (isLiked ? 1 : 0));
+  const rc           = getReplyCount(post);
 
-  const myReplyAvatar = MY_AVATAR_URL
-    ? `<div class="reply-avatar" style="background:${avatarColour(MY_NAME)};padding:0;">` +
-      `<img src="${MY_AVATAR_URL}" alt="${MY_INITIAL}" ` +
-      `style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" ` +
-      `onerror="this.parentElement.innerHTML='${MY_INITIAL}'"></div>`
-    : `<div class="reply-avatar" style="background:${avatarColour(MY_NAME)};">${MY_INITIAL}</div>`;
+  let repliesHtml = '';
+  if (!post.isReal) {
+    repliesHtml = (post.replies || []).map(r => renderReply(r)).join('');
+  } else if (replyCache[post.id]) {
+    repliesHtml = replyCache[post.id].map(r => renderReply(r)).join('');
+  }
 
   return `
   <div class="post-card${isNew ? ' new' : ''}" id="post-${post.id}">
@@ -781,18 +793,18 @@ function renderPost(post, isNew = false) {
       <button class="post-action${isLiked ? ' liked' : ''}"
               onclick="toggleLike(${post.id})"
               aria-label="${isLiked ? 'Unlike' : 'Like'} post">
-        ${isLiked ? '❤️' : '🤍'} <span id="like-count-${post.id}">${likeCount}</span>
+        ${isLiked ? '❤️' : '🤍'} <span id="like-count-${post.id}">${displayLikes}</span>
       </button>
       <div class="post-action-sep"></div>
       <button class="post-action" onclick="toggleReplies(${post.id})">
-        💬 ${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}
+        💬 <span id="reply-count-${post.id}">${rc}</span> ${rc === 1 ? 'reply' : 'replies'}
       </button>
     </div>
 
     <div class="post-replies${repliesOpen ? ' open' : ''}" id="replies-${post.id}">
-      ${post.replies && post.replies.length ? post.replies.map(r => renderReply(r)).join('') : ''}
+      ${repliesHtml}
       <div class="reply-item">
-        ${myReplyAvatar}
+        ${buildMyReplyAvatar()}
         <div class="reply-bubble" style="padding:0; background:transparent; border:none; flex:1;">
           <div class="reply-composer">
             <input class="reply-input" type="text" placeholder="Write a reply…"
@@ -827,40 +839,103 @@ function escHtml(str) {
 }
 
 /* ── INTERACTIONS ───────────────────────────────────────── */
-function toggleLike(postId) {
-  const btn       = document.querySelector(`#post-${postId} .post-action`);
-  const countEl   = document.getElementById(`like-count-${postId}`);
-  const post      = posts.find(p => p.id === postId);
-  if (!post || !btn || !countEl) return;
+async function toggleLike(postId) {
+  const btn  = document.querySelector(`#post-${postId} .post-action`);
+  const post = posts.find(p => p.id === postId);
+  if (!post || !btn) return;
+  const isLiked = likedPosts.has(postId);
 
-  if (likedPosts.has(postId)) {
-    likedPosts.delete(postId);
-    btn.classList.remove('liked');
-    btn.setAttribute('aria-label', 'Like post');
-    btn.querySelector('span') || null;
-    btn.innerHTML = `🤍 <span id="like-count-${postId}">${post.likes}</span>`;
+  if (post.isReal) {
+    if (!IS_LOGGED_IN) { showToast('Sign in to like posts.'); return; }
+    if (isLiked) {
+      likedPosts.delete(postId);
+      post.likes = Math.max(0, post.likes - 1);
+      btn.classList.remove('liked');
+      btn.setAttribute('aria-label', 'Like post');
+      btn.innerHTML = `🤍 <span id="like-count-${postId}">${post.likes}</span>`;
+    } else {
+      likedPosts.add(postId);
+      post.likes++;
+      btn.classList.add('liked');
+      btn.setAttribute('aria-label', 'Unlike post');
+      btn.innerHTML = `❤️ <span id="like-count-${postId}">${post.likes}</span>`;
+    }
+    try {
+      const res = await fetch(`/api/connect/posts/${postId}/like`, { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        post.likes = data.likes;
+        const el = document.getElementById(`like-count-${postId}`);
+        if (el) el.textContent = post.likes;
+      } else {
+        // Revert optimistic update
+        if (!isLiked) { likedPosts.delete(postId); post.likes--; }
+        else { likedPosts.add(postId); post.likes++; }
+        const nowLiked = likedPosts.has(postId);
+        btn.classList.toggle('liked', nowLiked);
+        btn.innerHTML = `${nowLiked ? '❤️' : '🤍'} <span id="like-count-${postId}">${post.likes}</span>`;
+        showToast('Failed to update like.');
+      }
+    } catch {
+      showToast('Network error. Please try again.');
+    }
   } else {
-    likedPosts.add(postId);
-    btn.classList.add('liked');
-    btn.setAttribute('aria-label', 'Unlike post');
-    btn.innerHTML = `❤️ <span id="like-count-${postId}">${post.likes + 1}</span>`;
+    if (isLiked) {
+      likedPosts.delete(postId);
+      btn.classList.remove('liked');
+      btn.setAttribute('aria-label', 'Like post');
+      btn.innerHTML = `🤍 <span id="like-count-${postId}">${post.likes}</span>`;
+    } else {
+      likedPosts.add(postId);
+      btn.classList.add('liked');
+      btn.setAttribute('aria-label', 'Unlike post');
+      btn.innerHTML = `❤️ <span id="like-count-${postId}">${post.likes + 1}</span>`;
+    }
   }
 }
 
-function toggleReplies(postId) {
+async function toggleReplies(postId) {
   const section = document.getElementById(`replies-${postId}`);
   if (!section) return;
+  const post = posts.find(p => p.id === postId);
+
   if (openReplies.has(postId)) {
     openReplies.delete(postId);
     section.classList.remove('open');
   } else {
     openReplies.add(postId);
+    if (post && post.isReal && replyCache[postId] === undefined) {
+      section.innerHTML = `<div style="color:var(--ink-lt);font-size:0.82rem;padding:0.25rem 0;">Loading replies…</div>`;
+      await fetchAndCacheReplies(postId);
+      const repliesHtml = (replyCache[postId] || []).map(r => renderReply(r)).join('');
+      section.innerHTML = repliesHtml + `
+        <div class="reply-item">
+          ${buildMyReplyAvatar()}
+          <div class="reply-bubble" style="padding:0;background:transparent;border:none;flex:1;">
+            <div class="reply-composer">
+              <input class="reply-input" type="text" placeholder="Write a reply…"
+                     id="reply-input-${postId}"
+                     onkeydown="if(event.key==='Enter') submitReply(${postId})">
+              <button class="reply-submit" onclick="submitReply(${postId})">Reply</button>
+            </div>
+          </div>
+        </div>`;
+    }
     section.classList.add('open');
     section.querySelector('.reply-input')?.focus();
   }
 }
 
-function submitReply(postId) {
+async function fetchAndCacheReplies(postId) {
+  try {
+    const res = await fetch(`/api/connect/posts/${postId}/replies`);
+    replyCache[postId] = res.ok ? ((await res.json()).replies || []) : [];
+  } catch {
+    replyCache[postId] = [];
+  }
+}
+
+async function submitReply(postId) {
   const input = document.getElementById(`reply-input-${postId}`);
   if (!input) return;
   const text = input.value.trim();
@@ -869,20 +944,37 @@ function submitReply(postId) {
   const post = posts.find(p => p.id === postId);
   if (!post) return;
 
+  if (post.isReal && !IS_LOGGED_IN) { showToast('Sign in to reply.'); return; }
+
   const newReply = {
-    author: {
-      name:       MY_NAME,
-      initial:    MY_INITIAL,
-      avatar_url: MY_AVATAR_URL,
-      role:       'NAIK Member',
-      url:        MY_USER_URL,
-    },
+    author: { name: MY_NAME, initial: MY_INITIAL, avatar_url: MY_AVATAR_URL, role: 'NAIK Member', url: MY_USER_URL },
     content: text,
     timestamp: new Date().toISOString(),
   };
 
-  post.replies = post.replies || [];
-  post.replies.push(newReply);
+  if (post.isReal) {
+    try {
+      const res = await fetch(`/api/connect/posts/${postId}/replies`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: text }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        showToast(err.error || 'Failed to post reply.');
+        return;
+      }
+    } catch {
+      showToast('Network error. Please try again.');
+      return;
+    }
+    if (!replyCache[postId]) replyCache[postId] = [];
+    replyCache[postId].push(newReply);
+    post.reply_count = (post.reply_count || 0) + 1;
+  } else {
+    post.replies = post.replies || [];
+    post.replies.push(newReply);
+  }
 
   const repliesSection = document.getElementById(`replies-${postId}`);
   const newReplyEl = document.createElement('div');
@@ -893,15 +985,15 @@ function submitReply(postId) {
   input.value = '';
   showToast('Reply posted!');
 
-  // Update reply count on button
-  const replyBtn = document.querySelector(`#post-${postId} .post-action:nth-child(3)`);
+  const rc = post.isReal ? post.reply_count : (post.replies || []).length;
+  const replyBtn = document.querySelector(`#post-${postId} .post-footer .post-action:last-child`);
   if (replyBtn) {
-    replyBtn.innerHTML = `💬 ${post.replies.length} ${post.replies.length === 1 ? 'reply' : 'replies'}`;
+    replyBtn.innerHTML = `💬 <span id="reply-count-${postId}">${rc}</span> ${rc === 1 ? 'reply' : 'replies'}`;
   }
 }
 
 /* ── POST COMPOSER ──────────────────────────────────────── */
-function handleImageSelect(event) {
+async function handleImageSelect(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -911,54 +1003,95 @@ function handleImageSelect(event) {
     document.getElementById('image-preview').style.display = 'block';
   };
   reader.readAsDataURL(file);
+
+  if (IS_LOGGED_IN) {
+    const formData = new FormData();
+    formData.append('image', file);
+    try {
+      const res = await fetch('/api/connect/image', { method: 'POST', body: formData });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) composerImageUrl = data.image_url;
+      }
+    } catch {
+      // Image will be omitted if upload failed
+    }
+  }
 }
 
 function removeImage() {
   composerImageDataUrl = null;
+  composerImageUrl     = null;
   document.getElementById('preview-img').src = '';
   document.getElementById('image-preview').style.display = 'none';
   document.getElementById('image-input').value = '';
 }
 
-function submitPost() {
+async function submitPost() {
   const text = document.getElementById('composer-text').value.trim();
-  if (!text) {
-    showToast('Please write something before posting.');
-    return;
-  }
+  if (!text) { showToast('Please write something before posting.'); return; }
 
   const selectedTags = [...document.querySelectorAll('.ctag.selected')].map(el => el.dataset.tag);
 
-  const newPost = {
-    id: nextId++,
-    author: {
-      name:       MY_NAME,
-      initial:    MY_INITIAL,
-      avatar_url: MY_AVATAR_URL,
-      role:       'NAIK Member',
-      url:        MY_USER_URL,
-    },
-    content: text,
-    image: composerImageDataUrl || null,
-    tags: selectedTags,
-    timestamp: new Date().toISOString(),
-    likes: 0,
-    replies: [],
-  };
+  if (!IS_LOGGED_IN) {
+    const newPost = {
+      id: -(Date.now()), isReal: false,
+      author: { name: MY_NAME, initial: MY_INITIAL, avatar_url: MY_AVATAR_URL, role: 'NAIK Member', url: MY_USER_URL },
+      content: text, image: composerImageDataUrl || null, tags: selectedTags,
+      timestamp: new Date().toISOString(), likes: 0, replies: [],
+    };
+    posts.unshift(newPost);
+    prependPostCard(newPost);
+    resetComposer();
+    showToast('Sign in to share posts with the community!');
+    return;
+  }
 
-  posts.unshift(newPost);
+  const btn = document.querySelector('.composer-submit');
+  btn.disabled = true;
+  btn.textContent = 'Posting…';
 
+  try {
+    const res = await fetch('/api/connect/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: text, image_url: composerImageUrl || null, tags: selectedTags }),
+    });
+    const data = await res.json();
+    if (!data.success) { showToast(data.error || 'Failed to post. Please try again.'); return; }
+
+    const newPost = {
+      id: data.post_id, isReal: true,
+      author: { name: MY_NAME, initial: MY_INITIAL, avatar_url: MY_AVATAR_URL, role: 'NAIK Member', url: MY_USER_URL },
+      content: text, image: composerImageUrl || null, tags: selectedTags,
+      timestamp: new Date().toISOString(), likes: 0, reply_count: 0,
+    };
+    posts.unshift(newPost);
+    replyCache[data.post_id] = [];
+    prependPostCard(newPost);
+    resetComposer();
+    showToast('Post shared with the community!');
+  } catch {
+    showToast('Network error. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Post →';
+  }
+}
+
+function prependPostCard(post) {
   const feed = document.getElementById('post-feed');
-  const newEl = document.createElement('div');
-  newEl.innerHTML = renderPost(newPost, true);
-  feed.prepend(newEl.firstElementChild);
+  const empty = feed.querySelector('.feed-empty');
+  if (empty) empty.remove();
+  const el = document.createElement('div');
+  el.innerHTML = renderPost(post, true);
+  feed.prepend(el.firstElementChild);
+}
 
-  // Reset composer
+function resetComposer() {
   document.getElementById('composer-text').value = '';
   document.querySelectorAll('.ctag.selected').forEach(el => el.classList.remove('selected'));
   removeImage();
-
-  showToast('Post shared with the community!');
 }
 
 /* ── TOAST ──────────────────────────────────────────────── */
@@ -971,7 +1104,6 @@ function showToast(msg) {
 
 /* ── INIT ───────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  // Composer avatar image fallback
   const myAvatarImg = document.getElementById('my-avatar-img');
   if (myAvatarImg) {
     myAvatarImg.onerror = function() {
@@ -981,12 +1113,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Tag chips
   document.querySelectorAll('.ctag').forEach(chip => {
     chip.addEventListener('click', () => chip.classList.toggle('selected'));
   });
 
-  renderFeed();
+  loadPosts();
 });
 </script>
 
