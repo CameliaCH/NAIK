@@ -31,6 +31,10 @@
   --banner: #1c1713;
   --alw-dk: #0c0c0c;
   --alw-white: white;
+  --trans-cream: rgba(255, 255, 255, 0.8);
+  --trans-rose-lt: rgba(247, 228, 233, 0.9);
+  --trans-card-bg: rgba(241, 221, 221, 0.8);
+  --batik-duration: 8s;
 }
 /*:root {
   --red:     #BF4646;
@@ -99,6 +103,9 @@
   --banner: #39332d;
   --alw-dk: #0c0c0c;
   --alw-white: white;
+  --trans-cream: rgba(26, 22, 18, 0.8);
+  --trans-rose-lt: rgba(42, 24, 32, 0.9);
+  --trans-card-bg: rgba(34, 30, 26, 0.8);
 }
 
 [data-theme="dark"] body {
@@ -120,9 +127,7 @@
 }
 
 [data-theme="dark"] .feature-card,
-[data-theme="dark"] .step,
-[data-theme="dark"] .testimonial-card,
-[data-theme="dark"] .team-card {
+[data-theme="dark"] .step {
   background: var(--card-bg);
   border-color: var(--border);
 }
@@ -445,26 +450,119 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
     );
     -webkit-mask-size: 300% 100%;
     mask-size: 300% 100%;
-    -webkit-mask-position: -200% 0;
-    mask-position: -200% 0;
-    animation: batik-sweep 8s ease-in-out infinite;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: 200% 0;
+    mask-position: 200% 0;
+    animation: batik-sweep var(--batik-duration, 8s) linear infinite;
   }
-
 
 @keyframes batik-sweep {
   0%   {
     opacity: 1;
-    -webkit-mask-position: -200% 0;
-    mask-position: -200% 0;
-  }
-  100% {
-    opacity: 1;
     -webkit-mask-position: 200% 0;
     mask-position: 200% 0;
   }
-}}
+  100% {
+    opacity: 1;
+    -webkit-mask-position: -200% 0;
+    mask-position: -200% 0;
+  }
+}
 
-  /* Sliding shine overlay via pseudo-element 
+  #batik-mount.batik-off svg {
+    animation-play-state: paused;
+    opacity: 0 !important;
+  }
+}
+
+/* ── BATIK SHINE SETTINGS FAB (touch/mobile only) ─────────── */
+.batik-settings-fab {
+  display: none;
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  z-index: 200;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+@media (hover: none) {
+  .batik-settings-fab { display: flex; }
+}
+.batik-settings-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--alw-dk);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.28);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.batik-settings-btn:active { transform: scale(0.92); }
+.batik-settings-panel {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 200px;
+}
+.batik-settings-panel[hidden] { display: none; }
+.batik-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.batik-speed-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+}
+.batik-speed-header {
+  display: flex;
+  justify-content: space-between;
+}
+.batik-settings-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.batik-toggle-btn {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.9rem;
+  border-radius: 50px;
+  border: 1.5px solid var(--red);
+  background: var(--red);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  min-width: 44px;
+  text-align: center;
+}
+.batik-toggle-btn.off {
+  background: transparent;
+  color: var(--ink-lt);
+  border-color: var(--border);
+}
+.batik-speed-input {
+  width: 100%;
+  accent-color: var(--red);
+  cursor: pointer;
+}
+
+  /* Sliding shine overlay via pseudo-element
   #batik-mount::after {
     content: '';
     position: absolute;
@@ -594,13 +692,6 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 .feature-link:hover { gap: 0.6rem; }
 
 /* ── DETAIL SECTIONS ──────────────────────────────────────── */
-.detail-section {
-  background: #fff;
-}
-.detail-section--alt {
-  background: #FAFAFA;
-}
-
 .detail-inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -645,7 +736,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 }
 
 .detail-stat-card {
-  background: #fff;
+  background: var(--trans-cream);
   border-radius: 14px;
   padding: 1.25rem;
   text-align: center;
@@ -653,7 +744,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
   z-index: 5;
 }
 .detail-stat-card .n {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display', serif; 
   font-size: 1.8rem;
   font-weight: 700;
   display: block;
@@ -668,9 +759,33 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 .detail-stat-card.c-teal .n { color: var(--red); }
 .detail-stat-card.c-red   .n { color: var(--red); }
 
+.quote-card {
+  grid-column: span 2;
+  background: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 14px;
+  text-align: left;
+  padding: 1.5rem;
+  color: #fff;
+  font-style: italic;
+  z-index: 5;
+}
+.quote-card .n {
+  font-size: .95rem;
+  font-style: italic;
+  color: #fff;
+  margin-bottom: .5rem;
+  display: block;
+}
+.quote-card .d {
+  color: rgba(255,255,255,0.6);
+  font-size: .75rem;
+}
+
 /* Full-width testimonial card */
 .highlight-teal {
   background: var(--red);
+  opacity:1;
   border-color: var(--red);
   text-align: left;
   padding: 1.5rem;
@@ -689,8 +804,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 
 /* ── FOR HER SECTION ─────────────────────────────────────── */
 .for-her {
-  background: var(--rose-lt);
-  opacity:0.9;
+  background: var(--trans-rose-lt);
   border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
   position: relative;
   z-index: 3;
@@ -704,8 +818,19 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 
 .her-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .her-stat-card {
-  background: #fff; border: 1px solid var(--border);
+  background: var(--trans-cream); border: 1px solid var(--border);
   border-radius: 14px; padding: 1.25rem; text-align: center;
+}
+.her-quote {
+  grid-column:span 2; 
+  background:var(--red); 
+  border: 1px solid var(--red); 
+  border-radius: 14px;
+  border-color: var(--red);
+  text-align:left; 
+  padding:1.5rem;
+  color:#fff;
+  font-style: italic;
 }
 .her-stat-card .n {
   font-family: 'Playfair Display', serif; font-size: 1.8rem;
@@ -758,7 +883,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
   gap: 1.25rem; max-width: 1000px; margin: 0 auto;
 }
 .testimonial-card {
-  background: var(--cream);
+  background: var(--trans-cream);
   border: 1px solid var(--border);
   border-radius: 16px; padding: 1.75rem;
   z-index: 5;
@@ -782,7 +907,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
   gap: 1rem; max-width: 760px; margin: 0 auto;
 }
 .team-card {
-  background: var(--card-bg); border: 1px solid var(--border); z-index: 5;
+  background: var(--trans-cream); border: 1px solid var(--border); z-index: 5;
   border-radius: 14px; padding: 1.5rem 1rem; text-align: center;
   transition: box-shadow 0.2s, transform 0.2s;
 }
@@ -1316,7 +1441,7 @@ footer ul a:hover { color: #fff; }
 
 /*naik.js tools section styles*/
 .tool-card{
-  background: var(--cream);
+  background: var(--trans-cream);
   border: 1px solid var(--border);
   border-radius: 16px; padding: 1.75rem;
   z-index: 5;

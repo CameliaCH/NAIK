@@ -95,7 +95,6 @@
   <a href="{{ url_for('home') }}">{{ t('nav.home') }}</a>
   <a href="{{ url_for('explore') }}">{{ t('nav.explore') }}</a>
   <a href="{{ url_for('skills') }}">{{ t('nav.skillup') }}</a>
-  <a href="{{ url_for('home') }}#forher" class="her">{{ t('nav.forHer') }}</a>
   <a href="{{ url_for('connect') }}">Connect</a>
   {% if session.get('user_id') %}
     <a href="{{ url_for('profile') }}">{{ t('nav.myProfile') }}</a>
