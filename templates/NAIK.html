@@ -246,13 +246,13 @@
       </div>
     </div>
     <div class="ob-hero-copy">
-      <span class="ob-hero-eyebrow">🚀 Getting started</span>
+      <span class="ob-hero-eyebrow">✨ Selamat datang</span>
       <h2 class="ob-hero-title" id="ob-hero-title">
-        Welcome, <em id="ob-hero-name">{{ session.get('user_name', '').split(' ')[0] or 'there' }}</em>.<br>
-        Let's set you up for success.
+        Hi, <em id="ob-hero-name">{{ session.get('user_name', '').split(' ')[0] or 'there' }}</em> —<br>
+        you're closer than you think.
       </h2>
       <div class="ob-hero-complete-msg" id="ob-hero-complete-msg">
-        🎉 You're all set! Your profile is complete. Explore your roadmaps and keep growing.
+        🎉 You're all set! Now go find the work that fits around your life.
       </div>
       <ul class="ob-steps-list" id="ob-steps-list"></ul>
       <div class="ob-cta-row">
@@ -270,14 +270,14 @@
 <!-- ══ HERO ══ -->
 <section class="hero" id="home">
   <div class="hero-content">
-    <div class="hero-badge"><span class="dot"></span> Free · Malaysia · AI-Powered</div>
+    <div class="hero-badge"><span class="dot"></span> Free · For Women · Malaysia</div>
     <h1>
       <span class="hero-headline-pre">Every woman deserves to</span>
       <span class="wc-word-outer"><span class="wc-word" id="wc-hero-word">Rise.</span></span>
     </h1>
     <div class="hero-stats">
-      <div class="hero-stat"><span class="num">12,400+</span><span class="label">Malaysians helped</span></div>
-      <div class="hero-stat"><span class="num">380+</span><span class="label">Jobs listed</span></div>
+      <div class="hero-stat"><span class="num">12,400+</span><span class="label">Women helped</span></div>
+      <div class="hero-stat"><span class="num">380+</span><span class="label">Flexible jobs listed</span></div>
       <div class="hero-stat"><span class="num">Free</span><span class="label">Always</span></div>
     </div>
   </div>
@@ -286,58 +286,58 @@
 <!-- ══ HOW IT WORKS ══ -->
 <section class="how-section">
   <div class="how-header">
-    <span class="section-label">How it works</span>
-    <h2>Three steps.<br>One platform.</h2>
-    <p>No laptop needed. Works on any phone.</p>
+    <span class="section-label">Your path back</span>
+    <h2>Three steps.<br>Back to work.</h2>
+    <p>Works on any phone. Designed for women returning after a career break.</p>
   </div>
   <div class="how-steps">
     <div class="how-step">
       <div class="how-step-num">01</div>
       <h3>Take the quiz</h3>
-      <p>5 questions. Under 3 minutes. Get matched to your top 3 jobs.</p>
+      <p>Your hours, your caregiving responsibilities, your location. Under 3 minutes. We match you to jobs that actually fit — not just jobs that exist.</p>
     </div>
     <div class="how-step">
       <div class="how-step-num">02</div>
       <h3>See your roadmap</h3>
-      <p>Every saved job unlocks a step-by-step path to that salary — free courses included.</p>
+      <p>Every match tells you WHY — flexible hours, skills from your caregiving years, no gap judgment. Save a job to unlock your full step-by-step roadmap.</p>
     </div>
     <div class="how-step">
       <div class="how-step-num">03</div>
-      <h3>Build & apply</h3>
-      <p>AI CV builder + mock interview practice. Walk in confident.</p>
+      <h3>Build confidence & apply</h3>
+      <p>Turn your caregiving years into a real CV. Practise answering "why haven't you worked?" — until you walk in owning your story.</p>
     </div>
   </div>
   <div class="how-ctas">
-    <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-lg">Start — it's free</a>
+    <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-lg">Find my matches — it's free</a>
     <a href="{{ url_for('explore') }}" class="btn btn-teal btn-lg">Browse all jobs</a>
   </div>
 </section>
 
-<!-- ══ CAREER QUIZ & JOBS ══ -->
+<!-- ══ QUIZZES ══ -->
 <section class="detail-section" id="explore-section">
   <div class="detail-inner">
     <div class="detail-copy">
-      <span class="section-label">Career Quiz & Jobs</span>
-      <h2>Find work that fits <em style="font-style:normal;color:var(--red);">your life.</em></h2>
-      <p style="margin-bottom:2rem;color:var(--ink-lt);max-width:400px;line-height:1.7;">5 questions. Instant match. 380+ listings across all 14 states.</p>
+      <span class="section-label">Career Match Quiz</span>
+      <h2>Find work that fits <em style="font-style:normal;color:var(--red);">your life right now.</em></h2>
+      <p style="margin-bottom:2rem;color:var(--ink-lt);max-width:400px;line-height:1.7;">Not a generic career test. 5 questions written for women returning after a break — around your hours, school runs, and family commitments.</p>
       <ul class="detail-features">
-        <li>Personalised top-3 job matches with salary ranges</li>
-        <li>Full-time, part-time, remote, freelance</li>
-        <li>Save jobs → unlock your career roadmap</li>
+        <li>Top 3 job matches explained — school-hours-friendly, remote, or part-time</li>
+        <li>Each result tells you exactly WHY it fits your situation</li>
+        <li>Save a job to unlock your personalised career roadmap</li>
       </ul>
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem;">
-        <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-lg">Take the Quiz</a>
+        <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-lg">Take the Career Quiz</a>
         <a href="{{ url_for('explore') }}" class="btn btn-teal btn-lg">Browse Jobs</a>
       </div>
     </div>
     <div class="detail-stat-grid">
-      <div class="detail-stat-card c-teal"><span class="n">380+</span><span class="d">Jobs listed</span></div>
+      <div class="detail-stat-card c-teal"><span class="n">380+</span><span class="d">Flexible jobs listed</span></div>
       <div class="detail-stat-card c-teal"><span class="n">3 min</span><span class="d">To get matched</span></div>
       <div class="detail-stat-card c-teal"><span class="n">14</span><span class="d">States covered</span></div>
       <div class="detail-stat-card c-teal"><span class="n">Free</span><span class="d">No fees. Ever.</span></div>
       <div class="detail-stat-card highlight-teal" style="grid-column:span 2;">
-        <span class="n" style="font-size:.95rem;font-style:italic;margin-bottom:.5rem;display:block;">"The quiz matched me to delivery driving. Now I earn RM 2,400/month and set my own hours."</span>
-        <span class="d">— Rizal, 34 · Kuala Lumpur</span>
+        <span class="n" style="font-size:.95rem;font-style:italic;margin-bottom:.5rem;display:block;">"The quiz asked about school hours and my caregiving experience. It matched me to clinic admin work near my house. No other app did that."</span>
+        <span class="d">— Aida, 33 · Selangor</span>
       </div>
     </div>
   </div>
@@ -347,27 +347,26 @@
 <section class="detail-section detail-section--alt" id="skillup-hired">
   <div class="detail-inner">
     <div class="detail-copy">
-      <span class="section-label">Skill Up & Get Hired</span>
-      <h2>Walk in <em style="font-style:normal;color:var(--red);">ready.</em></h2>
-      <p style="margin-bottom:2rem;color:var(--ink-lt);max-width:400px;line-height:1.7;">AI CV builder, mock interview practice, and job-hunt tools — all free.</p>
+      <span class="section-label">Your Re-entry Toolkit</span>
+      <h2>Walk in <em style="font-style:normal;color:var(--red);">owning your story.</em></h2>
+      <p style="margin-bottom:2rem;color:var(--ink-lt);max-width:400px;line-height:1.7;">Your years at home weren't a gap — they were experience. Three free tools to help you say that on paper, and out loud.</p>
       <ul class="detail-features">
-        <li>AI CV Builder — from scratch or polish your words</li>
-        <li>Mock Interview in BM, English, or Mandarin</li>
-        <li>WhatsApp templates, checklists & rights guides</li>
+        <li>Career Gap CV Builder — turns caregiving years into real CV bullets</li>
+        <li>Confidence Builder — practise gap questions until you own the room</li>
+        <li>Women's rights guide, safe gig checklist &amp; resources</li>
       </ul>
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem;">
-        <a href="{{ url_for('skills') }}" class="btn btn-primary btn-lg">Go to Skill Up</a>
-        <a href="{{ url_for('explore') }}" class="btn btn-teal btn-lg">Browse Jobs</a>
+        <a href="{{ url_for('skills') }}" class="btn btn-primary btn-lg">Open My Toolkit</a>
       </div>
     </div>
     <div class="detail-stat-grid">
-      <div class="detail-stat-card c-teal"><span class="n">3×</span><span class="d">More callbacks with AI CV</span></div>
+      <div class="detail-stat-card c-teal"><span class="n">3×</span><span class="d">More callbacks with an AI CV</span></div>
       <div class="detail-stat-card c-teal"><span class="n">15 min</span><span class="d">To build your first CV</span></div>
-      <div class="detail-stat-card c-teal"><span class="n">RM 750+</span><span class="d">Avg. monthly gain</span></div>
-      <div class="detail-stat-card c-teal"><span class="n">Free</span><span class="d">No sign-up to start</span></div>
+      <div class="detail-stat-card c-teal"><span class="n">RM 750+</span><span class="d">Avg. monthly income gain</span></div>
+      <div class="detail-stat-card c-teal"><span class="n">Free</span><span class="d">No sign-up needed</span></div>
       <div class="detail-stat-card highlight-teal" style="grid-column:span 2;">
-        <span class="n" style="font-size:.95rem;font-style:italic;margin-bottom:.5rem;display:block;">"The CV builder turned my market stall experience into something I was proud to send. Got called back within a week."</span>
-        <span class="d">— Siti Nor, 26 · Penang</span>
+        <span class="n" style="font-size:.95rem;font-style:italic;margin-bottom:.5rem;display:block;">"I hadn't worked in 5 years. The Career Gap CV Builder translated my caregiving into bullet points I was proud of. Three callbacks in one week."</span>
+        <span class="d">— Khatijah, 35 · Selangor</span>
       </div>
     </div>
   </div>
@@ -397,30 +396,6 @@
         <span class="n" style="color:#fff; font-size:.95rem; font-style:italic; margin-bottom:.5rem; display:block;">"I thought my career was over when I had my baby. NAIK showed me it was just beginning again."</span>
         <span class="d" style="color:rgba(255,255,255,0.6); font-size:.75rem;">— Nurul, 28 · Selangor</span>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ MORE TOOLS ══ -->
-<section style="background:var(--cream); border-bottom: 5px dotted var(--border); padding:clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem);">
-  <div class="section-header center">
-    <span class="section-label">More Tools</span>
-    <h2>Free resources<br><em style="font-style:normal;color:var(--red);">built for you.</em></h2>
-  </div>
-  <div class="tools-grid">
-    <div class="tool-card">
-      <div>💰</div>
-      <span class="section-label">Subsidy & Grant Finder</span>
-      <h3>Find government aid you qualify for.</h3>
-      <p>Answer 5 questions. Get a personalised list of subsidies, grants, and welfare programmes — in BM, English, or Mandarin.</p>
-      <a href="{{ url_for('subsidy') }}" class="btn btn-primary">Find My Subsidies</a>
-    </div>
-    <div class="tool-card">
-      <div>🤝</div>
-      <span class="section-label">Mentor Match</span>
-      <h3>Get guided by someone who's been there.</h3>
-      <p>Connect with volunteer mentors from your industry. Ask questions, get advice, and navigate your career with real support.</p>
-      <a href="{{ url_for('match') }}" class="btn btn-teal">Find a Mentor</a>
     </div>
   </div>
 </section>

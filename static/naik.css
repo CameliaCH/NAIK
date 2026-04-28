@@ -689,7 +689,7 @@ section { padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,5rem); }
 
 /* ── FOR HER SECTION ─────────────────────────────────────── */
 .for-her {
-  background: var(--rose-lt);
+  background: var(--cream);
   opacity:0.9;
   border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
   position: relative;

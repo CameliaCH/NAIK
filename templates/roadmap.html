@@ -140,9 +140,9 @@
 <div id="gate-section" style="display:{% if not session.get('user_id') %}block{% else %}none{% endif %}">
   <div class="gate-wrap">
     <div class="gate-card">
-      <div class="gate-icon">🔒</div>
-      <h2>Sign in to take the quiz</h2>
-      <p>Your answers are saved to your profile so NAIK can recommend the right jobs — and build you a personalised career roadmap.</p>
+      <div class="gate-icon">✨</div>
+      <h2>Sign in to find your match</h2>
+      <p>This quiz is built for women returning to work — it asks about your real life, not a generic career test. Your answers are saved so your results and career roadmap are personalised just for you.</p>
       <div class="gate-btns">
         <a href="{{ url_for('signIn') }}?next=/quiz" class="btn btn-primary">Sign In</a>
         <a href="{{ url_for('signIn') }}#register" class="btn btn-outline">Create Account</a>
@@ -161,8 +161,11 @@
   <div class="step-wrap active" id="step-1">
     <div class="step-header">
       <div class="step-num">Step 1 of 7</div>
-      <div class="step-q">What kind of work excites you most?</div>
-      <div class="step-sub">Pick the one that feels most like you</div>
+      <div class="step-q">What kind of work fits your life right now?</div>
+      <div class="step-sub">Don't think about your old job — think about what suits your life today</div>
+      <div style="margin-top:.75rem;background:rgba(191,70,70,.07);border:1px solid rgba(191,70,70,.2);border-radius:10px;padding:.7rem 1rem;font-size:.78rem;color:var(--ink-mid);line-height:1.6;">
+        💡 This quiz is built for women returning to work after caregiving. It asks about your real life — childcare, school hours, family commitments — so your results actually fit <em>you</em>.
+      </div>
     </div>
     <div class="cards-grid" id="interest-cards">
       <div class="sel-card" data-val="biz"><div class="card-emoji">💼</div><div class="card-label">Sales &amp; Business</div><div class="card-sub">Selling, admin, office</div></div>
@@ -183,8 +186,8 @@
   <div class="step-wrap" id="step-2">
     <div class="step-header">
       <div class="step-num">Step 2 of 7</div>
-      <div class="step-q">What's your income goal right now?</div>
-      <div class="step-sub">Both are good — be honest with yourself</div>
+      <div class="step-q">What's your income priority right now?</div>
+      <div class="step-sub">Both are valid — there's no wrong answer here</div>
     </div>
     <div class="cards-grid cards-grid-2" id="income-cards">
       <div class="sel-card" data-val="immediate">
@@ -239,8 +242,8 @@
   <div class="step-wrap" id="step-4">
     <div class="step-header">
       <div class="step-num">Step 4 of 7</div>
-      <div class="step-q">What can you already do?</div>
-      <div class="step-sub">Tap all that apply — or skip if none</div>
+      <div class="step-q">What skills do you have — including from home?</div>
+      <div class="step-sub">Caregiving, cooking, managing a household — these count. Tap all that apply.</div>
     </div>
     <div class="chips-wrap" id="skills-chips">
       <div class="chip" data-val="customer_service">🗣️ Customer service</div>
@@ -257,7 +260,7 @@
       <button class="btn-next" id="next-4" onclick="goStep(5)">Next →</button>
     </div>
     <div class="skip-row">
-      <button class="skip-link" onclick="answers.skills=[];goStep(5)">I don't have any of these — skip →</button>
+      <button class="skip-link" onclick="answers.skills=[];goStep(5)">None of these feel right — skip →</button>
     </div>
   </div>
 
@@ -265,8 +268,8 @@
   <div class="step-wrap" id="step-5">
     <div class="step-header">
       <div class="step-num">Step 5 of 7</div>
-      <div class="step-q">How do you like to work?</div>
-      <div class="step-sub">Move each slider to show how much you agree</div>
+      <div class="step-q">What kind of work environment suits you?</div>
+      <div class="step-sub">Think about what feels comfortable — there are no wrong answers</div>
     </div>
     <div class="slider-questions" id="slider-q5"></div>
     <div class="step-nav">
@@ -304,8 +307,8 @@
   <div class="step-wrap" id="step-7">
     <div class="step-header">
       <div class="step-num">Step 7 of 7</div>
-      <div class="step-q">What are your goals?</div>
-      <div class="step-sub">Last step — almost there!</div>
+      <div class="step-q">What matters most to you in a job?</div>
+      <div class="step-sub">Last step — you're almost there. Be honest, this helps us match you better.</div>
     </div>
     <div class="slider-questions" id="slider-q7"></div>
     <div class="step-nav">
@@ -320,7 +323,7 @@
 <!-- ══ SUBMITTING ══ -->
 <div class="submitting-wrap" id="submitting-wrap">
   <div class="spinner"></div>
-  <p>Finding your best jobs…</p>
+  <p>Finding jobs that fit your life…</p>
   <small>Matching your answers to opportunities across Malaysia.</small>
 </div>
 

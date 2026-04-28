@@ -158,33 +158,33 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
     <circle cx="450" cy="100" r="240" fill="none" stroke="#EDDCC6" stroke-width="1.5"/>
   </svg>
   <div class="rec-hero-content">
-    <span class="rec-eyebrow">🎯 Personalised for You</span>
-    <h1>Choose Your <em>Career Path</em></h1>
-    <p>We found the best realistic options for you. Save the one that fits your situation — and get a step-by-step personalised roadmap.</p>
+    <span class="rec-eyebrow">✨ Matched to Your Life</span>
+    <h1>Your <em>Best-Fit Jobs</em></h1>
+    <p>We found realistic options that fit your hours, your skills, and your situation — including your caregiving experience. Save the one that feels right and unlock your full step-by-step roadmap.</p>
   </div>
 </div>
 
 <!-- LOADING STATE -->
 <div class="loading-wrap" id="loading-wrap">
   <div class="spinner"></div>
-  <p>Matching your profile to the best opportunities in Malaysia…</p>
+  <p>Finding jobs that fit your life — flexible hours, real skills match, no gap judgment…</p>
 </div>
 
 <!-- ERROR STATE -->
 <div class="error-wrap" id="error-wrap" style="display:none;">
   <div class="error-card">
     <div class="error-icon">😕</div>
-    <h2 id="error-title">No quiz results found</h2>
-    <p id="error-msg">It looks like you haven't taken the career quiz yet. Take it now — it only takes 3 minutes.</p>
-    <a href="{{ url_for('quiz') }}" class="btn btn-primary" style="width:100%;justify-content:center;">Take the Career Quiz →</a>
+    <h2 id="error-title">You haven't taken the quiz yet</h2>
+    <p id="error-msg">Take the 3-minute career quiz — it's built for women returning to work after caregiving. The results explain why each job fits your life, not just what's available.</p>
+    <a href="{{ url_for('quiz') }}" class="btn btn-primary" style="width:100%;justify-content:center;">Take the Quiz — it's free →</a>
   </div>
 </div>
 
 <!-- RECOMMENDATIONS -->
 <div class="rec-wrap" id="rec-wrap" style="display:none;">
   <div class="rec-section-head">
-    <h2>🎯 Choose Your Career Path</h2>
-    <p>We found the best realistic options for you. Pick the one that fits your situation best.</p>
+    <h2>✨ Jobs matched to your life</h2>
+    <p>These are realistic options that fit your hours, your experience, and your situation right now. Each one explains why it's a match for you — not just a generic listing.</p>
   </div>
 
   <!-- Job cards injected here in 3-column grid -->

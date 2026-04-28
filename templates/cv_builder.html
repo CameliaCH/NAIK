@@ -285,9 +285,9 @@
 
 <!-- HERO -->
 <div class="pm-hero">
-  <span class="section-label">Skill Up</span>
-  <h1><em>CV</em> Builder</h1>
-  <p>Build a complete CV step by step — or turn your everyday words into polished CV language.</p>
+  <span class="section-label">Your Re-entry Toolkit</span>
+  <h1>Your <em>Career Gap</em> CV</h1>
+  <p>Most CV tools assume you've had a job. NAIK is different — we know caregiving IS work. Build your CV from scratch, or let us translate your years at home into professional language employers respect.</p>
 </div>
 
 <!-- MODE TABS -->
@@ -416,8 +416,8 @@
   <!-- Step 3: Experience -->
   <div class="wizard-step" id="step-3">
     <div class="step-heading">
-      <h2>Your experience</h2>
-      <p>Include any work — full-time, part-time, gig work, family business, or volunteering. Describe it in your own words; the AI will polish it.</p>
+      <h2>Your experience — including time at home</h2>
+      <p>Include any work — full-time, part-time, gig, family business, volunteering, <strong>or caregiving years</strong>. Describe it in your own words; the AI will translate it into professional language. Your years at home weren't a gap — they were experience.</p>
     </div>
     <div class="item-list" id="exp-list"></div>
     <button class="btn-add-item" onclick="addExperienceItem()">+ Add experience</button>
@@ -512,6 +512,7 @@
     <div class="result-box" id="result-box">
       <span class="result-label" id="result-label">✅ Your CV line</span>
       <p class="result-text" id="result-text"></p>
+      <p style="font-size:.74rem;color:var(--ink-lt);margin-top:.5rem;line-height:1.5;" id="result-explain">We rewrote this using action verbs and quantifiers that hiring managers look for — without inventing anything you didn't say.</p>
       <div class="result-actions">
         <button class="copy-btn" id="copy-btn" onclick="copyResult()">📋 Copy to clipboard</button>
         <button class="try-again-btn" onclick="tryAgain()">🔄 Try a different version</button>
@@ -660,7 +661,7 @@ function addExperienceItem() {
     </div>
     <div class="field">
       <label>What did you do? <span class="optional">(your own words)</span></label>
-      <textarea class="exp-desc" placeholder="e.g. I took customer orders, handled cash, helped with cooking during busy hours..."></textarea>
+      <textarea class="exp-desc" placeholder="e.g. I managed the household and raised two children for 5 years, handled the family budget, arranged school and medical appointments... or: I took customer orders, handled cash, helped with cooking during busy hours..."></textarea>
     </div>
   `;
   list.appendChild(card);
