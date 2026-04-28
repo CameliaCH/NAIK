@@ -140,6 +140,21 @@
     .pv-avatar, .pv-avatar-letter { width: 72px; height: 72px; font-size: 2rem; }
     .pv-section { padding: 1.25rem; }
   }
+
+  /* ── AVATAR LIGHTBOX ────────────────────────── */
+  .pv-avatar { cursor: zoom-in; }
+  #avatar-lightbox {
+    display: none; position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.75); cursor: zoom-out;
+    align-items: center; justify-content: center;
+  }
+  #avatar-lightbox.open { display: flex; }
+  #avatar-lightbox img {
+    width: min(80vw, 480px); height: min(80vw, 480px);
+    border-radius: 28%; object-fit: cover;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
   </style>
 {% endblock %}
 
@@ -166,7 +181,7 @@
     <div style="display:flex;align-items:flex-end;gap:2rem;flex-wrap:wrap;flex:1;">
       {% if viewed_user.get('avatar_url') %}
         <img src="{{ viewed_user['avatar_url'] }}" alt="{{ full_name }}"
-             class="pv-avatar"
+             class="pv-avatar" id="pv-avatar-img"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="pv-avatar-letter" style="display:none;">
           {{ (viewed_user.get('name') or 'U')[0].upper() }}
@@ -250,18 +265,37 @@
   <div style="text-align:center;padding:1.5rem;background:var(--cream);border:1.5px dashed var(--border);border-radius:16px;">
     <p style="font-size:.85rem;color:var(--ink-lt);margin-bottom:1rem;line-height:1.7;">
       Inspired by {{ viewed_user.get('name','this person') }}'s journey?
-      Share your own story or find a mentor on NAIK.
+      Share your own story.
     </p>
     <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
       <a href="{{ url_for('connect') }}" class="btn btn-primary">💬 Go to Connect</a>
-      <a href="{{ url_for('match') }}"   class="btn btn-teal">🤝 Find a Mentor</a>
     </div>
   </div>
   {% endif %}
 
 </div>
 
+<!-- Avatar lightbox -->
+<div id="avatar-lightbox" role="dialog" aria-modal="true" aria-label="Profile picture enlarged">
+  {% if viewed_user.get('avatar_url') %}
+    <img src="{{ viewed_user['avatar_url'] }}" alt="{{ full_name }}">
+  {% endif %}
+</div>
+
 <script>
+/* ── Avatar lightbox ────────────────────────────────────── */
+(function () {
+  const trigger = document.getElementById('pv-avatar-img');
+  const lightbox = document.getElementById('avatar-lightbox');
+  if (!trigger || !lightbox) return;
+
+  trigger.addEventListener('click', () => lightbox.classList.add('open'));
+  lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') lightbox.classList.remove('open');
+  });
+})();
+
 /* ── Render saved jobs with thumbnails ──────────────────── */
 const SAVED_JOBS = {{ saved_jobs | tojson }};
 
