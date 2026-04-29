@@ -31,7 +31,7 @@
 
 /* ── STEP HEADER ── */
 .step-header{text-align:center;margin-bottom:2rem;}
-.step-num{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.4rem;}
+.step-num{font-size:2rem;font-weight:800;text-transform:uppercase;color:white;margin-bottom:.4rem;align-items: center;}
 .step-q{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,3vw,1.6rem);color:var(--ink);line-height:1.35;margin-bottom:.4rem;}
 .step-sub{font-size:.85rem;color:var(--ink-mid);}
 
@@ -100,17 +100,6 @@
 /* ── TOAST ── */
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:#fff;padding:.6rem 1.4rem;border-radius:50px;font-size:.82rem;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:400;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* ── FLOW BANNER ── */
-.flow-banner{background:#fff;border-bottom:1px solid var(--border);padding:.7rem clamp(1rem,4vw,3rem);overflow-x:auto;}
-.flow-steps{display:flex;gap:0;align-items:center;white-space:nowrap;max-width:700px;margin:0 auto;}
-.flow-step{display:flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;color:var(--ink-lt);}
-.flow-step.done{color:var(--teal);}
-.flow-step.active{color:var(--red);font-weight:800;}
-.fs-num{width:20px;height:20px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;flex-shrink:0;}
-.flow-step.done .fs-num{background:var(--teal);border-color:var(--teal);color:#fff;}
-.flow-step.active .fs-num{background:var(--red);border-color:var(--red);color:#fff;}
-.fa{color:var(--border);margin:0 .3rem;font-size:.85rem;}
 </style>
 {% endblock %}
 
@@ -120,20 +109,7 @@
 
 {{ naik_nav(active='skills') }}
 
-<!-- FLOW BANNER -->
-<div class="flow-banner">
-  <div class="flow-steps">
-    <div class="flow-step done"><div class="fs-num">✓</div> Sign In</div>
-    <span class="fa">→</span>
-    <div class="flow-step active"><div class="fs-num">2</div> Career Quiz</div>
-    <span class="fa">→</span>
-    <div class="flow-step"><div class="fs-num">3</div> See Your Jobs</div>
-    <span class="fa">→</span>
-    <div class="flow-step"><div class="fs-num">4</div> Save Favourites</div>
-    <span class="fa">→</span>
-    <div class="flow-step"><div class="fs-num">5</div> Skill Up &amp; Apply</div>
-  </div>
-</div>
+
 
 
 <!-- ══ SIGN-IN GATE ══ -->
@@ -160,7 +136,7 @@
   <!-- ─── STEP 1: Field of interest ─── -->
   <div class="step-wrap active" id="step-1">
     <div class="step-header">
-      <div class="step-num">Step 1 of 7</div>
+      <div class="step-num">1</div>
       <div class="step-q">What kind of work fits your life right now?</div>
       <div class="step-sub">Don't think about your old job — think about what suits your life today</div>
       <div style="margin-top:.75rem;background:rgba(191,70,70,.07);border:1px solid rgba(191,70,70,.2);border-radius:10px;padding:.7rem 1rem;font-size:.78rem;color:var(--ink-mid);line-height:1.6;">
@@ -185,7 +161,7 @@
   <!-- ─── STEP 2: Income goal ─── -->
   <div class="step-wrap" id="step-2">
     <div class="step-header">
-      <div class="step-num">Step 2 of 7</div>
+      <div class="step-num">2</div>
       <div class="step-q">What's your income priority right now?</div>
       <div class="step-sub">Both are valid — there's no wrong answer here</div>
     </div>
@@ -210,7 +186,7 @@
   <!-- ─── STEP 3: Education level ─── -->
   <div class="step-wrap" id="step-3">
     <div class="step-header">
-      <div class="step-num">Step 3 of 7</div>
+      <div class="step-num">3</div>
       <div class="step-q">What's your highest education level?</div>
       <div class="step-sub">This helps us show jobs that are right for where you are now</div>
     </div>
@@ -241,7 +217,7 @@
   <!-- ─── STEP 4: Skills ─── -->
   <div class="step-wrap" id="step-4">
     <div class="step-header">
-      <div class="step-num">Step 4 of 7</div>
+      <div class="step-num">4</div>
       <div class="step-q">What skills do you have — including from home?</div>
       <div class="step-sub">Caregiving, cooking, managing a household — these count. Tap all that apply.</div>
     </div>
@@ -267,7 +243,7 @@
   <!-- ─── STEP 5: Work style sliders ─── -->
   <div class="step-wrap" id="step-5">
     <div class="step-header">
-      <div class="step-num">Step 5 of 7</div>
+      <div class="step-num">5</div>
       <div class="step-q">What kind of work environment suits you?</div>
       <div class="step-sub">Think about what feels comfortable — there are no wrong answers</div>
     </div>
@@ -281,7 +257,7 @@
   <!-- ─── STEP 6: Availability ─── -->
   <div class="step-wrap" id="step-6">
     <div class="step-header">
-      <div class="step-num">Step 6 of 7</div>
+      <div class="step-num">6</div>
       <div class="step-q">When are you available to work?</div>
       <div class="step-sub">We'll match jobs to your schedule — no judgment</div>
     </div>
@@ -306,7 +282,7 @@
   <!-- ─── STEP 7: Goals sliders ─── -->
   <div class="step-wrap" id="step-7">
     <div class="step-header">
-      <div class="step-num">Step 7 of 7</div>
+      <div class="step-num">7</div>
       <div class="step-q">What matters most to you in a job?</div>
       <div class="step-sub">Last step — you're almost there. Be honest, this helps us match you better.</div>
     </div>

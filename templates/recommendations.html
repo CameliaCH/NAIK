@@ -12,17 +12,6 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 
-/* ── FLOW BANNER ── */
-.flow-banner{background:#fff;border-bottom:1px solid var(--border);padding:.7rem clamp(1rem,4vw,3rem);overflow-x:auto;}
-.flow-steps{display:flex;gap:0;align-items:center;white-space:nowrap;max-width:700px;margin:0 auto;}
-.flow-step{display:flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;color:var(--ink-lt);}
-.flow-step.done{color:var(--teal);}
-.flow-step.active{color:var(--red);font-weight:800;}
-.fs-num{width:20px;height:20px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;flex-shrink:0;}
-.flow-step.done .fs-num{background:var(--teal);border-color:var(--teal);color:#fff;}
-.flow-step.active .fs-num{background:var(--red);border-color:var(--red);color:#fff;}
-.fa{color:var(--border);margin:0 .3rem;font-size:.85rem;}
-
 /* ── HERO ── */
 .rec-hero{background:var(--ink);padding:3rem clamp(1.5rem,5vw,4rem) 2.5rem;text-align:center;position:relative;overflow:hidden;}
 .rec-hero svg{position:absolute;inset:0;opacity:.06;pointer-events:none;width:100%;height:100%;}
@@ -135,20 +124,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);}
 {% block content %}
 {{ naik_nav(active='') }}
 
-<!-- FLOW BANNER -->
-<div class="flow-banner">
-  <div class="flow-steps">
-    <div class="flow-step done"><div class="fs-num">✓</div> Sign In</div>
-    <span class="fa">→</span>
-    <div class="flow-step done"><div class="fs-num">✓</div> Career Quiz</div>
-    <span class="fa">→</span>
-    <div class="flow-step active"><div class="fs-num">3</div> See Your Jobs</div>
-    <span class="fa">→</span>
-    <div class="flow-step"><div class="fs-num">4</div> Save &amp; Get Roadmap</div>
-    <span class="fa">→</span>
-    <div class="flow-step"><div class="fs-num">5</div> Skill Up &amp; Apply</div>
-  </div>
-</div>
+
 
 <!-- HERO -->
 <div class="rec-hero">
