@@ -219,21 +219,114 @@ function getSteps() {
       ]
     },
     {
+      id: 'has_children', type: 'options',
+      label: { en: 'Do you have children at home?', bm: 'Adakah anda mempunyai anak di rumah?' },
+      hint: { en: 'Helps us find jobs that fit around your family', bm: 'Membantu kami mencari kerja yang sesuai dengan keluarga anda' },
+      options: [
+        {
+          val: 'no',
+          icon: '🙋',
+          label: { en: 'No children at home', bm: 'Tiada anak di rumah' },
+          sub:   { en: 'I\'m free to take on any schedule', bm: 'Saya bebas untuk mana-mana jadual' }
+        },
+        {
+          val: 'school_age',
+          icon: '🏫',
+          label: { en: 'Yes — school-age children', bm: 'Ya — anak usia sekolah' },
+          sub:   { en: 'Need to be home by 2–3 pm on school days', bm: 'Perlu pulang sebelum 2–3 petang hari sekolah' }
+        },
+        {
+          val: 'young_children',
+          icon: '👶',
+          label: { en: 'Yes — young children (under 5)', bm: 'Ya — anak kecil (bawah 5 tahun)' },
+          sub:   { en: 'Need flexible or part-time hours', bm: 'Perlukan waktu fleksibel atau separuh masa' }
+        }
+      ]
+    },
+    {
       id: 'availability', type: 'options',
-      label: { en: 'When are you available to work?', bm: 'Bilakah anda boleh bekerja?' },
-      hint: { en: 'We\'ll match jobs to your schedule — no judgment', bm: 'Kami akan padankan kerja mengikut jadual anda' },
+      label: { en: 'What hours can you realistically work?', bm: 'Berapa jam anda boleh bekerja secara realistik?' },
+      hint: { en: 'Be honest — we\'ll find jobs that actually fit your life', bm: 'Jujurlah — kami akan cari kerja yang benar-benar sesuai' },
       options: [
         {
           val: 'anytime',
           icon: '🕐',
-          label: { en: 'Any time', bm: 'Bila-bila masa' },
-          sub:   { en: 'Full-time, shifts, evenings — I\'m flexible', bm: 'Sepenuh masa, syif, malam — saya fleksibel' }
+          label: { en: 'Full-time (any hours)', bm: 'Sepenuh masa (mana-mana waktu)' },
+          sub:   { en: 'I can work shifts, evenings or weekends', bm: 'Saya boleh kerja syif, malam atau hujung minggu' }
         },
         {
           val: 'school_hours',
-          icon: '🏫',
-          label: { en: 'School hours only', bm: 'Waktu sekolah sahaja' },
-          sub:   { en: 'Roughly 8 am – 2 pm on school days — I have kids at home', bm: 'Lebih kurang 8 pagi – 2 petang hari sekolah — saya ada anak di rumah' }
+          icon: '🌅',
+          label: { en: 'School hours only (8 am – 2 pm)', bm: 'Waktu sekolah sahaja (8 pagi – 2 petang)' },
+          sub:   { en: 'Need to be available for kids after school', bm: 'Perlu ada untuk anak-anak selepas sekolah' }
+        },
+        {
+          val: 'part_time',
+          icon: '⏰',
+          label: { en: 'Part-time (4–6 hours a day)', bm: 'Separuh masa (4–6 jam sehari)' },
+          sub:   { en: 'Flexible mornings or afternoons', bm: 'Pagi atau petang yang fleksibel' }
+        },
+        {
+          val: 'evenings_weekends',
+          icon: '🌙',
+          label: { en: 'Evenings or weekends only', bm: 'Malam atau hujung minggu sahaja' },
+          sub:   { en: 'My days are taken — I work around my family', bm: 'Siang saya sibuk — saya kerja mengikut keluarga' }
+        }
+      ]
+    },
+    {
+      id: 'has_transport', type: 'options',
+      label: { en: 'Do you have your own transport?', bm: 'Adakah anda mempunyai pengangkutan sendiri?' },
+      hint: { en: 'This helps us show jobs you can actually get to', bm: 'Ini membantu kami menunjukkan kerja yang boleh anda pergi' },
+      options: [
+        {
+          val: 'own_vehicle',
+          icon: '🚗',
+          label: { en: 'Yes — own car or motorbike', bm: 'Ya — kereta atau motosikal sendiri' },
+          sub:   { en: 'I can travel to most job locations', bm: 'Saya boleh pergi ke kebanyakan lokasi kerja' }
+        },
+        {
+          val: 'public_only',
+          icon: '🚌',
+          label: { en: 'Public transport only', bm: 'Pengangkutan awam sahaja' },
+          sub:   { en: 'Bus, LRT, Grab — need job near transit', bm: 'Bas, LRT, Grab — perlukan kerja berhampiran laluan transit' }
+        },
+        {
+          val: 'no_transport',
+          icon: '🏠',
+          label: { en: 'No reliable transport', bm: 'Tiada pengangkutan yang boleh dipercayai' },
+          sub:   { en: 'Need work from home or very close to home', bm: 'Perlukan kerja dari rumah atau sangat dekat rumah' }
+        }
+      ]
+    },
+    {
+      id: 'gap_duration', type: 'options',
+      label: { en: 'How long have you been out of work?', bm: 'Berapa lama anda tidak bekerja?' },
+      hint: { en: 'No judgment — this helps us pick the right starting point for you', bm: 'Tiada penilaian — ini membantu kami memilih titik permulaan yang tepat' },
+      options: [
+        {
+          val: 'currently_working',
+          icon: '💼',
+          label: { en: 'I\'m currently working', bm: 'Saya sedang bekerja' },
+          sub:   { en: 'Looking to switch or level up', bm: 'Ingin bertukar atau naik taraf' }
+        },
+        {
+          val: 'less_1_year',
+          icon: '📅',
+          label: { en: 'Less than 1 year', bm: 'Kurang dari 1 tahun' },
+          sub:   { en: 'Recent gap — skills still fresh', bm: 'Jurang terkini — kemahiran masih segar' }
+        },
+        {
+          val: '1_3_years',
+          icon: '🗓️',
+          label: { en: '1–3 years', bm: '1–3 tahun' },
+          sub:   { en: 'May need a refresher or entry-level start', bm: 'Mungkin perlu penyegaran atau mulakan dari bawah' }
+        },
+        {
+          val: 'more_3_years',
+          icon: '🌱',
+          label: { en: 'More than 3 years', bm: 'Lebih dari 3 tahun' },
+          sub:   { en: 'Returning to work — we\'ll find a welcoming path', bm: 'Kembali bekerja — kami akan cari laluan yang sesuai' }
         }
       ]
     },
@@ -892,12 +985,15 @@ async function saveRoadmapToSupabase() {
 
   try {
     const payload = {
-      name:          profile.name         || '',
-      age:           profile.age          || '',
-      location:      profile.location     || '',
-      interest:      profile.interest     || '',
-      income_mode:   profile.income_mode  || '',
-      availability:  profile.availability || 'anytime',
+      name:          profile.name          || '',
+      age:           profile.age           || '',
+      location:      profile.location      || '',
+      interest:      profile.interest      || '',
+      income_mode:   profile.income_mode   || '',
+      availability:  profile.availability  || 'anytime',
+      has_children:  profile.has_children  || 'no',
+      has_transport: profile.has_transport || 'own_vehicle',
+      gap_duration:  profile.gap_duration  || 'less_1_year',
       lang:          lang,
       selected_path: selectedPath,
       career_paths:  roadmapData.careerPaths,
@@ -971,7 +1067,7 @@ async function loadSavedRoadmap(id) {
     if (!row) throw new Error('Not found');
 
     // Restore state
-    profile       = { name: row.name, age: row.age, location: row.location, interest: row.interest, income_mode: row.income_mode, availability: row.availability || 'anytime' };
+    profile       = { name: row.name, age: row.age, location: row.location, interest: row.interest, income_mode: row.income_mode, availability: row.availability || 'anytime', has_children: row.has_children || 'no', has_transport: row.has_transport || 'own_vehicle', gap_duration: row.gap_duration || 'less_1_year' };
     lang          = row.lang || 'en';
     roadmapData   = { careerPaths: row.career_paths };
     selectedPath  = row.selected_path || 0;

@@ -160,7 +160,7 @@
   <!-- ─── STEP 1: Field of interest ─── -->
   <div class="step-wrap active" id="step-1">
     <div class="step-header">
-      <div class="step-num">Step 1 of 7</div>
+      <div class="step-num">Step 1 of 9</div>
       <div class="step-q">What kind of work fits your life right now?</div>
       <div class="step-sub">Don't think about your old job — think about what suits your life today</div>
       <div style="margin-top:.75rem;background:rgba(191,70,70,.07);border:1px solid rgba(191,70,70,.2);border-radius:10px;padding:.7rem 1rem;font-size:.78rem;color:var(--ink-mid);line-height:1.6;">
@@ -185,7 +185,7 @@
   <!-- ─── STEP 2: Income goal ─── -->
   <div class="step-wrap" id="step-2">
     <div class="step-header">
-      <div class="step-num">Step 2 of 7</div>
+      <div class="step-num">Step 2 of 9</div>
       <div class="step-q">What's your income priority right now?</div>
       <div class="step-sub">Both are valid — there's no wrong answer here</div>
     </div>
@@ -210,7 +210,7 @@
   <!-- ─── STEP 3: Education level ─── -->
   <div class="step-wrap" id="step-3">
     <div class="step-header">
-      <div class="step-num">Step 3 of 7</div>
+      <div class="step-num">Step 3 of 9</div>
       <div class="step-q">What's your highest education level?</div>
       <div class="step-sub">This helps us show jobs that are right for where you are now</div>
     </div>
@@ -241,7 +241,7 @@
   <!-- ─── STEP 4: Skills ─── -->
   <div class="step-wrap" id="step-4">
     <div class="step-header">
-      <div class="step-num">Step 4 of 7</div>
+      <div class="step-num">Step 4 of 9</div>
       <div class="step-q">What skills do you have — including from home?</div>
       <div class="step-sub">Caregiving, cooking, managing a household — these count. Tap all that apply.</div>
     </div>
@@ -267,7 +267,7 @@
   <!-- ─── STEP 5: Work style sliders ─── -->
   <div class="step-wrap" id="step-5">
     <div class="step-header">
-      <div class="step-num">Step 5 of 7</div>
+      <div class="step-num">Step 5 of 9</div>
       <div class="step-q">What kind of work environment suits you?</div>
       <div class="step-sub">Think about what feels comfortable — there are no wrong answers</div>
     </div>
@@ -278,23 +278,28 @@
     </div>
   </div>
 
-  <!-- ─── STEP 6: Availability ─── -->
+  <!-- ─── STEP 6: Children at home ─── -->
   <div class="step-wrap" id="step-6">
     <div class="step-header">
-      <div class="step-num">Step 6 of 7</div>
-      <div class="step-q">When are you available to work?</div>
-      <div class="step-sub">We'll match jobs to your schedule — no judgment</div>
+      <div class="step-num">Step 6 of 9</div>
+      <div class="step-q">Do you have children at home?</div>
+      <div class="step-sub">Helps us find jobs that genuinely fit around your family</div>
     </div>
-    <div class="cards-grid cards-grid-2" id="availability-cards">
-      <div class="sel-card" data-val="anytime">
-        <div class="card-emoji">🕐</div>
-        <div class="card-label">Any time</div>
-        <div class="card-sub">Full-time, shifts, evenings — I'm flexible</div>
+    <div class="cards-grid" id="children-cards">
+      <div class="sel-card" data-val="no">
+        <div class="card-emoji">🙋</div>
+        <div class="card-label">No children at home</div>
+        <div class="card-sub">I'm free to take any schedule</div>
       </div>
-      <div class="sel-card" data-val="school_hours">
+      <div class="sel-card" data-val="school_age">
         <div class="card-emoji">🏫</div>
-        <div class="card-label">School hours only</div>
-        <div class="card-sub">Roughly 8 am – 2 pm on school days — I have kids at home</div>
+        <div class="card-label">Yes — school-age children</div>
+        <div class="card-sub">Need to be home by 2–3 pm on school days</div>
+      </div>
+      <div class="sel-card" data-val="young_children">
+        <div class="card-emoji">👶</div>
+        <div class="card-label">Yes — young children (under 5)</div>
+        <div class="card-sub">Need flexible or part-time hours</div>
       </div>
     </div>
     <div class="step-nav">
@@ -303,17 +308,103 @@
     </div>
   </div>
 
-  <!-- ─── STEP 7: Goals sliders ─── -->
+  <!-- ─── STEP 7: Hours available ─── -->
   <div class="step-wrap" id="step-7">
     <div class="step-header">
-      <div class="step-num">Step 7 of 7</div>
-      <div class="step-q">What matters most to you in a job?</div>
-      <div class="step-sub">Last step — you're almost there. Be honest, this helps us match you better.</div>
+      <div class="step-num">Step 7 of 9</div>
+      <div class="step-q">What hours can you realistically work?</div>
+      <div class="step-sub">Be honest — we'll find jobs that actually fit your life</div>
     </div>
-    <div class="slider-questions" id="slider-q7"></div>
+    <div class="cards-grid" id="availability-cards">
+      <div class="sel-card" data-val="anytime">
+        <div class="card-emoji">🕐</div>
+        <div class="card-label">Full-time (any hours)</div>
+        <div class="card-sub">I can work shifts, evenings or weekends</div>
+      </div>
+      <div class="sel-card" data-val="school_hours">
+        <div class="card-emoji">🌅</div>
+        <div class="card-label">School hours only (8 am – 2 pm)</div>
+        <div class="card-sub">Need to be available for kids after school</div>
+      </div>
+      <div class="sel-card" data-val="part_time">
+        <div class="card-emoji">⏰</div>
+        <div class="card-label">Part-time (4–6 hours a day)</div>
+        <div class="card-sub">Flexible mornings or afternoons</div>
+      </div>
+      <div class="sel-card" data-val="evenings_weekends">
+        <div class="card-emoji">🌙</div>
+        <div class="card-label">Evenings or weekends only</div>
+        <div class="card-sub">My days are taken — I work around my family</div>
+      </div>
+    </div>
     <div class="step-nav">
       <button class="btn-back-q" onclick="goStep(6)">← Back</button>
-      <button class="btn-next" id="next-7" disabled onclick="submitQuiz()">See My Jobs →</button>
+      <button class="btn-next" id="next-7" disabled onclick="goStep(8)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 8: Transport ─── -->
+  <div class="step-wrap" id="step-8">
+    <div class="step-header">
+      <div class="step-num">Step 8 of 9</div>
+      <div class="step-q">Do you have your own transport?</div>
+      <div class="step-sub">This helps us show jobs you can actually get to</div>
+    </div>
+    <div class="cards-grid" id="transport-cards">
+      <div class="sel-card" data-val="own_vehicle">
+        <div class="card-emoji">🚗</div>
+        <div class="card-label">Yes — own car or motorbike</div>
+        <div class="card-sub">I can travel to most job locations</div>
+      </div>
+      <div class="sel-card" data-val="public_only">
+        <div class="card-emoji">🚌</div>
+        <div class="card-label">Public transport only</div>
+        <div class="card-sub">Bus, LRT, Grab — need a job near transit</div>
+      </div>
+      <div class="sel-card" data-val="no_transport">
+        <div class="card-emoji">🏠</div>
+        <div class="card-label">No reliable transport</div>
+        <div class="card-sub">Need work from home or very close to home</div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back-q" onclick="goStep(7)">← Back</button>
+      <button class="btn-next" id="next-8" disabled onclick="goStep(9)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 9: Career gap ─── -->
+  <div class="step-wrap" id="step-9">
+    <div class="step-header">
+      <div class="step-num">Step 9 of 9</div>
+      <div class="step-q">How long have you been out of work?</div>
+      <div class="step-sub">No judgment — this helps us pick the right starting point for you</div>
+    </div>
+    <div class="cards-grid" id="gap-cards">
+      <div class="sel-card" data-val="currently_working">
+        <div class="card-emoji">💼</div>
+        <div class="card-label">I'm currently working</div>
+        <div class="card-sub">Looking to switch or level up</div>
+      </div>
+      <div class="sel-card" data-val="less_1_year">
+        <div class="card-emoji">📅</div>
+        <div class="card-label">Less than 1 year</div>
+        <div class="card-sub">Recent gap — skills still fresh</div>
+      </div>
+      <div class="sel-card" data-val="1_3_years">
+        <div class="card-emoji">🗓️</div>
+        <div class="card-label">1–3 years</div>
+        <div class="card-sub">May need a refresher or entry-level start</div>
+      </div>
+      <div class="sel-card" data-val="more_3_years">
+        <div class="card-emoji">🌱</div>
+        <div class="card-label">More than 3 years</div>
+        <div class="card-sub">Returning to work — we'll find a welcoming path</div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back-q" onclick="goStep(8)">← Back</button>
+      <button class="btn-next" id="next-9" disabled onclick="submitQuiz()">See My Jobs →</button>
     </div>
   </div>
 
@@ -346,22 +437,24 @@ if (jobParam) {
     .then(r => r.json()).then(data => { roadmapData = data; renderPathSelection(); showScreen('roadmap'); });
 }
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 9;
 let currentStep = 1;
 
 const answers = {
-  interest:     null,
-  income_mode:  null,
-  education:    null,
-  skills:       [],
-  availability: null,
+  interest:      null,
+  income_mode:   null,
+  education:     null,
+  skills:        [],
+  availability:  null,
+  has_children:  null,
+  has_transport: null,
+  gap_duration:  null,
   // Sliders
   q_people:    null,
   q_outdoor:   null,
   q_creative:  null,
   q_flexible:  null,
   q_growth:    null,
-  q_leadership:null,
 };
 
 const SCALE_SHORT = ['Strongly Disagree','Disagree','Neutral','Agree','Strongly Agree'];
@@ -372,12 +465,7 @@ const STEP5_SLIDERS = [
   { id: 'q_outdoor',  text: 'I am comfortable working outdoors or travelling around for work.' },
   { id: 'q_creative', text: 'I enjoy creative work — designing, making, writing, or content.' },
   { id: 'q_flexible', text: 'I need flexible or part-time hours (e.g. family responsibilities).' },
-];
-
-// Step 7: goals (removed q_ambition)
-const STEP7_SLIDERS = [
-  { id: 'q_growth',    text: 'I am willing to learn a completely new skill if it leads to better pay.' },
-  { id: 'q_leadership',text: 'I would feel comfortable managing or leading a small team in the future.' },
+  { id: 'q_growth',   text: 'I am willing to learn a completely new skill if it leads to better pay.' },
 ];
 
 
@@ -421,8 +509,7 @@ function buildSliders(containerId, sliderDefs, stepNum) {
 }
 
 function checkSliderStep(stepNum) {
-  const defs = stepNum === 5 ? STEP5_SLIDERS : STEP7_SLIDERS;
-  const allDone = defs.every(s => answers[s.id] !== null);
+  const allDone = STEP5_SLIDERS.every(s => answers[s.id] !== null);
   document.getElementById('next-' + stepNum).disabled = !allDone;
 }
 
@@ -486,17 +573,19 @@ async function submitQuiz() {
   document.getElementById('qpbar-fill').style.width = '95%';
 
   const profile = {
-    interest:     answers.interest    || 'biz',
-    income_mode:  answers.income_mode || 'immediate',
-    education:    answers.education   || 'spm',
-    skills:       answers.skills      || [],
-    availability: answers.availability || 'anytime',
-    q_people:     answers.q_people    ?? 2,
-    q_outdoor:    answers.q_outdoor   ?? 2,
-    q_creative:   answers.q_creative  ?? 2,
-    q_flexible:   answers.q_flexible  ?? 2,
-    q_growth:     answers.q_growth    ?? 2,
-    q_leadership: answers.q_leadership?? 2,
+    interest:      answers.interest      || 'biz',
+    income_mode:   answers.income_mode   || 'immediate',
+    education:     answers.education     || 'spm',
+    skills:        answers.skills        || [],
+    availability:  answers.availability  || 'anytime',
+    has_children:  answers.has_children  || 'no',
+    has_transport: answers.has_transport || 'own_vehicle',
+    gap_duration:  answers.gap_duration  || 'less_1_year',
+    q_people:      answers.q_people      ?? 2,
+    q_outdoor:     answers.q_outdoor     ?? 2,
+    q_creative:    answers.q_creative    ?? 2,
+    q_flexible:    answers.q_flexible    ?? 2,
+    q_growth:      answers.q_growth      ?? 2,
   };
 
   try {
@@ -513,7 +602,7 @@ async function submitQuiz() {
     showToast('⚠️ Could not save — please try again');
     document.getElementById('quiz-section').style.display = 'block';
     document.getElementById('submitting-wrap').classList.remove('active');
-    goStep(7);
+    goStep(9);
   }
 }
 
@@ -533,17 +622,19 @@ function showToast(msg) {
 //  INIT
 // ════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  setupCardSelect('interest-cards',     'interest',    'next-1');
-  setupCardSelect('income-cards',       'income_mode', 'next-2');
-  setupCardSelect('edu-cards',          'education',   'next-3');
+  setupCardSelect('interest-cards',     'interest',      'next-1');
+  setupCardSelect('income-cards',       'income_mode',   'next-2');
+  setupCardSelect('edu-cards',          'education',     'next-3');
   setupChipSelect('skills-chips',       'skills');
-  setupCardSelect('availability-cards', 'availability','next-6');
+  setupCardSelect('children-cards',     'has_children',  'next-6');
+  setupCardSelect('availability-cards', 'availability',  'next-7');
+  setupCardSelect('transport-cards',    'has_transport', 'next-8');
+  setupCardSelect('gap-cards',          'gap_duration',  'next-9');
 
   // Step 4 (skills) — next button always enabled (optional step)
   document.getElementById('next-4').disabled = false;
 
   buildSliders('slider-q5', STEP5_SLIDERS, 5);
-  buildSliders('slider-q7', STEP7_SLIDERS, 7);
 
   updateDots();
 });
