@@ -23,12 +23,6 @@ NAIK is built to change that.
 
 ---
 
-## Screenshots
-
-*Coming soon — screenshots of the Career Quiz, CV Builder, Confidence Builder, and Community feed will be added here.*
-
----
-
 ## Features
 
 | Feature | Description |
@@ -87,6 +81,7 @@ A returning woman takes a 3-minute quiz → gets matched to 3 jobs → unlocks a
 
 ## Project Structure
 
+---
 NAIK/
 ├── app.py                       # Main Flask application & all API routes
 ├── db.py                        # Supabase client singleton
