@@ -751,13 +751,14 @@ def api_recommendations():
 #  CV TRANSLATOR
 # ══════════════════════════════════════════════════════════════
 
-@app.route("/cv-translator/translate", methods=["POST"])
+@app.route("/cv-builder/translate", methods=["POST"])
+@app.route("/cv-translator/translate", methods=["POST"])  # legacy alias
 def cv_translate():
     data = request.get_json()
     if not data or "text" not in data:
         return jsonify({"error": "No text provided"}), 400
     try:
-        result = translate_to_cv(data["text"])
+        result = translate_to_cv(data["text"], lang=data.get("lang", "en"))
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -768,7 +769,7 @@ def cv_translate_caregiving():
     if not data or "text" not in data:
         return jsonify({"error": "No text provided"}), 400
     try:
-        result = translate_caregiving_to_cv(data["text"])
+        result = translate_caregiving_to_cv(data["text"], lang=data.get("lang", "en"))
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

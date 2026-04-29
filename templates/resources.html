@@ -40,19 +40,6 @@
 .btn-copy-wa{align-self:flex-start;padding:.4rem .9rem;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .15s;}
 .btn-copy-wa:hover{background:#333;}
 
-/* ── CHECKLIST ── */
-.checklist-group{background:var(--card-bg2);border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
-.checklist-group-title{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:.75rem;}
-.check-item{display:flex;align-items:center;gap:.75rem;padding:.55rem .5rem;border-radius:8px;cursor:pointer;transition:background .15s;user-select:none;}
-.check-item:hover{background:var(--cream);}
-.check-item.checked{background:rgba(126,172,181,.1);}
-.check-box{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .15s;}
-.check-item.checked .check-box{background:var(--teal);border-color:var(--teal);color:#fff;}
-.check-label{font-size:.84rem;color:var(--ink);}
-.check-item.checked .check-label{text-decoration:line-through;color:var(--ink-lt);}
-.checklist-reset{margin-top:.5rem;padding:.45rem 1rem;background:transparent;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;font-weight:700;color:var(--ink-mid);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
-.checklist-reset:hover{border-color:var(--red);color:var(--red);}
-
 /* ── RIGHTS CARDS ── */
 .rights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:1.25rem;}
 .rights-card{background:var(--card-bg2);border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;}
@@ -62,19 +49,6 @@
 .rights-detail{font-size:.78rem;color:var(--ink-mid);line-height:1.55;}
 .rights-tip{background:rgba(191,70,70,.07);border:1.5px solid rgba(191,70,70,.2);border-radius:12px;padding:1rem 1.1rem;font-size:.82rem;color:var(--ink);line-height:1.6;}
 .rights-tip a{color:var(--red);font-weight:700;}
-
-/* ── USEFUL LINKS ── */
-.links-section{margin-bottom:1.5rem;}
-.links-section-title{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lt);margin-bottom:.75rem;}
-.links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;}
-.link-card{background:var(--card-bg2);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.75rem;text-decoration:none;transition:all .18s;}
-.link-card:hover{border-color:var(--teal);box-shadow:0 4px 14px rgba(0,0,0,.06);}
-.link-icon{font-size:1.3rem;flex-shrink:0;}
-.link-name{font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:.15rem;}
-.link-desc{font-size:.73rem;color:var(--ink-mid);line-height:1.45;margin-bottom:.3rem;}
-.link-badge{display:inline-block;font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:50px;}
-.badge-free{background:rgba(126,172,181,.15);color:var(--teal);}
-.badge-govt{background:rgba(26,26,46,.08);color:var(--ink-mid);}
 
 /* ── RIGHTS LAW REFERENCE ── */
 .rights-law{font-size:.68rem;font-weight:700;color:var(--ink-lt);margin-top:.65rem;letter-spacing:.03em;border-top:1px solid var(--border);padding-top:.5rem;}
@@ -109,9 +83,7 @@
   <!-- Tab bar -->
   <div class="res-tabs">
     <button class="res-tab active" onclick="switchResTab('res-wa', this)">WhatsApp Templates</button>
-    <button class="res-tab" onclick="switchResTab('res-checklist', this)">Job-Hunt Checklist</button>
     <button class="res-tab" onclick="switchResTab('res-rights', this)">Women's Rights</button>
-    <button class="res-tab" onclick="switchResTab('res-links', this)">Useful Links</button>
     <button class="res-tab" onclick="switchResTab('res-gig', this)">Safe Gig Work</button>
   </div>
 
@@ -157,42 +129,7 @@
     </div>
   </div>
 
-  <!-- ── TAB 2: Job-Hunt Checklist ── -->
-  <div class="res-panel" id="res-checklist">
-
-    <div class="checklist-group">
-      <div class="checklist-group-title">Documents to prepare</div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">MyKad / IC (photocopy ready)</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">SPM / diploma / degree certificate</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Updated CV (saved on your phone)</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Passport-sized photo (digital)</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Bank account number (for salary)</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">EPF number (KWSP) — check via i-Akaun</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">SOCSO number (PERKESO)</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Income tax number (if applicable)</div></div>
-    </div>
-
-    <div class="checklist-group">
-      <div class="checklist-group-title">References</div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">At least 2 references identified</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Permission asked from each reference</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Reference phone numbers saved</div></div>
-    </div>
-
-    <div class="checklist-group">
-      <div class="checklist-group-title">Before the interview</div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Researched the company online</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Practised 3 common interview questions</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Planned your outfit the night before</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Confirmed the location / Waze route</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Arrived 10–15 minutes early</div></div>
-      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">☐</div><div class="check-label">Brought printed copies of your CV</div></div>
-    </div>
-
-    <button class="checklist-reset" onclick="resetChecklist()">↺ Reset all</button>
-  </div>
-
-  <!-- ── TAB 3: Women's Rights ── -->
+  <!-- ── TAB 2: Women's Rights ── -->
   <div class="res-panel" id="res-rights">
 
     <p style="font-size:.84rem;color:var(--ink-mid);line-height:1.6;margin-bottom:1.25rem;">These rights are yours under Malaysian law. You do not need to ask for them — your employer is <strong>legally required</strong> to provide them.</p>
@@ -254,78 +191,7 @@
     </div>
   </div>
 
-  <!-- ── TAB 4: Useful Links ── -->
-  <div class="res-panel" id="res-links">
-
-    <div class="links-section">
-      <div class="links-section-title">🎓 Free Learning</div>
-      <div class="links-grid">
-        <a href="https://learndigital.withgoogle.com/digitalgarage" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon"><img src="{{ url_for('static', filename='images/google-digital-garage.png') }}" alt="Google Digital Garage" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
-          <div><div class="link-name">Google Digital Garage</div><div class="link-desc">Free digital marketing & career courses</div><span class="link-badge badge-free">Free</span></div>
-        </a>
-        <a href="https://www.myskills.gov.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">🇲🇾</div>
-          <div><div class="link-name">MySkills Portal</div><div class="link-desc">Govt-recognised skills & certification courses</div><span class="link-badge badge-govt">Government</span></div>
-        </a>
-        <a href="https://www.mdec.my/digital-skills" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon"><img src="{{ url_for('static', filename='images/mdec.png') }}" alt="MDEC" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
-          <div><div class="link-name">MDEC Digital Skills</div><div class="link-desc">Tech skills training for Malaysians</div><span class="link-badge badge-free">Free</span></div>
-        </a>
-        <a href="https://www.coursera.org/courses?query=free" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon"><img src="{{ url_for('static', filename='images/coursera.png') }}" alt="Coursera" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
-          <div><div class="link-name">Coursera (Free Audit)</div><div class="link-desc">Audit thousands of university courses free</div><span class="link-badge badge-free">Free</span></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="links-section">
-      <div class="links-section-title">💼 Job Portals</div>
-      <div class="links-grid">
-        <a href="https://www.jobsmalaysia.gov.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">🏛️</div>
-          <div><div class="link-name">JobsMalaysia</div><div class="link-desc">Official government job portal</div><span class="link-badge badge-govt">Government</span></div>
-        </a>
-        <a href="https://www.myfuturejobs.gov.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon"><img src="{{ url_for('static', filename='images/my-future-jobs.png') }}" alt="MYFutureJobs" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
-          <div><div class="link-name">MYFutureJobs</div><div class="link-desc">Govt portal for fresh grads & job seekers</div><span class="link-badge badge-govt">Government</span></div>
-        </a>
-        <a href="https://www.hiredly.com" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon"><img src="{{ url_for('static', filename='images/hiredly-h.png') }}" alt="Hiredly" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
-          <div><div class="link-name">Hiredly</div><div class="link-desc">Jobs with salary transparency</div><span class="link-badge badge-free">Free</span></div>
-        </a>
-        <a href="https://www.jobstreet.com.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon"><img src="{{ url_for('static', filename='images/jobstreet.png') }}" alt="JobStreet" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
-          <div><div class="link-name">JobStreet</div><div class="link-desc">Malaysia's largest job board</div><span class="link-badge badge-free">Free</span></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="links-section">
-      <div class="links-section-title">🛡️ Financial Safety Net</div>
-      <div class="links-grid">
-        <a href="https://www.kwsp.gov.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">💛</div>
-          <div><div class="link-name">EPF / KWSP</div><div class="link-desc">Check your retirement savings via i-Akaun</div><span class="link-badge badge-govt">Government</span></div>
-        </a>
-        <a href="https://www.perkeso.gov.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">🛡️</div>
-          <div><div class="link-name">SOCSO / PERKESO</div><div class="link-desc">Worker insurance & injury protection</div><span class="link-badge badge-govt">Government</span></div>
-        </a>
-        <a href="https://mysalam.com.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon"><img src="{{ url_for('static', filename='images/mysalam.png') }}" alt="MySalam" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
-          <div><div class="link-name">MySalam</div><div class="link-desc">Free insurance for B40 — including gig workers</div><span class="link-badge badge-free">Free</span></div>
-        </a>
-        <a href="https://www.ptptn.gov.my" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon"><img src="{{ url_for('static', filename='images/myptptn.png') }}" alt="PTPTN" style="width:1.3rem;height:1.3rem;object-fit:contain;"></div>
-          <div><div class="link-name">PTPTN</div><div class="link-desc">Study loans & repayment assistance</div><span class="link-badge badge-govt">Government</span></div>
-        </a>
-      </div>
-    </div>
-
-  </div><!-- /res-links -->
-
-  <!-- ── TAB 5: Safe Gig Work ── -->
+  <!-- ── TAB 3: Safe Gig Work ── -->
   <div class="res-panel" id="res-gig">
 
     <div class="gig-intro">

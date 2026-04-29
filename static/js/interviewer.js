@@ -2,6 +2,33 @@ let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
 let manualLanguage = null;
+let ttsGeneration = 0; // incremented on every reset so stale onend callbacks never re-enable the mic
+
+// When the browser restores this page from bfcache (back/forward navigation),
+// put the UI back to the start screen and clear the server session.
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    ttsGeneration++;
+    if (isRecording) stopRecording();
+    window.speechSynthesis.cancel();
+    const log = document.getElementById('transcript-log');
+    if (log) log.innerHTML = '';
+    const active = document.getElementById('interview-active');
+    const start  = document.getElementById('start-screen');
+    if (active) active.style.display = 'none';
+    if (start)  start.style.display  = 'block';
+    const stopBtn  = document.getElementById('stop-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    if (stopBtn)  stopBtn.style.display  = 'none';
+    if (resetBtn) resetBtn.style.display = 'none';
+    fetch('/interview/reset', { method: 'POST' });
+  }
+});
+
+// Clear the server session whenever the user leaves this page.
+window.addEventListener('pagehide', () => {
+  navigator.sendBeacon('/interview/reset');
+});
 const LANG_LOCALE = { 'en': 'en-US', 'ms': 'ms-MY', 'zh': 'zh-CN' };
 
 // Preferred voices by language — Mac enhanced voices sound much more natural
@@ -204,6 +231,9 @@ function speakResponse(text, lang) {
   const voice = getBestVoice(lang);
   if (voice) utterance.voice = voice;
 
+  // Snapshot the generation so callbacks from a cancelled/reset TTS never re-enable the mic.
+  const gen = ttsGeneration;
+
   utterance.onstart = () => {
     setStatus('speaking');
     // Chrome bug fix: keep synthesis alive every 10 seconds
@@ -217,6 +247,7 @@ function speakResponse(text, lang) {
     clearInterval(window._ttsKeepAlive);
     // Short delay before re-enabling mic so it doesn't catch the tail end of speech
     setTimeout(() => {
+      if (gen !== ttsGeneration) return; // reset happened — don't re-enable mic
       if (micBtn) micBtn.disabled = false;
       setStatus('idle');
     }, 500);
@@ -224,6 +255,7 @@ function speakResponse(text, lang) {
 
   utterance.onerror = () => {
     clearInterval(window._ttsKeepAlive);
+    if (gen !== ttsGeneration) return;
     if (micBtn) micBtn.disabled = false;
     setStatus('idle');
   };
@@ -273,6 +305,7 @@ const OPENING_PROMPT = {
 };
 
 async function startInterview() {
+  ttsGeneration++; // invalidate any pending TTS onend/onerror callbacks
   setStatus('starting');
   await fetch('/interview/reset', { method: 'POST' });
   const lang = manualLanguage || 'en';
@@ -290,6 +323,7 @@ async function startInterview() {
 }
 
 async function resetInterview() {
+  if (isRecording) stopRecording();
   window.speechSynthesis.cancel();
   document.getElementById('transcript-log').innerHTML = '';
   const video = document.getElementById('avatar-video');

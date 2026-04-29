@@ -992,7 +992,7 @@ async function translateCV() {
   try {
     const res  = await fetch(endpoint, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, lang: window.LANG || 'en' }),
     });
     const data = await res.json();
     if (data.error) { showError(data.error); return; }
