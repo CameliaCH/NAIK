@@ -1,8 +1,8 @@
 # NAIK — Naikkan Taraf Hidup Anda
 
-[![Live Demo](https://img.shields.io/badge/demo-coming%20soon-red)]()
-[![Built for](https://img.shields.io/badge/built%20for-Malaysia-yellow)]()
-[![License](https://img.shields.io/badge/license-MIT-blue)]()
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://naik.onrender.com)
+
+🚀 **Live demo:** [naik.onrender.com](https://naik.onrender.com)
 
 **Malaysia's free AI-powered career platform for the 4.86 million women outside our workforce.**
 
