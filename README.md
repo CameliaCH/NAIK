@@ -1,14 +1,12 @@
 # NAIK — Naikkan Taraf Hidup Anda
 
-[![Live Demo](https://img.shields.io/badge/demo-coming%20soon-red)]()
-[![Built for](https://img.shields.io/badge/built%20for-Malaysia-yellow)]()
-[![License](https://img.shields.io/badge/license-MIT-blue)]()
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://naik.onrender.com)
+
+🚀 **Live demo:** [naik.onrender.com](https://naik.onrender.com)
 
 **Malaysia's free AI-powered career platform for the 4.86 million women outside our workforce.**
 
 NAIK ("rise" in Malay) is built for the women who fall through the cracks of mainstream career tools — particularly those re-entering the workforce after a caregiving break. We turn years of household management into professional language, give women the confidence to walk into interviews, and surface the jobs, skills, and grants that actually fit their lives.
-
-> 🚧 *Live demo coming soon — see screenshots below.*
 
 ---
 
