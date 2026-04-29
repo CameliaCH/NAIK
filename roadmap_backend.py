@@ -51,7 +51,6 @@ QUIZ_AFFINITY_MAP = {
     'q_outdoor':   ('outdoor',     3),
     'q_creative':  ('creative',    3),
     'q_flexible':  ('flexible',    3),
-    'q_leadership':('leadership',  3),
 }
 
 
@@ -144,6 +143,47 @@ def _score_job(job, quiz_result):
             score += 8   # strong boost for compatible jobs
         else:
             score -= 10  # heavy penalty — job won't fit her schedule
+    elif availability in ('part_time', 'evenings_weekends'):
+        if job.get('work_type') in ('part-time', 'freelance') or job.get('income_type') == 'mixed':
+            score += 5
+        elif job.get('work_type') == 'full-time':
+            score -= 5
+
+    # 10. Transport — match jobs to what she can actually access
+    has_transport = quiz_result.get('has_transport', 'own_vehicle')
+    if has_transport == 'no_transport':
+        if job.get('location_type') == 'remote' or job.get('internet_required'):
+            score += 8   # work from home — perfect fit
+        elif job.get('location_type') == 'on-site':
+            score -= 6   # she can't get there reliably
+    elif has_transport == 'public_only':
+        if job.get('location_type') == 'remote':
+            score += 4
+        if job.get('physically_demanding'):
+            score -= 2   # trades/physical jobs often in hard-to-reach areas
+
+    # 11. Career gap — prefer gap-friendly entry roles for longer absences
+    gap_duration = quiz_result.get('gap_duration', 'less_1_year')
+    if gap_duration == 'more_3_years':
+        # Strong preference for no-cert, lower education bar roles
+        if not job.get('cert_required') and job.get('education_min') in ('primary', 'secondary_incomplete', 'spm_incomplete'):
+            score += 4
+        if job.get('poverty_exit_score', 5) >= 7:
+            score += 2   # stable demand = forgiving of gaps
+    elif gap_duration == '1_3_years':
+        if not job.get('cert_required'):
+            score += 2
+
+    # 12. Children at home — align with schedule needs
+    has_children = quiz_result.get('has_children', 'no')
+    if has_children == 'school_age':
+        if job.get('school_hours_ok'):
+            score += 4
+    elif has_children == 'young_children':
+        if job.get('work_type') in ('part-time', 'freelance') or job.get('location_type') == 'remote':
+            score += 5
+        elif job.get('work_type') == 'full-time' and not job.get('school_hours_ok'):
+            score -= 3
 
     return score
 
@@ -161,8 +201,10 @@ def _generate_why_fit_dynamic(job, quiz_result, lang):
     q_creative  = quiz_result.get('q_creative', 2)
     q_flexible  = quiz_result.get('q_flexible', 2)
     q_growth    = quiz_result.get('q_growth', 2)
-    q_leadership = quiz_result.get('q_leadership', 2)
     education   = quiz_result.get('education', 'spm')
+    has_children  = quiz_result.get('has_children', 'no')
+    has_transport = quiz_result.get('has_transport', 'own_vehicle')
+    gap_duration  = quiz_result.get('gap_duration', 'less_1_year')
     job_affinities = job.get('quiz_affinity') or []
     job_skills_affinity = job.get('skills_affinity') or []
     job_category = job.get('category', '')
@@ -224,8 +266,23 @@ def _generate_why_fit_dynamic(job, quiz_result, lang):
         if quiz_result.get('availability') == 'school_hours' and job.get('school_hours_ok'):
             reasons.append(f"{title} fits within school hours — you can be home for your children after 2 pm")
 
-        if q_leadership >= 3 and 'leadership' in job_affinities:
-            reasons.append(f"you're growth-oriented — the {title} path has a clear leadership/management track")
+        # Children context
+        if has_children == 'young_children' and job.get('work_type') in ('part-time', 'freelance'):
+            reasons.append(f"this is a {job.get('work_type','flexible')} role — manageable alongside caring for young children")
+        elif has_children == 'school_age' and job.get('school_hours_ok'):
+            reasons.append(f"{title} works around the school day — no need to arrange childcare for pick-up time")
+
+        # Transport match
+        if has_transport == 'no_transport' and (job.get('location_type') == 'remote' or job.get('internet_required')):
+            reasons.append(f"this role can be done from home — no transport needed")
+        elif has_transport == 'public_only' and job.get('location_type') == 'remote':
+            reasons.append(f"remote-friendly role — reduces your reliance on transport")
+
+        # Gap duration empathy
+        if gap_duration == 'more_3_years' and not job.get('cert_required'):
+            reasons.append(f"no formal cert required — employers in this field hire based on willingness to learn, not a spotless CV")
+        elif gap_duration == '1_3_years' and not job.get('cert_required'):
+            reasons.append(f"your career gap is not a barrier here — entry hiring is based on attitude and basic skills")
 
         # 3. Income mode fit — specific to this job's salary profile
         if income_mode == 'immediate':
@@ -296,6 +353,18 @@ def _generate_why_fit_dynamic(job, quiz_result, lang):
             reasons.append(f"anda perlukan fleksibiliti — {title_bm} adalah {job.get('work_type', 'fleksibel')}")
         if quiz_result.get('availability') == 'school_hours' and job.get('school_hours_ok'):
             reasons.append(f"{title_bm} sesuai dalam waktu sekolah — anda boleh pulang untuk anak-anak selepas pukul 2 petang")
+        if has_children == 'young_children' and job.get('work_type') in ('part-time', 'freelance'):
+            reasons.append(f"ini adalah kerja {job.get('work_type','fleksibel')} — boleh diuruskan sambil menjaga anak kecil")
+        elif has_children == 'school_age' and job.get('school_hours_ok'):
+            reasons.append(f"{title_bm} sesuai dengan waktu sekolah — tiada perlu atur penjagaan anak untuk waktu petang")
+        if has_transport == 'no_transport' and (job.get('location_type') == 'remote' or job.get('internet_required')):
+            reasons.append(f"kerja ini boleh dilakukan dari rumah — tiada pengangkutan diperlukan")
+        elif has_transport == 'public_only' and job.get('location_type') == 'remote':
+            reasons.append(f"kerja dari rumah — mengurangkan pergantungan pada pengangkutan")
+        if gap_duration == 'more_3_years' and not job.get('cert_required'):
+            reasons.append(f"tiada sijil diperlukan — majikan dalam bidang ini mengambil pekerja berdasarkan kesediaan belajar, bukan rekod kerja sempurna")
+        elif gap_duration == '1_3_years' and not job.get('cert_required'):
+            reasons.append(f"jurang kerjaya anda bukan halangan di sini — pengambilan peringkat masuk berdasarkan sikap dan kemahiran asas")
         if q_growth >= 3:
             reasons.append(f"anda bersedia belajar — laluan ini boleh capai RM{target_max:,}/bulan dalam {timeline} tahun")
         if income_mode == 'immediate':
@@ -448,25 +517,30 @@ def save_quiz():
 
     # Build the quiz_results row
     row = {
-        'user_id':     user_id,
-        'interest':    profile.get('interest'),
-        'income_mode': profile.get('income_mode'),
-        'education':   profile.get('education'),
-        'skills':      profile.get('skills') or [],
+        'user_id':      user_id,
+        'interest':     profile.get('interest'),
+        'income_mode':  profile.get('income_mode'),
+        'education':    profile.get('education'),
+        'skills':       profile.get('skills') or [],
         'availability': profile.get('availability', 'anytime'),
+        'has_children':  profile.get('has_children', 'no'),
+        'has_transport': profile.get('has_transport', 'own_vehicle'),
+        'gap_duration':  profile.get('gap_duration', 'less_1_year'),
         # Slider answers (q_digital and q_ambition removed from quiz)
         'q_people':    profile.get('q_people'),
         'q_outdoor':   profile.get('q_outdoor'),
         'q_creative':  profile.get('q_creative'),
         'q_flexible':  profile.get('q_flexible'),
         'q_growth':    profile.get('q_growth'),
-        'q_leadership':profile.get('q_leadership'),
         'profile_summary': {
-            'interest':      profile.get('interest'),
-            'income_mode':   profile.get('income_mode'),
-            'education':     profile.get('education'),
-            'availability':  profile.get('availability', 'anytime'),
-            'lang':          lang,
+            'interest':       profile.get('interest'),
+            'income_mode':    profile.get('income_mode'),
+            'education':      profile.get('education'),
+            'availability':   profile.get('availability', 'anytime'),
+            'has_children':   profile.get('has_children', 'no'),
+            'has_transport':  profile.get('has_transport', 'own_vehicle'),
+            'gap_duration':   profile.get('gap_duration', 'less_1_year'),
+            'lang':           lang,
         }
     }
 
@@ -792,12 +866,15 @@ def generate_roadmap():
             if qr_res.ok and qr_res.json():
                 qr = qr_res.json()[0]
                 profile.update({
-                    'age':          qr.get('age', '18-22'),
-                    'education':    qr.get('education', 'spm'),
-                    'interest':     qr.get('interest', 'biz'),
-                    'skills':       qr.get('skills') or [],
-                    'income_mode':  qr.get('income_mode', 'immediate'),
-                    'availability': qr.get('availability', 'anytime'),
+                    'age':           qr.get('age', '18-22'),
+                    'education':     qr.get('education', 'spm'),
+                    'interest':      qr.get('interest', 'biz'),
+                    'skills':        qr.get('skills') or [],
+                    'income_mode':   qr.get('income_mode', 'immediate'),
+                    'availability':  qr.get('availability', 'anytime'),
+                    'has_children':  qr.get('has_children', 'no'),
+                    'has_transport': qr.get('has_transport', 'own_vehicle'),
+                    'gap_duration':  qr.get('gap_duration', 'less_1_year'),
                 })
             user_url = f"{SUPABASE}/rest/v1/users?id=eq.{user_id}&select=name&limit=1"
             user_res = req_lib.get(user_url, headers=_supabase_headers(), timeout=8)
