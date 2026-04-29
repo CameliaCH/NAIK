@@ -8,8 +8,6 @@
 
 NAIK ("rise" in Malay) is built for the women who fall through the cracks of mainstream career tools — particularly those re-entering the workforce after a caregiving break. We turn years of household management into professional language, give women the confidence to walk into interviews, and surface the jobs, skills, and grants that actually fit their lives.
 
-> 🚧 *Live demo coming soon — see screenshots below.*
-
 ---
 
 ## Why NAIK Exists
